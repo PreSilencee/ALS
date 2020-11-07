@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "416382271413",
+    "firebase_url": "https://charitymobileapp.firebaseio.com",
+    "project_id": "charitymobileapp",
+    "storage_bucket": "charitymobileapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:416382271413:android:9f102ee5c77ba784d023fc",
+        "android_client_info": {
+          "package_name": "com.example.als"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "416382271413-1s946f50rqugss2lejook938ruhqssk6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDsHv3ck28jNWuDAn23VbjHLg56rQ7COw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "416382271413-1s946f50rqugss2lejook938ruhqssk6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:416382271413:android:4d99239e22c67d96d023fc",
+        "android_client_info": {
+          "package_name": "com.example.charitymobileapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "416382271413-1s946f50rqugss2lejook938ruhqssk6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDsHv3ck28jNWuDAn23VbjHLg56rQ7COw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "416382271413-1s946f50rqugss2lejook938ruhqssk6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,104 @@
+package com.example.als.object;
+
+import com.google.firebase.database.Exclude;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Organization {
+
+    //organization details
+    private String organizationName;
+    private String organizationType;
+    private String organizationRegistrationNumber;
+    private String organizationDescription;
+    private String organizationAddress;
+    private String organizationPhone;
+    private String organizationProfileImageName;
+    private boolean organizationVerifyStatus;
+
+
+    public Organization() {
+    }
+
+
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public String getOrganizationType() {
+        return organizationType;
+    }
+
+    public void setOrganizationType(String organizationType) {
+        this.organizationType = organizationType;
+    }
+
+    public String getOrganizationRegistrationNumber() {
+        return organizationRegistrationNumber;
+    }
+
+    public void setOrganizationRegistrationNumber(String organizationRegistrationNumber) {
+        this.organizationRegistrationNumber = organizationRegistrationNumber;
+    }
+
+    public String getOrganizationDescription() {
+        return organizationDescription;
+    }
+
+    public void setOrganizationDescription(String organizationDescription) {
+        this.organizationDescription = organizationDescription;
+    }
+
+    public String getOrganizationAddress() {
+        return organizationAddress;
+    }
+
+    public void setOrganizationAddress(String organizationAddress) {
+        this.organizationAddress = organizationAddress;
+    }
+
+    public String getOrganizationPhone() {
+        return organizationPhone;
+    }
+
+    public void setOrganizationPhone(String organizationPhone) {
+        this.organizationPhone = organizationPhone;
+    }
+
+    public String getOrganizationProfileImageName() {
+        return organizationProfileImageName;
+    }
+
+    public void setOrganizationProfileImageName(String organizationProfileImageName) {
+        this.organizationProfileImageName = organizationProfileImageName;
+    }
+
+    public boolean isOrganizationVerifyStatus() {
+        return organizationVerifyStatus;
+    }
+
+    public void setOrganizationVerifyStatus(boolean organizationVerifyStatus) {
+        this.organizationVerifyStatus = organizationVerifyStatus;
+    }
+
+    @Exclude
+    public Map<String, Object> toMap(){
+        HashMap<String,Object> result = new HashMap<>();
+        result.put("organizationName", organizationName);
+        result.put("organizationType", organizationType);
+        result.put("organizationRegistrationNumber", organizationRegistrationNumber);
+        result.put("organizationDescription", organizationDescription);
+        result.put("organizationAddress", organizationAddress);
+        result.put("organizationPhone", organizationPhone);
+        result.put("organizationProfileImageName", organizationProfileImageName);
+        result.put("organizationVerifyStatus", organizationVerifyStatus);
+
+        return result;
+    }
+}

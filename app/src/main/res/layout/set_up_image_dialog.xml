@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_marginTop="20dp"
+        android:layout_width="125dp"
+        android:layout_height="125dp"
+        app:civ_border_width="2dp"
+        app:civ_border_color="@color/colorAccent"
+        android:layout_gravity="center"
+        android:id="@+id/updateImageView"/>
+    
+    <TextView
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableLeftCompat="@drawable/ic_outline_info_24"
+        app:drawableStartCompat="@drawable/ic_outline_info_24"
+        app:drawableTint="@color/colorAccent"
+        android:drawablePadding="10dp"
+        android:padding="5dp"
+        android:text="@string/longClickImageNote"
+        android:layout_gravity="center"
+        android:textStyle="italic"/>
+
+    <LinearLayout
+        android:layout_marginBottom="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:gravity="end">
+
+        <Button
+            android:layout_margin="10dp"
+            android:id="@+id/cancelImage"
+            android:layout_weight="0.7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:textColor="@color/colorAccent"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:padding="10dp"/>
+
+        <Button
+            android:layout_margin="10dp"
+            android:id="@+id/confirmImage"
+            android:layout_weight="0.7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/corner_button_main_filled"
+            android:text="@string/confirm"
+            android:textColor="@color/colorWhite"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:padding="10dp"
+            android:maxEms="10"/>
+        
+    </LinearLayout>
+
+
+</LinearLayout>

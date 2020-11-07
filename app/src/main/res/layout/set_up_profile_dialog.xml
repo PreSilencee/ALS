@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        app:hintEnabled="false"
+        app:startIconDrawable="@drawable/ic_outline_account_circle_24"
+        app:startIconTint="@color/colorAccent"
+        android:background="@drawable/card_view_border"
+        android:id="@+id/updateDisplayName"
+        android:layout_gravity="center">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="@string/displayname"
+            android:inputType="text"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        app:hintEnabled="false"
+        app:startIconDrawable="@drawable/ic_baseline_phone_android_24"
+        app:startIconTint="@color/colorAccent"
+        android:background="@drawable/card_view_border"
+        android:id="@+id/updatePhone"
+        android:layout_gravity="center">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="@string/phone"
+            android:inputType="phone"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_marginBottom="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:gravity="end">
+
+        <Button
+            android:layout_margin="10dp"
+            android:id="@+id/cancelProfile"
+            android:layout_weight="0.7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:textColor="@color/colorAccent"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:padding="10dp"/>
+
+        <Button
+            android:layout_margin="10dp"
+            android:id="@+id/confirmProfile"
+            android:layout_weight="0.7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/corner_button_main_filled"
+            android:text="@string/confirm"
+            android:textColor="@color/colorWhite"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:padding="10dp"
+            android:maxEms="10"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:id="@+id/raisedEventListCardView">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:weightSum="2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_weight="0.5"
+            android:orientation="vertical"
+            android:baselineAligned="false"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/raisedEventListYearTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/year"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/raisedEventListDayTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/day"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textColor="@color/colorBlue"/>
+
+            <TextView
+                android:id="@+id/raisedEventListMonthTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/month"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="1.5"
+            android:orientation="vertical"
+            android:baselineAligned="false"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/raisedEventListNameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/uid"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textColor="@color/colorAccent"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ProgressBar
+                    android:id="@+id/raisedEventTargetFundProgressBar"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:minWidth="300dp"
+                    android:scaleY="3"
+                    android:max="100" />
+
+                <TextView
+                    android:id="@+id/raisedEventListProgressTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@id/raisedEventTargetFundProgressBar"
+                    android:layout_alignBottom="@id/raisedEventTargetFundProgressBar"
+                    android:layout_alignLeft="@id/raisedEventTargetFundProgressBar"
+                    android:layout_alignRight="@id/raisedEventTargetFundProgressBar"
+                    android:text="@string/uid"
+                    android:layout_alignStart="@id/raisedEventTargetFundProgressBar"
+                    android:layout_alignEnd="@id/raisedEventTargetFundProgressBar"
+                    android:gravity="center"/>
+
+            </RelativeLayout>
+
+
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

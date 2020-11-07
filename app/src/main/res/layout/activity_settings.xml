@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:orientation="vertical"
+    tools:context=".SettingsActivity">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_account"
+        android:textColor="@color/colorAccent"
+        android:background="@drawable/corner_button_main"
+        android:padding="15dp"
+        android:drawableRight="@drawable/ic_outline_keyboard_arrow_right_light_green_24"
+        android:drawableEnd="@drawable/ic_outline_keyboard_arrow_right_light_green_24"
+        android:gravity="start"
+        android:clickable="true"
+        android:focusable="true"
+        app:rippleColor="@color/colorAccent"
+        android:onClick="viewAccountBtn"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/title_change_password"
+        android:textColor="@color/colorAccent"
+        android:background="@drawable/corner_button_main"
+        android:padding="15dp"
+        android:drawableRight="@drawable/ic_outline_keyboard_arrow_right_light_green_24"
+        android:drawableEnd="@drawable/ic_outline_keyboard_arrow_right_light_green_24"
+        android:gravity="start"
+        android:clickable="true"
+        android:focusable="true"
+        app:rippleColor="@color/colorAccent"
+        android:onClick="changePasswordBtn"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/aboutUs"
+        android:textColor="@color/colorAccent"
+        android:background="@drawable/corner_button_main"
+        android:padding="15dp"
+        android:drawableRight="@drawable/ic_outline_keyboard_arrow_right_light_green_24"
+        android:drawableEnd="@drawable/ic_outline_keyboard_arrow_right_light_green_24"
+        android:gravity="start"
+        android:clickable="true"
+        android:focusable="true"
+        app:rippleColor="@color/colorAccent"
+        android:onClick="aboutUsBtn"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/logOut"
+        android:textColor="@color/colorRed"
+        android:background="@drawable/corner_button_red"
+        android:padding="15dp"
+        android:drawableRight="@drawable/ic_outline_keyboard_arrow_right_red_24"
+        android:drawableEnd="@drawable/ic_outline_keyboard_arrow_right_red_24"
+        android:gravity="start"
+        android:clickable="true"
+        android:focusable="true"
+        app:rippleColor="@color/colorAccent"
+        android:onClick="logOutButton"/>
+
+</LinearLayout>
