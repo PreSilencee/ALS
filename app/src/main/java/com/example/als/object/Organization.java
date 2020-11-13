@@ -13,6 +13,7 @@ public class Organization {
     private String organizationRegistrationNumber;
     private String organizationDescription;
     private String organizationAddress;
+    private String organizationEmail;
     private String organizationPhone;
     private String organizationProfileImageName;
     private boolean organizationVerifyStatus;
@@ -87,10 +88,19 @@ public class Organization {
         this.organizationVerifyStatus = organizationVerifyStatus;
     }
 
+    public String getOrganizationEmail() {
+        return organizationEmail;
+    }
+
+    public void setOrganizationEmail(String organizationEmail) {
+        this.organizationEmail = organizationEmail;
+    }
+
     @Exclude
     public Map<String, Object> toMap(){
         HashMap<String,Object> result = new HashMap<>();
         result.put("organizationName", organizationName);
+        result.put("organizationEmail", organizationEmail);
         result.put("organizationType", organizationType);
         result.put("organizationRegistrationNumber", organizationRegistrationNumber);
         result.put("organizationDescription", organizationDescription);

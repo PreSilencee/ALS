@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class Contributor {
     //normal donator details
+    private String email;
     private String name;
     private String phone;
     private String profileImageName;
@@ -35,10 +36,20 @@ public class Contributor {
         this.profileImageName = profileImageName;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Exclude
     public Map<String, Object> toMap(){
         HashMap<String,Object> result = new HashMap<>();
+
         result.put("name", name);
+        result.put("email", email);
         result.put("phone", phone);
         result.put("profileImageName", profileImageName);
 
