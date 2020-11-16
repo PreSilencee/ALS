@@ -186,24 +186,50 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                                         Log.d(TAG, "uploadImage: success");
-                                                        Contributor contributor = new Contributor();
-                                                        contributor.setProfileImageName(profileImageName);
-                                                        Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                                                        Variable.CONTRIBUTOR_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
-                                                            public void onSuccess(Void aVoid) {
-                                                                Log.d(TAG, "saveImageNameToDatabase: success");
-                                                                progressDialog.dismiss();
-                                                                finish();
-                                                                startActivity(new Intent(SetUpAccountImageActivity.this, SetUpContributorDetailsActivity.class));
-                                                            }
-                                                        })
-                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                        Log.d(TAG, "saveImageNameToDatabase: failed");
-                                                                        progressDialog.dismiss();
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                if(snapshot.exists()){
+                                                                    Contributor contributor = snapshot.getValue(Contributor.class);
+
+                                                                    if(contributor != null){
+                                                                        contributor.setUserId(cUser.getUid());
+                                                                        contributor.setProfileImageName(profileImageName);
+
+                                                                        Map<String, Object> contributorValues = contributor.toMap();
+
+                                                                        Variable.CONTRIBUTOR_REF.child(cUser.getUid()).updateChildren(contributorValues).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                Log.d(TAG, "saveImageNameToDatabase: success");
+                                                                                progressDialog.dismiss();
+                                                                                finish();
+                                                                                startActivity(new Intent(SetUpAccountImageActivity.this, SetUpContributorDetailsActivity.class));
+                                                                            }
+                                                                        })
+                                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                                    @Override
+                                                                                    public void onFailure(@NonNull Exception e) {
+                                                                                        Log.d(TAG, "saveImageNameToDatabase: failed");
+                                                                                        progressDialog.dismiss();
+                                                                                    }
+                                                                                });
                                                                     }
-                                                                });
+                                                                    else{
+                                                                        Log.d(TAG, "contributorFound: failed");
+                                                                    }
+                                                                }
+                                                                else{
+                                                                    Log.d(TAG, "invalidcontributorfound: failed");
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                                Log.d(TAG, "databaseerror: " + error.getMessage());
+                                                            }
+                                                        });
                                                     }
                                                 })
                                                 .addOnFailureListener(new OnFailureListener() {
@@ -235,24 +261,49 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                                                     @Override
                                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                                         Log.d(TAG, "uploadImage: success");
-                                                        Organization organization = new Organization();
-                                                        organization.setOrganizationProfileImageName(profileImageName);
-                                                        Variable.ORGANIZATION_REF.child(cUser.getUid()).setValue(organization).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                                                        Variable.ORGANIZATION_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
-                                                            public void onSuccess(Void aVoid) {
-                                                                Log.d(TAG, "saveImageNameToDatabase: success");
-                                                                progressDialog.dismiss();
-                                                                finish();
-                                                                startActivity(new Intent(SetUpAccountImageActivity.this, SetUpOrganizationDetailsActivity.class));
-                                                            }
-                                                        })
-                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                        Log.d(TAG, "saveImageNameToDatabase: failed");
-                                                                        progressDialog.dismiss();
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                if(snapshot.exists()){
+                                                                    Organization organization = snapshot.getValue(Organization.class);
+
+                                                                    if(organization != null){
+
+                                                                        organization.setUserId(cUser.getUid());
+                                                                        organization.setOrganizationProfileImageName(profileImageName);
+                                                                        Map<String, Object> organizationValues = organization.toMap();
+
+                                                                        Variable.ORGANIZATION_REF.child(cUser.getUid()).updateChildren(organizationValues).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                progressDialog.dismiss();
+                                                                                finish();
+                                                                                startActivity(new Intent(SetUpAccountImageActivity.this, SetUpOrganizationDetailsActivity.class));
+                                                                            }
+                                                                        })
+                                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                                    @Override
+                                                                                    public void onFailure(@NonNull Exception e) {
+                                                                                        Log.d(TAG, "saveImageNameToDatabase: failed");
+                                                                                        progressDialog.dismiss();
+                                                                                    }
+                                                                                });
                                                                     }
-                                                                });
+                                                                    else{
+                                                                        Log.d(TAG, "organizationFound: failed");
+                                                                    }
+                                                                }
+                                                                else{
+                                                                    Log.d(TAG, "invalidorganizationfound: failed");
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                                Log.d(TAG, "databaseerror: " + error.getMessage());
+                                                            }
+                                                        });
                                                     }
                                                 })
                                                 .addOnFailureListener(new OnFailureListener() {
@@ -300,22 +351,13 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
 
     public void setUpImage(View view) {
 
-        if(Build.VERSION.SDK_INT >=23)
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {
-            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            {
-                requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_CODE);
-            }
-            else
-            {
-                CropImage.activity()
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .setAspectRatio(1,1)
-                        .start(this);
-            }
+            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_CODE);
         }
-        else{
+        else
+        {
             CropImage.activity()
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setAspectRatio(1,1)

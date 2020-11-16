@@ -55,12 +55,14 @@
 
         <ImageView
             android:id="@+id/homeEventListImageView"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_width="390dp"
+            android:layout_height="200dp"
             android:layout_margin="5dp"
             android:src="@drawable/select_image_view"
             android:layout_gravity="center"
-            android:contentDescription="@string/eventImage" />
+            android:contentDescription="@string/eventImage"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"/>
 
         <TextView
             android:id="@+id/homeEventListTitleTextView"

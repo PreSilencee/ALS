@@ -2,6 +2,7 @@ package com.example.als.object;
 
 public class Event {
 
+    private String eventId;
     private String eventTitle;
     private String eventDescription;
     private String eventDateTimeCreated;
@@ -82,5 +83,13 @@ public class Event {
 
     public void setEventHandler(String eventHandler) {
         this.eventHandler = eventHandler;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 }

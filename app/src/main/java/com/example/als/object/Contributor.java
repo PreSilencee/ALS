@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class Contributor {
     //normal donator details
+    private String userId;
     private String email;
     private String name;
     private String phone;
@@ -44,10 +45,19 @@ public class Contributor {
         this.email = email;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     @Exclude
     public Map<String, Object> toMap(){
         HashMap<String,Object> result = new HashMap<>();
 
+        result.put("userId", userId);
         result.put("name", name);
         result.put("email", email);
         result.put("phone", phone);

@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -354,7 +355,11 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
                     newEvent.setEventDateTimeCreated(dateTimeCreated);
                     newEvent.setEventHandler(cUser.getUid());
                     newEvent.setEventImageName(eventImageName);
-                    Variable.EVENT_REF.push().setValue(newEvent).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                    DatabaseReference pushedEvent = Variable.EVENT_REF.push();
+                    String id = pushedEvent.getKey();
+                    newEvent.setEventId(id);
+                    Variable.EVENT_REF.child(newEvent.getEventId()).setValue(newEvent).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             progressDialog.dismiss();

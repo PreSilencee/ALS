@@ -118,4 +118,6 @@
     <string name="organizationInformation">Organization Information</string>
     <string name="personalInformation">Personal Information</string>
     <string name="contribution">Contribution</string>
+    <string name="type_message_here">Type message here…</string>
+    <string name="attachFiles">attachFiles</string>
 </resources>

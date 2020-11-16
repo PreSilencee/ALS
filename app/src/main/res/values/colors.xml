@@ -8,5 +8,5 @@
     <color name="colorGreen">#008000</color>
     <color name="colorRed">#FF0000</color>
     <color name="colorGray">#D3D3D3</color>
-    03A9F4
+    <color name="colorNormal">?attr/colorControlNormal</color>
 </resources>

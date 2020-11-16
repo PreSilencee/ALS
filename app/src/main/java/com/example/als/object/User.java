@@ -7,6 +7,8 @@ import java.util.Map;
 
 public class User {
 
+    //string for id
+    private String id;
     //string for register date time
     private String registerDateTime;
 
@@ -21,6 +23,8 @@ public class User {
 
     //boolean for determine whether the user is first time login
     private boolean isFirstTimeLoggedIn;
+
+
 
     public User() {
     }
@@ -65,9 +69,20 @@ public class User {
         isFirstTimeLoggedIn = firstTimeLoggedIn;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
+
     @Exclude
     public Map<String, Object> toMap(){
         HashMap<String,Object> result = new HashMap<>();
+        result.put("id", id);
         result.put("registerDateTime", registerDateTime);
         result.put("loggedInDateTime", loggedInDateTime);
         result.put("loggedOutDateTime", loggedOutDateTime);

@@ -27,6 +27,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 import com.example.als.R;
 import com.example.als.handler.Connectivity;
+import com.example.als.handler.GlideApp;
 import com.example.als.object.Contributor;
 import com.example.als.object.Event;
 import com.example.als.object.Organization;
@@ -44,6 +45,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import es.dmoral.toasty.Toasty;
 
@@ -112,35 +114,9 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                         holder.homeEventListProfileNameTV.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-
-                                                final String key = snapshot.getKey();
-
-                                                if(key != null){
-                                                    Variable.USER_REF.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                            if(snapshot.exists()){
-
-                                                                User user = snapshot.getValue(User.class);
-
-                                                                if(user != null){
-                                                                    Intent i = new Intent(requireActivity(), HomeUserViewDetailsActivity.class);
-                                                                    i.putExtra(Variable.HOME_USER_SESSION_ID, key);
-                                                                    i.putExtra(Variable.HOME_USER_SESSION_POSITION, user.getRole());
-                                                                    startActivity(i);
-                                                                }
-                                                            }
-                                                        }
-
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError error) {
-
-                                                        }
-                                                    });
-                                                }
-
-
-
+                                                Intent i = new Intent(requireActivity(), HomeUserViewDetailsActivity.class);
+                                                i.putExtra(Variable.HOME_USER_SESSION_ID, organization.getUserId());
+                                                startActivity(i);
                                             }
                                         });
                                     }
@@ -177,7 +153,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                     @Override
                                     public void onDataChange(@NonNull final DataSnapshot snapshot) {
                                         if(snapshot.exists()){
-                                            Contributor contributor = snapshot.getValue(Contributor.class);
+                                            final Contributor contributor = snapshot.getValue(Contributor.class);
 
                                             if(contributor != null){
                                                 if(contributor.getName() != null){
@@ -185,31 +161,9 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                                                     holder.homeEventListProfileNameTV.setOnClickListener(new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View v) {
-                                                            final String key = snapshot.getKey();
-
-                                                            if(key != null){
-                                                                Variable.USER_REF.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                    @Override
-                                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                        if(snapshot.exists()){
-
-                                                                            User user = snapshot.getValue(User.class);
-
-                                                                            if(user != null){
-                                                                                Intent i = new Intent(requireActivity(), HomeUserViewDetailsActivity.class);
-                                                                                i.putExtra(Variable.HOME_USER_SESSION_ID, key);
-                                                                                i.putExtra(Variable.HOME_USER_SESSION_POSITION, user.getRole());
-                                                                                startActivity(i);
-                                                                            }
-                                                                        }
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                                                    }
-                                                                });
-                                                            }
+                                                            Intent i = new Intent(requireActivity(), HomeUserViewDetailsActivity.class);
+                                                            i.putExtra(Variable.HOME_USER_SESSION_ID, contributor.getUserId());
+                                                            startActivity(i);
                                                         }
                                                     });
                                                 }
@@ -279,7 +233,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         @Override
                         public void onSuccess(Uri uri) {
                             Log.d(TAG, "loadEventImage: success");
-                            Glide.with(requireActivity())
+                            GlideApp.with(requireActivity())
                                     .load(uri)
                                     .placeholder(R.drawable.loading_image)
                                     .into(holder.homeEventListIV);

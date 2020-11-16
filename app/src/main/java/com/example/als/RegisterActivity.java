@@ -15,6 +15,8 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.example.als.handler.Connectivity;
+import com.example.als.object.Contributor;
+import com.example.als.object.Organization;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -219,7 +221,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                                 public void onSuccess(Void aVoid) {
                                                                     Log.d(TAG, "sendEmailVerification:success");
 
-                                                                    User newUser = new User();
+                                                                    final User newUser = new User();
                                                                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
                                                                     Date dateObj = Calendar.getInstance().getTime();
                                                                     final String currentDateTime = simpleDateFormat.format(dateObj);
@@ -233,24 +235,102 @@ public class RegisterActivity extends AppCompatActivity {
 
                                                                     newUser.setRegisterDateTime(currentDateTime);
                                                                     newUser.setFirstTimeLoggedIn(true);
+                                                                    newUser.setId(cUser.getUid());
 
                                                                     Variable.USER_REF.child(cUser.getUid()).setValue(newUser)
                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                 @Override
                                                                                 public void onSuccess(Void aVoid) {
                                                                                     //show success message to user
-                                                                                    Toasty.success(getApplicationContext(),"Create Account Successfully. " +
-                                                                                                    "Please check your email for verification",
-                                                                                            Toast.LENGTH_SHORT, true).show();
 
-                                                                                    //hide the progress dialog
-                                                                                    progressDialog.dismiss();
+                                                                                    if(newUser.getRole().equals(Variable.CONTRIBUTOR)){
+                                                                                        Contributor contributor = new Contributor();
+                                                                                        contributor.setEmail(cUser.getEmail());
+                                                                                        Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                Toasty.success(getApplicationContext(),"Create Account Successfully. " +
+                                                                                                                "Please check your email for verification",
+                                                                                                        Toast.LENGTH_SHORT, true).show();
 
-                                                                                    //clear the input field
-                                                                                    clearField();
+                                                                                                //hide the progress dialog
+                                                                                                progressDialog.dismiss();
 
-                                                                                    //sign out
-                                                                                    cAuth.signOut();
+                                                                                                //clear the input field
+                                                                                                clearField();
+
+                                                                                                finish();
+
+                                                                                                //sign out
+                                                                                                cAuth.signOut();
+                                                                                            }
+                                                                                        })
+                                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                                            @Override
+                                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                                //show warning message (create account is successful,
+                                                                                                        // but database not include the user's data
+                                                                                                        Toasty.warning(getApplicationContext(),"Something went wrong. " +
+                                                                                                                        "Please do not use the same email to create account again" +
+                                                                                                                        "Please contact Administrator!"
+                                                                                                                , Toast.LENGTH_SHORT, true).show();
+
+                                                                                                //hide the progress dialog
+                                                                                                progressDialog.dismiss();
+
+                                                                                                //clear the input field
+                                                                                                clearField();
+
+                                                                                                //sign out
+                                                                                                cAuth.signOut();
+                                                                                            }
+                                                                                        });
+                                                                                    }
+                                                                                    else{
+                                                                                        Organization organization = new Organization();
+                                                                                        organization.setOrganizationEmail(cUser.getEmail());
+                                                                                        Variable.ORGANIZATION_REF.child(cUser.getUid()).setValue(organization).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void aVoid) {
+                                                                                                Toasty.success(getApplicationContext(),"Create Account Successfully. " +
+                                                                                                                "Please check your email for verification",
+                                                                                                        Toast.LENGTH_SHORT, true).show();
+
+                                                                                                //hide the progress dialog
+                                                                                                progressDialog.dismiss();
+
+                                                                                                //clear the input field
+                                                                                                clearField();
+
+                                                                                                finish();
+
+                                                                                                //sign out
+                                                                                                cAuth.signOut();
+                                                                                            }
+                                                                                        })
+                                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                                            @Override
+                                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                                //show warning message (create account is successful,
+                                                                                                // but database not include the user's data
+                                                                                                Toasty.warning(getApplicationContext(),"Something went wrong. " +
+                                                                                                                "Please do not use the same email to create account again" +
+                                                                                                                "Please contact Administrator!"
+                                                                                                        , Toast.LENGTH_SHORT, true).show();
+
+                                                                                                //hide the progress dialog
+                                                                                                progressDialog.dismiss();
+
+                                                                                                //clear the input field
+                                                                                                clearField();
+
+                                                                                                //sign out
+                                                                                                cAuth.signOut();
+
+                                                                                            }
+                                                                                        });
+                                                                                    }
+
                                                                                 }
                                                                             })
                                                                             .addOnFailureListener(new OnFailureListener() {

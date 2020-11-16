@@ -8,6 +8,7 @@ import java.util.Map;
 public class Organization {
 
     //organization details
+    private String userId;
     private String organizationName;
     private String organizationType;
     private String organizationRegistrationNumber;
@@ -22,7 +23,13 @@ public class Organization {
     public Organization() {
     }
 
+    public String getUserId() {
+        return userId;
+    }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getOrganizationName() {
         return organizationName;
@@ -99,6 +106,8 @@ public class Organization {
     @Exclude
     public Map<String, Object> toMap(){
         HashMap<String,Object> result = new HashMap<>();
+
+        result.put("userId", userId);
         result.put("organizationName", organizationName);
         result.put("organizationEmail", organizationEmail);
         result.put("organizationType", organizationType);
