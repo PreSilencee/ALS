@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MessageChatUserListAdapter extends RecyclerView.Adapter<MessageChatUserListAdapter.ViewHolder>{
-    private static final String TAG = "MessageChatListItemAdapter";
+    private static final String TAG = "ChatListItemAdapter";
     private List<User> userList;
     private Context context;
 
@@ -211,7 +211,7 @@ public class MessageChatUserListAdapter extends RecyclerView.Adapter<MessageChat
                     Message message = dataSnapshot.getValue(Message.class);
 
                     if(message.getReceiver().equals(cUser.getUid()) && message.getSender().equals(userId) ||
-                            message.getSender().equals(userId) && message.getReceiver().equals(cUser.getUid())) {
+                            message.getReceiver().equals(userId) && message.getSender().equals(cUser.getUid())) {
                         try {
                             content[0] = AESCrypt.decrypt(message.getContent());
                         } catch (Exception e) {

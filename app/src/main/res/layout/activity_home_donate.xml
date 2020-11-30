@@ -103,7 +103,7 @@
         android:layout_margin="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/homeDonateConfirmButton"
@@ -118,6 +118,6 @@
         android:clickable="true"
         android:focusable="true"
         app:rippleColor="@color/colorAccent"
-        />
+        android:visibility="gone"/>
 
 </LinearLayout>

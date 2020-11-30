@@ -103,7 +103,8 @@ public class HomeDonateActivity extends AppCompatActivity{
     private Button homeDonateConfirmBtn;
 
     // 10.0.2.2 is the Android emulator's alias to localhost
-    private static final String BACKEND_URL = "http://10.0.2.2:4242/";
+    private static final String BACKEND_URL = "http://192.168.0.172:5002/";
+    //private static final String BACKEND_URL = "http://10.0.2.2:4242/";
     private OkHttpClient httpClient = new OkHttpClient();
     private String paymentIntentClientSecret;
     private Stripe stripe;
@@ -121,11 +122,7 @@ public class HomeDonateActivity extends AppCompatActivity{
 
         Intent session = getIntent();
 
-        stripe = new Stripe(
-                getApplicationContext(),
-                Objects.requireNonNull("pk_test_51Hklw2HeAF36bhnSQH6J2DDp2Ph7uHb9EaxurePC3cFhngCrp0fBsAbpBJkpC7gd2yp0odVCHDw587bAfOTqsULP00jEFJE1eW")
-        );
-        startCheckout();
+        //stripe = new Stripe(getApplicationContext(), Variable.STRIPE_PUBLISHABLE_KEY);
 
         if(session.hasExtra(Variable.HOME_USER_SESSION_ID)){
             userId = session.getStringExtra(Variable.HOME_USER_SESSION_ID);
@@ -191,10 +188,7 @@ public class HomeDonateActivity extends AppCompatActivity{
                                         homeDonateConfirmBtn.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                stripe = new Stripe(
-                                                        getApplicationContext(),
-                                                        Variable.STRIPE_PUBLISHABLE_KEY
-                                                );
+
                                                 startStripePayment();
                                             }
                                         });

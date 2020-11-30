@@ -59,7 +59,7 @@ public class Variable {
     public static final String MESSAGE_USER_SESSION_ID = "messageUserSessionId";
 
     //stripe publishable key
-    public static final String STRIPE_PUBLISHABLE_KEY = "pk_test_51Hklw2HeAF36bhnSQH6J2DDp2Ph7uHb9EaxurePC3cFhngCrp0fBsAbpBJkpC7gd2yp0odVCHDw587bAfOTqsULP00jEFJE1eW";
+    public static final String STRIPE_KEY = "pk_test_51Hklw2HeAF36bhnSQH6J2DDp2Ph7uHb9EaxurePC3cFhngCrp0fBsAbpBJkpC7gd2yp0odVCHDw587bAfOTqsULP00jEFJE1eW";
 
     public static final String MESSAGE_TYPE_TEXT = "text";
     public static final String MESSAGE_TYPE_FILE = "file";

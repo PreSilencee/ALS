@@ -48,6 +48,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -373,7 +375,7 @@ public class MessageChatActivity extends AppCompatActivity {
                                 @Override
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
                                     if(response.code() == 200){
-                                        if(response.body().success == 1){
+                                        if(response.body().success != 1){
                                             Toast.makeText(MessageChatActivity.this, "failed!", Toast.LENGTH_SHORT).show();
                                         }
                                     }
