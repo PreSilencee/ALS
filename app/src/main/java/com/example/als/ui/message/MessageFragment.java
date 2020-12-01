@@ -28,6 +28,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.installations.FirebaseInstallations;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,12 +67,12 @@ public class MessageFragment extends Fragment{
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()){
                     Message message = dataSnapshot.getValue(Message.class);
 
-                    if(message.getSender().equals(cUser.getUid())){
-                        usersList.add(message.getReceiver());
+                    if(message.getMessageSender().equals(cUser.getUid())){
+                        usersList.add(message.getMessageReceiver());
                     }
 
-                    if(message.getReceiver().equals(cUser.getUid())){
-                        usersList.add(message.getSender());
+                    if(message.getMessageReceiver().equals(cUser.getUid())){
+                        usersList.add(message.getMessageSender());
                     }
                 }
 
@@ -89,9 +91,8 @@ public class MessageFragment extends Fragment{
     }
 
     private void updateToken(String token){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
         Token token1 = new Token(token);
-        reference.child(cUser.getUid()).setValue(token1);
+        Variable.TOKEN_REF.child(cUser.getUid()).setValue(token1);
     }
 
     private void readChatList(){

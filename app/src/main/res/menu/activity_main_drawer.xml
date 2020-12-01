@@ -16,5 +16,9 @@
             android:id="@+id/nav_message"
             android:icon="@drawable/ic_baseline_chat_24"
             android:title="@string/message" />
+        <item
+            android:id="@+id/nav_donation_history"
+            android:icon="@drawable/ic_outline_payment_24"
+            android:title="@string/donationHistory"/>
     </group>
 </menu>

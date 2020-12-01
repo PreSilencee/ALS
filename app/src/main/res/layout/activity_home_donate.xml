@@ -27,36 +27,31 @@
             android:id="@+id/homeDonateRM10RadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/rm10"
-            android:onClick="onDonateAmountSelected"/>
+            android:text="@string/rm10" />
 
         <RadioButton
             android:id="@+id/homeDonateRM20RadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/rm20"
-            android:onClick="onDonateAmountSelected"/>
+            android:text="@string/rm20" />
 
         <RadioButton
             android:id="@+id/homeDonateRM50RadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/rm50"
-            android:onClick="onDonateAmountSelected"/>
+            android:text="@string/rm50" />
 
         <RadioButton
             android:id="@+id/homeDonateRM100RadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/rm100"
-            android:onClick="onDonateAmountSelected"/>
+            android:text="@string/rm100" />
 
         <RadioButton
             android:id="@+id/homeDonateOtherAmountRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/otherAmount"
-            android:onClick="onDonateAmountSelected"/>
+            android:text="@string/otherAmount" />
 
         <EditText
             android:id="@+id/homeDonateOtherAmountEditText"
@@ -68,42 +63,6 @@
             android:visibility="gone"/>
 
     </RadioGroup>
-
-    <View
-        android:id="@+id/homeDonateSelectPaymentMethodView"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:alpha="0.5"
-        android:background="@color/colorAccent"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/homeDonateSelectPaymentMethodTextView"
-        android:layout_margin="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/selectPaymentMethod"
-        style="@style/TextAppearance.AppCompat.Title"
-        android:visibility="gone"/>
-
-    <RadioButton
-        android:id="@+id/homeDonatePayWithStripeRadioButton"
-        android:layout_marginStart="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/payWithStripe"
-        android:visibility="gone"/>
-
-    <com.stripe.android.view.CardInputWidget
-        android:id="@+id/homeDonateCardInputWidget"
-        android:layout_margin="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
 
     <Button
         android:id="@+id/homeDonateConfirmButton"

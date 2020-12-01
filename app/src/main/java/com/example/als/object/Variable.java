@@ -17,6 +17,9 @@ public class Variable {
                     "$");
 
     //database reference
+    public static final DatabaseReference TOKEN_REF =
+            FirebaseDatabase.getInstance()
+                    .getReference().child("token");
     public static final DatabaseReference USER_REF =
             FirebaseDatabase.getInstance()
                     .getReference().child("user");
@@ -32,6 +35,10 @@ public class Variable {
     public static final DatabaseReference MESSAGE_REF =
             FirebaseDatabase.getInstance().
                     getReference().child("message");
+    public static final DatabaseReference DONATION_REF =
+            FirebaseDatabase.getInstance()
+                    .getReference().child("donation");
+
 
     //storage reference
     public static final StorageReference CONTRIBUTOR_SR =
@@ -71,5 +78,8 @@ public class Variable {
     //message
     public static final int MSG_TYPE_LEFT = 0;
     public static final int MSG_TYPE_RIGHT = 1;
+
+    public static final String MESSAGE_CHANNEL_ID = "MESSAGE_CHANNEL_ID";
+    public static final String MESSAGE_CHANNEL_NAME = "MESSAGE_CHANNEL_NAME";
 }
 

@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity{
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_raised_event_list, R.id.nav_message)
+                R.id.nav_home, R.id.nav_raised_event_list, R.id.nav_message, R.id.nav_donation_history)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity{
                             if(user != null){
                                 if(user.isFirstTimeLoggedIn()){
                                     user.setFirstTimeLoggedIn(false);
-                                    Map<String,Object> userValues = user.toMap();
+                                    Map<String,Object> userValues = user.userMap();
                                     Variable.USER_REF.child(cUser.getUid()).setValue(userValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {

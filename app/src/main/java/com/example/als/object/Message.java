@@ -2,60 +2,58 @@ package com.example.als.object;
 
 public class Message {
 
-    private String id;
-    private String receiver;
-    private String sender;
-    private String content;
-    private String type;
-    private String dateTimeSent;
+    private String messageId;
+    private String messageReceiver;
+    private String messageSender;
+    private String messageContent;
+    private String messageType;
+    private String messageDateTimeSent;
 
-    public String getId() {
-        return id;
+    public String getMessageId() {
+        return messageId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
-    public String getReceiver() {
-        return receiver;
+    public String getMessageReceiver() {
+        return messageReceiver;
     }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
+    public void setMessageReceiver(String messageReceiver) {
+        this.messageReceiver = messageReceiver;
     }
 
-    public String getSender() {
-        return sender;
+    public String getMessageSender() {
+        return messageSender;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setMessageSender(String messageSender) {
+        this.messageSender = messageSender;
     }
 
-    public String getContent() {
-        return content;
+    public String getMessageContent() {
+        return messageContent;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setMessageContent(String messageContent) {
+        this.messageContent = messageContent;
     }
 
-    public String getType() {
-        return type;
+    public String getMessageType() {
+        return messageType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
     }
 
-    public String getDateTimeSent() {
-        return dateTimeSent;
+    public String getMessageDateTimeSent() {
+        return messageDateTimeSent;
     }
 
-    public void setDateTimeSent(String dateTimeSent) {
-        this.dateTimeSent = dateTimeSent;
+    public void setMessageDateTimeSent(String messageDateTimeSent) {
+        this.messageDateTimeSent = messageDateTimeSent;
     }
-
-
 }

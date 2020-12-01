@@ -277,20 +277,70 @@ public class MessageChatActivity extends AppCompatActivity {
             String id = pushedMessage.getKey();
 
             final Message message = new Message();
-            message.setId(id);
-            message.setSender(myId);
-            message.setReceiver(userId);
-            message.setType(Variable.MESSAGE_TYPE_TEXT);
-            message.setDateTimeSent(currentDateTime);
-            message.setContent(messageContent);
+            message.setMessageId(id);
+            message.setMessageSender(myId);
+            message.setMessageReceiver(userId);
+            message.setMessageType(Variable.MESSAGE_TYPE_TEXT);
+            message.setMessageDateTimeSent(currentDateTime);
+            message.setMessageContent(messageContent);
 
 
 
-            Variable.MESSAGE_REF.child(message.getId()).setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
+            Variable.MESSAGE_REF.child(message.getMessageId()).setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Log.d(TAG, "sendMessage: success");
                     messageChatInputMessageET.getText().clear();
+                    Variable.USER_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            User user = snapshot.getValue(User.class);
+
+                            if(user != null){
+                                if(user.getRole().equals(Variable.CONTRIBUTOR)){
+                                    Variable.CONTRIBUTOR_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            Contributor contributor = snapshot.getValue(Contributor.class);
+                                            if(notify){
+                                                sendNotification(message.getMessageReceiver(), contributor.getName(), content);
+                                            }
+                                            notify = false;
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Log.d(TAG, "databaseError: "+error.getMessage());
+                                        }
+                                    });
+
+                                }
+                                else{
+                                    Variable.ORGANIZATION_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            Organization organization = snapshot.getValue(Organization.class);
+                                            if(notify){
+                                                sendNotification(message.getMessageReceiver(), organization.getOrganizationName(), content);
+                                            }
+                                            notify = false;
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Log.d(TAG, "databaseError: "+error.getMessage());
+                                        }
+                                    });
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.d(TAG, "databaseError: "+error.getMessage());
+                        }
+                    });
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -301,70 +351,18 @@ public class MessageChatActivity extends AppCompatActivity {
                 }
             });
 
-            Variable.USER_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    User user = snapshot.getValue(User.class);
 
-                    if(user != null){
-                        if(user.getRole().equals(Variable.CONTRIBUTOR)){
-                            Variable.CONTRIBUTOR_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    Contributor contributor = snapshot.getValue(Contributor.class);
-                                    if(notify){
-                                        sendNotification(message.getReceiver(), contributor.getName(), content);
-                                    }
-                                    notify = false;
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-
-                        }
-                        else{
-                            Variable.ORGANIZATION_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    Organization organization = snapshot.getValue(Organization.class);
-                                    if(notify){
-                                        sendNotification(message.getReceiver(), organization.getOrganizationName(), content);
-                                    }
-                                    notify = false;
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-                        }
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
         }
-
-
-
     }
 
     private void sendNotification(String receiver, final String username, final String message){
-        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
-        Query query = tokens.orderByKey().equalTo(receiver);
+        Query query = Variable.TOKEN_REF.orderByKey().equalTo(receiver);
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()){
                     Token token = dataSnapshot.getValue(Token.class);
+                    Log.d(TAG, messageChatUserId);
                     Data data = new Data(cUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message",
                             messageChatUserId);
 
@@ -376,14 +374,14 @@ public class MessageChatActivity extends AppCompatActivity {
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
                                     if(response.code() == 200){
                                         if(response.body().success != 1){
-                                            Toast.makeText(MessageChatActivity.this, "failed!", Toast.LENGTH_SHORT).show();
+                                            Log.d(TAG, "Notify failed!");
                                         }
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(Call<MyResponse> call, Throwable t) {
-
+                                    Log.d(TAG, "Notify failed!");
                                 }
                             });
                 }
@@ -391,7 +389,7 @@ public class MessageChatActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.d(TAG, "databaseError: "+error.getMessage());
             }
         });
     }
@@ -406,8 +404,8 @@ public class MessageChatActivity extends AppCompatActivity {
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()){
                     Message message = dataSnapshot.getValue(Message.class);
                     assert message != null;
-                    if(message.getReceiver().equals(myId) && message.getSender().equals(userId) ||
-                            message.getReceiver().equals(userId) && message.getSender().equals(myId)){
+                    if(message.getMessageReceiver().equals(myId) && message.getMessageSender().equals(userId) ||
+                            message.getMessageReceiver().equals(userId) && message.getMessageSender().equals(myId)){
                         messageList.add(message);
                     }
 

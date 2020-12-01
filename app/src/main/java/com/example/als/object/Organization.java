@@ -104,7 +104,7 @@ public class Organization {
     }
 
     @Exclude
-    public Map<String, Object> toMap(){
+    public Map<String, Object> organizationMap(){
         HashMap<String,Object> result = new HashMap<>();
 
         result.put("userId", userId);

@@ -13,6 +13,10 @@ public class Contributor {
     private String phone;
     private String profileImageName;
 
+    public Contributor(){
+        //
+    }
+
     public String getName() {
         return name;
     }
@@ -54,7 +58,7 @@ public class Contributor {
     }
 
     @Exclude
-    public Map<String, Object> toMap(){
+    public Map<String, Object> contributorMap(){
         HashMap<String,Object> result = new HashMap<>();
 
         result.put("userId", userId);

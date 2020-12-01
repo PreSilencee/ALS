@@ -53,7 +53,7 @@ public class MessageChatItemAdapter extends RecyclerView.Adapter<MessageChatItem
         Message message = messageList.get(position);
         String decryptedMessage ="";
         try{
-            decryptedMessage = AESCrypt.decrypt(message.getContent());
+            decryptedMessage = AESCrypt.decrypt(message.getMessageContent());
         }
         catch (Exception e){
             Log.d(TAG, e.toString());
@@ -80,7 +80,7 @@ public class MessageChatItemAdapter extends RecyclerView.Adapter<MessageChatItem
     @Override
     public int getItemViewType(int position) {
         cUser = FirebaseAuth.getInstance().getCurrentUser();
-        if(messageList.get(position).getSender().equals(cUser.getUid())){
+        if(messageList.get(position).getMessageSender().equals(cUser.getUid())){
             return Variable.MSG_TYPE_RIGHT;
         }
         else{

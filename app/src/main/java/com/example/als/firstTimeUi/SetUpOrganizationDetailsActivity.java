@@ -143,7 +143,7 @@ public class SetUpOrganizationDetailsActivity extends AppCompatActivity {
                                 organization.setOrganizationPhone(organizationPhone);
                                 organization.setOrganizationVerifyStatus(false);
 
-                                Map<String, Object> organizationValues = organization.toMap();
+                                Map<String, Object> organizationValues = organization.organizationMap();
 
                                 Variable.ORGANIZATION_REF.child(cUser.getUid()).updateChildren(organizationValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override

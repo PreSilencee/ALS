@@ -1,5 +1,10 @@
 package com.example.als.object;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Event {
 
     private String eventId;
@@ -12,6 +17,7 @@ public class Event {
     private double eventCurrentAmount;
     private String eventImageName;
     private String eventHandler;
+    private boolean eventVerifyStatus;
 
     public String getEventTitle() {
         return eventTitle;
@@ -91,5 +97,31 @@ public class Event {
 
     public void setEventId(String eventId) {
         this.eventId = eventId;
+    }
+
+    public boolean isEventVerifyStatus() {
+        return eventVerifyStatus;
+    }
+
+    public void setEventVerifyStatus(boolean eventVerifyStatus) {
+        this.eventVerifyStatus = eventVerifyStatus;
+    }
+
+    @Exclude
+    public Map<String, Object> eventMap(){
+        HashMap<String,Object> result = new HashMap<>();
+
+        result.put("eventId", eventId);
+        result.put("eventTitle", eventTitle);
+        result.put("eventDescription", eventDateTimeCreated);
+        result.put("eventStartDate", eventStartDate);
+        result.put("eventEndDate", eventEndDate);
+        result.put("eventTargetAmount", eventTargetAmount);
+        result.put("eventCurrentAmount", eventCurrentAmount);
+        result.put("eventImageName", eventImageName);
+        result.put("eventHandler", eventHandler);
+        result.put("eventVerifyStatus", eventVerifyStatus);
+
+        return result;
     }
 }

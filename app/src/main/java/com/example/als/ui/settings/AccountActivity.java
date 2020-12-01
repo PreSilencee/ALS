@@ -459,7 +459,7 @@ public class AccountActivity extends AppCompatActivity {
                     Log.d(TAG, "displayNameStatus: "+displayNameStatus);
                     Log.d(TAG, "displayPhoneStatus: "+phoneStatus);
                     if(displayNameStatus || phoneStatus){
-                        Map<String, Object> contributorValues = existedContributor.toMap();
+                        Map<String, Object> contributorValues = existedContributor.contributorMap();
                         Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributorValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
@@ -566,7 +566,7 @@ public class AccountActivity extends AppCompatActivity {
                                                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                                                     Log.d(TAG, "uploadImage: success");
                                                                     existedContributor.setProfileImageName(profileImageName);
-                                                                    Map<String, Object> contributorValues = existedContributor.toMap();
+                                                                    Map<String, Object> contributorValues = existedContributor.contributorMap();
                                                                     Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributorValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                         @Override
                                                                         public void onSuccess(Void aVoid) {
@@ -614,7 +614,7 @@ public class AccountActivity extends AppCompatActivity {
                                                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                                                     Log.d(TAG, "uploadImage: success");
                                                                     existedOrganization.setOrganizationProfileImageName(profileImageName);
-                                                                    Map<String, Object> organizationValues = existedOrganization.toMap();
+                                                                    Map<String, Object> organizationValues = existedOrganization.organizationMap();
                                                                     Variable.ORGANIZATION_REF.child(cUser.getUid()).setValue(organizationValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                         @Override
                                                                         public void onSuccess(Void aVoid) {

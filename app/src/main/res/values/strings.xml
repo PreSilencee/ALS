@@ -120,4 +120,6 @@
     <string name="contribution">Contribution</string>
     <string name="type_message_here">Type message here…</string>
     <string name="attachFiles">attachFiles</string>
+    <string name="donationHistory">Donation History</string>
+    <string name="empty_donation_history_found">No Donation History Found</string>
 </resources>

@@ -113,7 +113,7 @@ public class SettingsActivity extends AppCompatActivity {
                                                     final String currentDateTime = simpleDateFormat.format(dateObj);
                                                     user.setLoggedOutDateTime(currentDateTime);
 
-                                                    Map<String, Object> userValues = user.toMap();
+                                                    Map<String, Object> userValues = user.userMap();
 
                                                     Variable.USER_REF.child(cUser.getUid()).setValue(userValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override

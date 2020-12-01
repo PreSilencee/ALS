@@ -1,9 +1,7 @@
 package com.example.als.notification;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -15,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.als.object.Variable;
 import com.example.als.ui.message.MessageChatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,9 +28,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
+        Log.d(TAG, "From: " + remoteMessage.getFrom());
+
         String sented = remoteMessage.getData().get("sented");
 
         FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        Log.d(TAG, cUser.getUid());
+        Log.d(TAG, sented);
 
         if(cUser != null && sented.equals(cUser.getUid())){
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -52,7 +56,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
         Intent intent = new Intent(this, MessageChatActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("userId", user);
+        bundle.putString(Variable.MESSAGE_USER_SESSION_ID, user);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -82,10 +86,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
         Intent intent = new Intent(this, MessageChatActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("userId", user);
+        bundle.putString(Variable.MESSAGE_USER_SESSION_ID, user);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
@@ -105,7 +109,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             i = j;
         }
 
-        notificationManager.notify(i, notification1);
+        notificationManager.notify(0, notification1);
         Log.d(TAG, "sendNormalNotification: success");
     }
 }

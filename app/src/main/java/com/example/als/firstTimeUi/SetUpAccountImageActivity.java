@@ -197,7 +197,7 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                                                                         contributor.setUserId(cUser.getUid());
                                                                         contributor.setProfileImageName(profileImageName);
 
-                                                                        Map<String, Object> contributorValues = contributor.toMap();
+                                                                        Map<String, Object> contributorValues = contributor.contributorMap();
 
                                                                         Variable.CONTRIBUTOR_REF.child(cUser.getUid()).updateChildren(contributorValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
@@ -272,7 +272,7 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
 
                                                                         organization.setUserId(cUser.getUid());
                                                                         organization.setOrganizationProfileImageName(profileImageName);
-                                                                        Map<String, Object> organizationValues = organization.toMap();
+                                                                        Map<String, Object> organizationValues = organization.organizationMap();
 
                                                                         Variable.ORGANIZATION_REF.child(cUser.getUid()).updateChildren(organizationValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override

@@ -1,7 +1,6 @@
 package com.example.als.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,11 +18,8 @@ import com.example.als.handler.GlideApp;
 import com.example.als.object.Contributor;
 import com.example.als.object.Message;
 import com.example.als.object.Organization;
-import com.example.als.object.Payment;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
-import com.example.als.ui.home.HomeUserViewDetailsActivity;
-import com.example.als.ui.message.MessageChatActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -210,10 +206,10 @@ public class MessageChatUserListAdapter extends RecyclerView.Adapter<MessageChat
 
                     Message message = dataSnapshot.getValue(Message.class);
 
-                    if(message.getReceiver().equals(cUser.getUid()) && message.getSender().equals(userId) ||
-                            message.getReceiver().equals(userId) && message.getSender().equals(cUser.getUid())) {
+                    if(message.getMessageReceiver().equals(cUser.getUid()) && message.getMessageSender().equals(userId) ||
+                            message.getMessageReceiver().equals(userId) && message.getMessageSender().equals(cUser.getUid())) {
                         try {
-                            content[0] = AESCrypt.decrypt(message.getContent());
+                            content[0] = AESCrypt.decrypt(message.getMessageContent());
                         } catch (Exception e) {
                             Log.d(TAG, e.toString());
                         }

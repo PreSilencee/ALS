@@ -73,7 +73,7 @@ public class SetUpContributorDetailsActivity extends AppCompatActivity {
                             if(contributor != null){
                                 contributor.setName(displayName);
 
-                                Map<String, Object> contributorValues = contributor.toMap();
+                                Map<String, Object> contributorValues = contributor.contributorMap();
 
                                 Variable.CONTRIBUTOR_REF.child(cUser.getUid()).updateChildren(contributorValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override

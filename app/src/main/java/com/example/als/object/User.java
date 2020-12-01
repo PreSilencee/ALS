@@ -80,7 +80,7 @@ public class User {
 
 
     @Exclude
-    public Map<String, Object> toMap(){
+    public Map<String, Object> userMap(){
         HashMap<String,Object> result = new HashMap<>();
         result.put("id", id);
         result.put("registerDateTime", registerDateTime);

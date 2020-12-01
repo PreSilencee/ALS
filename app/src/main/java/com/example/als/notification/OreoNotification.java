@@ -13,10 +13,9 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-public class OreoNotification extends ContextWrapper {
+import com.example.als.object.Variable;
 
-    private static final String CHANNEL_ID ="com.example.als";
-    private static final String CHANNEL_NAME = "alittleshare";
+public class OreoNotification extends ContextWrapper {
 
     private NotificationManagerCompat notificationManagerCompat;
 
@@ -31,8 +30,8 @@ public class OreoNotification extends ContextWrapper {
     @TargetApi(Build.VERSION_CODES.O)
     private void createChannel() {
 
-        NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                CHANNEL_NAME,
+        NotificationChannel channel = new NotificationChannel(Variable.MESSAGE_CHANNEL_ID,
+                Variable.MESSAGE_CHANNEL_NAME,
                 NotificationManager.IMPORTANCE_HIGH);
         channel.enableLights(false);
         channel.enableVibration(true);
@@ -50,7 +49,7 @@ public class OreoNotification extends ContextWrapper {
     @TargetApi(Build.VERSION_CODES.O)
     public NotificationCompat.Builder getOreoNotification(String title, String body,
                                                     PendingIntent pendingIntent, Uri soundUri, String icon){
-        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+        return new NotificationCompat.Builder(getApplicationContext(), Variable.MESSAGE_CHANNEL_ID)
                 .setContentIntent(pendingIntent)
                 .setContentTitle(title)
                 .setContentText(body)
