@@ -19,7 +19,7 @@ public class Variable {
     //database reference
     public static final DatabaseReference TOKEN_REF =
             FirebaseDatabase.getInstance()
-                    .getReference().child("token");
+                    .getReference().child("Tokens");
     public static final DatabaseReference USER_REF =
             FirebaseDatabase.getInstance()
                     .getReference().child("user");
@@ -81,5 +81,6 @@ public class Variable {
 
     public static final String MESSAGE_CHANNEL_ID = "MESSAGE_CHANNEL_ID";
     public static final String MESSAGE_CHANNEL_NAME = "MESSAGE_CHANNEL_NAME";
+    public static final String MESSAGE_CHANNEL_DESC = "MESSAGE_CHANNEL_DESCRIPTION";
 }
 

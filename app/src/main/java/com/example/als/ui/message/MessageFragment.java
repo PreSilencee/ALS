@@ -60,32 +60,33 @@ public class MessageFragment extends Fragment{
 
         usersList = new ArrayList<>();
 
-        Variable.MESSAGE_REF.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                usersList.clear();
-                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-                    Message message = dataSnapshot.getValue(Message.class);
+        if(cUser != null){
+            Variable.MESSAGE_REF.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    usersList.clear();
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        Message message = dataSnapshot.getValue(Message.class);
 
-                    if(message.getMessageSender().equals(cUser.getUid())){
-                        usersList.add(message.getMessageReceiver());
+                        if(message.getMessageSender().equals(cUser.getUid())){
+                            usersList.add(message.getMessageReceiver());
+                        }
+
+                        if(message.getMessageReceiver().equals(cUser.getUid())){
+                            usersList.add(message.getMessageSender());
+                        }
                     }
 
-                    if(message.getMessageReceiver().equals(cUser.getUid())){
-                        usersList.add(message.getMessageSender());
-                    }
+                    readChatList();
                 }
 
-                readChatList();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        updateToken(FirebaseInstanceId.getInstance().getToken());
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.d(TAG, "databaseError: "+error.getMessage());
+                }
+            });
+            updateToken(FirebaseInstanceId.getInstance().getToken());
+        }
 
         return root;
     }

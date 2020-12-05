@@ -205,6 +205,7 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
                                     Variable.ORGANIZATION_REF.child(homeUserSessionId).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            homeUserViewDetailsPositionTitleTV.setText(Variable.ORGANIZATION);
                                             if(snapshot.exists()){
                                                 Organization organization = snapshot.getValue(Organization.class);
 

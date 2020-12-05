@@ -15,12 +15,15 @@ import android.widget.Toast;
 import com.example.als.firstTimeUi.SetUpAccountImageActivity;
 import com.example.als.handler.Connectivity;
 import com.example.als.handler.GlideApp;
+import com.example.als.notification.Token;
 import com.example.als.object.Contributor;
 import com.example.als.object.Organization;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -28,7 +31,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.encoders.ObjectEncoder;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.StorageReference;
 
 import androidx.annotation.NonNull;
@@ -283,13 +291,100 @@ public class MainActivity extends AppCompatActivity{
         }
         else{
             //get current user
-            FirebaseUser cUser = cAuth.getCurrentUser();
+            final FirebaseUser cUser = cAuth.getCurrentUser();
 
             //if user != null
             if(cUser != null)
             {
                 //show success message to console log
                 Log.d(TAG, "getCurrentUser: success");
+                FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull final Task<InstanceIdResult> task) {
+                        if(task.isSuccessful()){
+                            Variable.TOKEN_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if(snapshot.exists()){
+                                        Token token = snapshot.getValue(Token.class);
+
+                                        if(token != null)
+                                        {
+                                            token.setToken(task.getResult().getToken());
+
+                                            Map<String, Object> tokenValues = token.tokenMap();
+
+                                            Variable.TOKEN_REF.child(cUser.getUid()).updateChildren(tokenValues).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d(TAG, "Update Token: success");
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.d(TAG, "Exception: " + e.getMessage());
+                                                }
+                                            });
+                                        }
+                                    }
+                                    else{
+                                        Token token = new Token(task.getResult().getToken());
+                                        Variable.TOKEN_REF.child(cUser.getUid()).setValue(token).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "Update Token: success");
+                                            }
+                                        })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.d(TAG, "Exception: " + e.getMessage());
+                                                    }
+                                                });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    Log.d(TAG, "Database Error: " + error.getMessage());
+                                }
+                            });
+//                            Variable.USER_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                    if(snapshot.exists()){
+//                                        User user = snapshot.getValue(User.class);
+//
+//                                        if(user != null){
+//                                            user.setToken(task.getResult().getToken());
+//                                            Map<String, Object> userValues = user.userMap();
+//
+//                                            Variable.USER_REF.child(cUser.getUid()).updateChildren(userValues).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                @Override
+//                                                public void onSuccess(Void aVoid) {
+//                                                    Log.d(TAG, "Update Token: success");
+//                                                }
+//                                            })
+//                                            .addOnFailureListener(new OnFailureListener() {
+//                                                @Override
+//                                                public void onFailure(@NonNull Exception e) {
+//                                                    Log.d(TAG, "Exception: " + e.getMessage());
+//                                                }
+//                                            });
+//                                        }
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError error) {
+//
+//                                }
+//                            });
+                        }
+                    }
+                });
+
             }
             else
             {
@@ -307,6 +402,12 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(i);
             }
         }
+    }
+
+    private void updateToken(String token){
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        Token token1 = new Token(token);
+        Variable.TOKEN_REF.child(cUser.getUid()).setValue(token1);
     }
 
     @Override

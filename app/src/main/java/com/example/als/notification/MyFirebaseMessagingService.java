@@ -25,25 +25,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "FMessagingService";
 
     @Override
+    public void onNewToken(@NonNull String s) {
+        super.onNewToken(s);
+    }
+
+    @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
+//        if(remoteMessage.getNotification() != null){
+//            String title = remoteMessage.getNotification().getTitle();
+//            String body = remoteMessage.getNotification().getBody();
+//
+//            notificationHelper.displayNotification(getApplicationContext(), title, body);
+//        }
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
-        String sented = remoteMessage.getData().get("sented");
+        String sent = remoteMessage.getData().get("sent");
 
         FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        Log.d(TAG, cUser.getUid());
-        Log.d(TAG, sented);
-
-        if(cUser != null && sented.equals(cUser.getUid())){
+        if(cUser != null && sent.equals(cUser.getUid())){
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
                 sendOreoNotification(remoteMessage);
             }else{
                 sendNotification(remoteMessage);
             }
         }
+
     }
 
     private void sendOreoNotification(RemoteMessage remoteMessage){

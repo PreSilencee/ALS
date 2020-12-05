@@ -24,6 +24,8 @@ public class User {
     //boolean for determine whether the user is first time login
     private boolean isFirstTimeLoggedIn;
 
+    private String token;
+
 
 
     public User() {
@@ -77,7 +79,13 @@ public class User {
         this.id = id;
     }
 
+    public String getToken() {
+        return token;
+    }
 
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     @Exclude
     public Map<String, Object> userMap(){
@@ -88,7 +96,7 @@ public class User {
         result.put("loggedOutDateTime", loggedOutDateTime);
         result.put("role", role);
         result.put("firstTimeLoggedIn", isFirstTimeLoggedIn);
-
+        //result.put("token", token);
         return result;
     }
 }

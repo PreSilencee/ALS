@@ -22,13 +22,17 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.als.R;
+import com.example.als.adapter.DonationHistoryListFragmentAdapter;
+import com.example.als.adapter.HomeEventListFragmentAdapter;
 import com.example.als.handler.Connectivity;
 import com.example.als.handler.GlideApp;
 import com.example.als.object.Contributor;
+import com.example.als.object.Donation;
 import com.example.als.object.Event;
 import com.example.als.object.Organization;
 import com.example.als.object.User;
@@ -47,6 +51,14 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
 import es.dmoral.toasty.Toasty;
 
 public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
@@ -57,6 +69,11 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private SwipeRefreshLayout homeEventListSRL;
     private FirebaseRecyclerOptions<Event> homeEventListOptions;
     private FirebaseRecyclerAdapter<Event, HomeEventListFragmentViewHolder> homeEventListAdapter;
+
+    private List<Event> homeEventList;
+    private HomeEventListFragmentAdapter adapter;
+
+    FirebaseUser cUser;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              final ViewGroup container, Bundle savedInstanceState) {
@@ -100,7 +117,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         homeEventListAdapter = new FirebaseRecyclerAdapter<Event, HomeEventListFragmentViewHolder>(homeEventListOptions) {
             @Override
             protected void onBindViewHolder(@NonNull final HomeEventListFragmentViewHolder holder, final int position, @NonNull final Event model) {
-
                 if(model.getEventHandler() != null){
                     Variable.ORGANIZATION_REF.child(model.getEventHandler()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -300,7 +316,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 });
 
 
-
             }
 
             @NonNull
@@ -399,7 +414,6 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                 }
             });
         }
-
 
     }
 }

@@ -7,12 +7,14 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.als.R;
 
 public class HomeEventListFragmentViewHolder extends RecyclerView.ViewHolder {
 
+    public CardView homeEventListCV;
     public LinearLayout homeEventListEventHandlerLL;
     public TextView homeEventListProfileNameTV, homeEventListEventCreatedDate, homeEventListTitleTV, homeEventListDescriptionTV, homeEventListDurationTV,
              homeEventListCurrentFundTV, homeEventListTargetFundTV;
@@ -23,6 +25,7 @@ public class HomeEventListFragmentViewHolder extends RecyclerView.ViewHolder {
     public HomeEventListFragmentViewHolder(View itemView){
         super(itemView);
 
+        homeEventListCV = itemView.findViewById(R.id.homeEventListCardView);
         homeEventListEventHandlerLL = itemView.findViewById(R.id.homeEventListEventHandlerLinearLayout);
         homeEventListProfileNameTV = itemView.findViewById(R.id.homeEventListProfileNameTextView);
         homeEventListEventCreatedDate = itemView.findViewById(R.id.homeEventListEventCreatedTextView);

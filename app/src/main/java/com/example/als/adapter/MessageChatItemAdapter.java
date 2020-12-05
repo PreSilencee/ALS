@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,10 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.als.R;
 import com.example.als.handler.AESCrypt;
-import com.example.als.object.Event;
 import com.example.als.object.Message;
 import com.example.als.object.Variable;
-import com.example.als.viewHolder.MessageChatItemViewHolder;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

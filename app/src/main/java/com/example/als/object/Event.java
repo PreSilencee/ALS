@@ -113,7 +113,8 @@ public class Event {
 
         result.put("eventId", eventId);
         result.put("eventTitle", eventTitle);
-        result.put("eventDescription", eventDateTimeCreated);
+        result.put("eventDescription", eventDescription);
+        result.put("eventDateTimeCreated", eventDateTimeCreated);
         result.put("eventStartDate", eventStartDate);
         result.put("eventEndDate", eventEndDate);
         result.put("eventTargetAmount", eventTargetAmount);

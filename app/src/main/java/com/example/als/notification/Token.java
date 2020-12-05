@@ -1,5 +1,10 @@
 package com.example.als.notification;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Token {
     private String token;
 
@@ -16,5 +21,12 @@ public class Token {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    @Exclude
+    public Map<String, Object> tokenMap(){
+        HashMap<String,Object> result = new HashMap<>();
+        result.put("token", token);
+        return result;
     }
 }

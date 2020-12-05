@@ -42,10 +42,6 @@ public class DonationHistoryFragment extends Fragment implements SwipeRefreshLay
 
     FirebaseUser cUser;
 
-    public DonationHistoryFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,6 +73,7 @@ public class DonationHistoryFragment extends Fragment implements SwipeRefreshLay
             }
         });
 
+        loadDonationHistoryList();
 
         return root;
     }
@@ -100,13 +97,17 @@ public class DonationHistoryFragment extends Fragment implements SwipeRefreshLay
                     for(DataSnapshot dataSnapshot : snapshot.getChildren()){
                         Donation donation = dataSnapshot.getValue(Donation.class);
 
-                        if(donation.getDonationUserId().equals(cUser.getUid())){
-                            donationHistoryList.add(donation);
+                        if(donation != null){
+                            if(donation.getDonationUserId().equals(cUser.getUid())){
+                                donationHistoryList.add(donation);
+                            }
                         }
 
-                        donationHistoryListFragmentAdapter = new DonationHistoryListFragmentAdapter(getContext(), donationHistoryList);
-                        donationHistoryRecyclerView.setAdapter(donationHistoryListFragmentAdapter);
                     }
+
+                    donationHistoryListFragmentAdapter = new DonationHistoryListFragmentAdapter(getContext(), donationHistoryList);
+                    donationHistoryListFragmentAdapter.notifyDataSetChanged();
+                    donationHistoryRecyclerView.setAdapter(donationHistoryListFragmentAdapter);
                     donationHistoryListSRL.setRefreshing(false);
                 }
 

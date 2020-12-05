@@ -19,12 +19,17 @@ import com.example.als.object.Contributor;
 import com.example.als.object.Organization;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -237,6 +242,17 @@ public class RegisterActivity extends AppCompatActivity {
                                                                     newUser.setFirstTimeLoggedIn(true);
                                                                     newUser.setId(cUser.getUid());
 
+                                                                    FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                                            if(task.isSuccessful()){
+                                                                                String token = task.getResult().getToken();
+                                                                                newUser.setToken(token);
+                                                                            }
+                                                                        }
+                                                                    });
+
+
                                                                     Variable.USER_REF.child(cUser.getUid()).setValue(newUser)
                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                 @Override
@@ -409,4 +425,5 @@ public class RegisterActivity extends AppCompatActivity {
         alertDialog.setTitle("Confirmation");
         alertDialog.show();
     }
+
 }
