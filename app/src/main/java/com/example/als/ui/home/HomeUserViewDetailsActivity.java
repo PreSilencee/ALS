@@ -14,22 +14,31 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.als.LoginActivity;
+import com.example.als.MainActivity;
 import com.example.als.R;
 import com.example.als.handler.Connectivity;
 import com.example.als.handler.GlideApp;
+import com.example.als.notification.Token;
 import com.example.als.object.Contributor;
 import com.example.als.object.Organization;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
 import com.example.als.ui.message.MessageChatActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 
@@ -37,7 +46,6 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
 
     //tag for console log
     private static final String TAG = "HomeUserViewDetailsAct";
-    //private GoogleSignInClient cGoogleSignInClient;
 
     //connectivity
     private Connectivity device;
@@ -46,7 +54,7 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
     private FirebaseUser cUser;
 
     //session id
-    private String homeUserSessionId, homeUserSessionPosition;
+    private String homeUserSessionId;
 
     //imageView
     private ImageView homeUserViewDetailsIV;
@@ -54,13 +62,18 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
     //textView
     private TextView homeUserViewDetailsNameTV, homeUserViewDetailsPositionTitleTV,
             homeUserViewDetailsOrganizationTypeTV, homeUserViewDetailsOrganizationRegistrationNumberTV,
-            homeUserViewDetailsEmailTV, homeUserViewDetailsPhoneTV, homeuserViewDetailsOrganizationDescriptionTV,
+            homeUserViewDetailsEmailTV, homeUserViewDetailsPhoneTV, homeUserViewDetailsOrganizationDescriptionTV,
             homeUserViewDetailsOrganizationAddressTV;
 
     //linear layout
-    private LinearLayout homeUserDetailsOrganizationTypeLL, homeUserDetailsOrganizationRegistrationNumberLL,
-            homeUserDetailsOrganizationDescriptionLL, homeUserDetailsOrganizationAddressLL;
+    private LinearLayout homeUserViewDetailsOrganizationTypeLL, homeUserViewDetailsOrganizationRegistrationNumberLL,
+            homeUserViewDetailsOrganizationDescriptionLL, homeUserViewDetailsOrganizationAddressLL;
 
+    //view
+    private View homeUserViewDetailsOrganizationTypeV, homeUserViewDetailsOrganizationRegistrationNumberV,
+            homeUserViewDetailsOrganizationDescriptionV, homeUserViewDetailsOrganizationAddressV;
+
+    //button
     private Button homeUserSendMessageBtn;
 
     @Override
@@ -68,22 +81,93 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_user_view_details);
 
+        //initialize connectivity
         device = new Connectivity(HomeUserViewDetailsActivity.this);
 
+        //check connectivity
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(), device.NetworkError(), Toast.LENGTH_SHORT,true).show();
         }
         else{
             initialize();
         }
-
-
-
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //if device no network
+        if(!device.haveNetwork()){
+            //show error message
+            Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_SHORT,true).show();
+        }
+        else{
+            //get current user
+            cUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            //if user != null
+            if(cUser == null)
+            {
+                //show error message to console log
+                Log.d(TAG, "getCurrentUser: failed");
+
+                //show error message to user
+                Toasty.error(getApplicationContext(), "Session is expired. Please relogin.", Toast.LENGTH_SHORT,true).show();
+
+                //intent user to login page (relogin)
+                Intent i = new Intent(HomeUserViewDetailsActivity.this, LoginActivity.class);
+
+                //clear the background task
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //if device no network
+        if(!device.haveNetwork()){
+            //show error message
+            Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_SHORT,true).show();
+        }
+        else{
+            //get current user
+            cUser = FirebaseAuth.getInstance().getCurrentUser();
+
+            //if user != null
+            if(cUser == null)
+            {
+                //show error message to console log
+                Log.d(TAG, "getCurrentUser: failed");
+
+                //show error message to user
+                Toasty.error(getApplicationContext(), "Session is expired. Please relogin.", Toast.LENGTH_SHORT,true).show();
+
+                //intent user to login page (relogin)
+                Intent i = new Intent(HomeUserViewDetailsActivity.this, LoginActivity.class);
+
+                //clear the background task
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    //initialize the view
     private void initialize(){
+
+        //get session
         Intent session = getIntent();
 
+        //check session id
         if(session.hasExtra(Variable.HOME_USER_SESSION_ID)){
             homeUserSessionId = session.getStringExtra(Variable.HOME_USER_SESSION_ID);
         }
@@ -92,24 +176,38 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
             finish();
         }
 
+        //get current user
         cUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        //if user not null
         if(cUser != null){
+            //find id for image view
             homeUserViewDetailsIV = findViewById(R.id.homeUserViewDetailsImageView);
+
+            //find id for text view
             homeUserViewDetailsNameTV = findViewById(R.id.homeUserViewDetailsNameTextView);
             homeUserViewDetailsPositionTitleTV = findViewById(R.id.homeUserViewDetailsPositionTitleTextView);
-            homeUserDetailsOrganizationTypeLL = findViewById(R.id.homeUserViewDetailsOrganizationTypeLinearLayout);
-            homeUserDetailsOrganizationRegistrationNumberLL = findViewById(R.id.homeUserViewDetailsOrganizationRegistrationNumberLinearLayout);
-            homeUserDetailsOrganizationDescriptionLL = findViewById(R.id.homeUserViewDetailsOrganizationDescriptionLinearLayout);
-            homeUserDetailsOrganizationAddressLL = findViewById(R.id.homeUserViewDetailsOrganizationAddressLinearLayout);
             homeUserViewDetailsOrganizationTypeTV = findViewById(R.id.homeUserViewOrganizationTypeTextView);
             homeUserViewDetailsOrganizationRegistrationNumberTV = findViewById(R.id.homeUserViewOrganizationRegistrationNumberTextView);
             homeUserViewDetailsEmailTV = findViewById(R.id.homeUserViewEmailTextView);
             homeUserViewDetailsPhoneTV = findViewById(R.id.homeUserViewPhoneTextView);
-            homeuserViewDetailsOrganizationDescriptionTV = findViewById(R.id.homeUserViewOrganizationDescriptionTextView);
+            homeUserViewDetailsOrganizationDescriptionTV = findViewById(R.id.homeUserViewOrganizationDescriptionTextView);
             homeUserViewDetailsOrganizationAddressTV = findViewById(R.id.homeUserViewOrganizationAddressTextView);
             homeUserViewDetailsNameTV = findViewById(R.id.homeUserViewDetailsNameTextView);
             homeUserViewDetailsPositionTitleTV = findViewById(R.id.homeUserViewDetailsPositionTitleTextView);
+
+            //find id for linear layout
+            homeUserViewDetailsOrganizationTypeLL = findViewById(R.id.homeUserViewDetailsOrganizationTypeLinearLayout);
+            homeUserViewDetailsOrganizationRegistrationNumberLL = findViewById(R.id.homeUserViewDetailsOrganizationRegistrationNumberLinearLayout);
+            homeUserViewDetailsOrganizationDescriptionLL = findViewById(R.id.homeUserViewDetailsOrganizationDescriptionLinearLayout);
+            homeUserViewDetailsOrganizationAddressLL = findViewById(R.id.homeUserViewDetailsOrganizationAddressLinearLayout);
+
+            //find id for view
+            homeUserViewDetailsOrganizationTypeV = findViewById(R.id.homeUserViewDetailsOrganizationTypeView);
+            homeUserViewDetailsOrganizationRegistrationNumberV = findViewById(R.id.homeUserViewDetailsOrganizationRegistrationNumberView);
+            homeUserViewDetailsOrganizationDescriptionV = findViewById(R.id.homeUserViewDetailsOrganizationDescriptionView);
+            homeUserViewDetailsOrganizationAddressV = findViewById(R.id.homeUserViewDetailsOrganizationAddressView);
+
             homeUserSendMessageBtn = findViewById(R.id.homeUserSendMessageButton);
 
 
@@ -127,10 +225,17 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
 
                             if(user != null){
                                 if(user.getRole().equals(Variable.CONTRIBUTOR)){
-                                    homeUserDetailsOrganizationTypeLL.setVisibility(View.GONE);
-                                    homeUserDetailsOrganizationRegistrationNumberLL.setVisibility(View.GONE);
-                                    homeUserDetailsOrganizationDescriptionLL.setVisibility(View.GONE);
-                                    homeUserDetailsOrganizationAddressLL.setVisibility(View.GONE);
+                                    //set visibility to gone for unnecessary view
+                                    homeUserViewDetailsOrganizationTypeLL.setVisibility(View.GONE);
+                                    homeUserViewDetailsOrganizationRegistrationNumberLL.setVisibility(View.GONE);
+                                    homeUserViewDetailsOrganizationDescriptionLL.setVisibility(View.GONE);
+                                    homeUserViewDetailsOrganizationAddressLL.setVisibility(View.GONE);
+                                    homeUserViewDetailsOrganizationTypeV.setVisibility(View.GONE);
+                                    homeUserViewDetailsOrganizationRegistrationNumberV.setVisibility(View.GONE);
+                                    homeUserViewDetailsOrganizationDescriptionV.setVisibility(View.GONE);
+                                    homeUserViewDetailsOrganizationAddressV.setVisibility(View.GONE);
+
+                                    //set position to the view
                                     homeUserViewDetailsPositionTitleTV.setText(Variable.CONTRIBUTOR);
                                     Variable.CONTRIBUTOR_REF.child(homeUserSessionId).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
@@ -285,10 +390,10 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
                                                     }
 
                                                     if(organization.getOrganizationDescription() != null){
-                                                        homeuserViewDetailsOrganizationDescriptionTV.setText(organization.getOrganizationDescription());
+                                                        homeUserViewDetailsOrganizationDescriptionTV.setText(organization.getOrganizationDescription());
                                                     }
                                                     else{
-                                                        homeuserViewDetailsOrganizationDescriptionTV.setText("-");
+                                                        homeUserViewDetailsOrganizationDescriptionTV.setText("-");
                                                     }
 
                                                     if(organization.getOrganizationAddress() != null){
@@ -319,6 +424,20 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
                 });
 
             }
+        }
+        else{
+            //show error message to console log
+            Log.d(TAG, "getCurrentUser: failed");
+
+            //show error message to user
+            Toasty.error(getApplicationContext(), "Session is expired. Please relogin.", Toast.LENGTH_SHORT,true).show();
+
+            //intent user to login page (relogin)
+            Intent i = new Intent(HomeUserViewDetailsActivity.this, LoginActivity.class);
+
+            //clear the background task
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
         }
 
         homeUserSendMessageBtn.setOnClickListener(new View.OnClickListener() {

@@ -1,6 +1,5 @@
 package com.example.als.ui.raised_event;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,22 +11,23 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.als.R;
+import com.example.als.adapter.RaisedEventListFragmentAdapter;
 import com.example.als.handler.Connectivity;
 import com.example.als.object.Event;
 import com.example.als.object.Variable;
-import com.example.als.viewHolder.RaisedEventListFragmentViewHolder;
 import com.example.als.widget.AlsRecyclerView;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import es.dmoral.toasty.Toasty;
 
 public class RaisedEventListFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
@@ -38,10 +38,12 @@ public class RaisedEventListFragment extends Fragment implements SwipeRefreshLay
 
     private SwipeRefreshLayout raisedEventListSRL;
 
-    private FirebaseRecyclerOptions<Event> raisedEventOptions;
-    private FirebaseRecyclerAdapter<Event, RaisedEventListFragmentViewHolder> raisedEventAdapter;
-
     private AlsRecyclerView raisedEventRV;
+
+    private List<Event> raisedEventList;
+    private RaisedEventListFragmentAdapter adapter;
+
+    FirebaseUser cUser;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -72,95 +74,10 @@ public class RaisedEventListFragment extends Fragment implements SwipeRefreshLay
         raisedEventListSRL.post(new Runnable() {
             @Override
             public void run() {
-                loadRaisedEvent();
                 raisedEventListSRL.setRefreshing(true);
+                loadRaisedEvent();
             }
         });
-
-        final FirebaseUser cUser = cAuth.getCurrentUser();
-
-        if(cUser != null){
-
-            raisedEventOptions = new FirebaseRecyclerOptions.Builder<Event>()
-                    .setQuery(Variable.EVENT_REF, Event.class).build();
-
-             raisedEventAdapter =
-                    new FirebaseRecyclerAdapter<Event, RaisedEventListFragmentViewHolder>(raisedEventOptions) {
-                @Override
-                protected void onBindViewHolder(@NonNull RaisedEventListFragmentViewHolder holder, final int position, @NonNull Event model) {
-                    if(model.getEventHandler().equals(cUser.getUid())){
-                        String[] separatedDateAndTime = model.getEventDateTimeCreated().split(" ");
-                        String[] separatedDate = separatedDateAndTime[0].split("/");
-                        holder.raisedEventListYearTV.setText(separatedDate[2]);
-                        holder.raisedEventListDayTV.setText(separatedDate[0]);
-                        holder.raisedEventListMonthTV.setText(separatedDate[1]);
-
-
-                        if(model.getEventTitle() != null){
-                            holder.raisedEventListNameTV.setText(model.getEventTitle());
-                        }
-                        else{
-                            holder.raisedEventListNameTV.setText("-");
-                        }
-
-                        String currentAmount;
-                        String targetAmount;
-                        double cAmount;
-                        double tAmount;
-
-                        if(model.getEventCurrentAmount() >= 0){
-                            currentAmount = "RM " + model.getEventCurrentAmount();
-                            cAmount = model.getEventCurrentAmount();
-                        }
-                        else{
-                            currentAmount = "RM 0";
-                            cAmount = 0.0;
-                        }
-
-                        if(model.getEventTargetAmount() > 0){
-                            targetAmount = "RM " + model.getEventTargetAmount();
-                            tAmount = model.getEventTargetAmount();
-                        }
-                        else {
-                            targetAmount = "RM 0";
-                            tAmount = 0.0;
-                        }
-
-                        String currentProgressTV = currentAmount + "/" +targetAmount;
-                        holder.raisedEventListProgressTV.setText(currentProgressTV);
-
-                        double progress = (cAmount/tAmount)*100;
-                        holder.raisedEventListPB.setProgress((int) progress);
-
-                        holder.itemView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent i = new Intent(requireActivity(), RaisedEventDetailsActivity.class);
-                                i.putExtra(Variable.EVENT_SESSION_ID, getRef(position).getKey());
-                                startActivity(i);
-                            }
-                        });
-                    }
-                    else{
-                        holder.raisedEventListCV.setVisibility(View.GONE);
-                        holder.raisedEventListCV.setLayoutParams(new RecyclerView.LayoutParams(0,0));
-                    }
-
-                }
-
-                @NonNull
-                @Override
-                public RaisedEventListFragmentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                    View view = LayoutInflater.from(parent.getContext())
-                            .inflate(R.layout.raised_event_view_layout,parent,false);
-                    return new RaisedEventListFragmentViewHolder(view);
-                }
-            };
-
-            raisedEventAdapter.startListening();
-            raisedEventAdapter.notifyDataSetChanged();
-            raisedEventRV.setAdapter(raisedEventAdapter);
-        }
 
         return root;
     }
@@ -173,10 +90,7 @@ public class RaisedEventListFragment extends Fragment implements SwipeRefreshLay
             Toasty.error(requireContext(), device.NetworkError(), Toast.LENGTH_SHORT,true).show();
         }
         else{
-            if(raisedEventAdapter !=null){
-                raisedEventAdapter.startListening();
-            }
-
+            loadRaisedEvent();
         }
     }
 
@@ -187,36 +101,49 @@ public class RaisedEventListFragment extends Fragment implements SwipeRefreshLay
             Toasty.error(requireContext(), device.NetworkError(), Toast.LENGTH_SHORT,true).show();
         }
         else{
-            if(raisedEventAdapter !=null){
-                raisedEventAdapter.startListening();
-            }
+            loadRaisedEvent();
         }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if(raisedEventAdapter !=null){
-            raisedEventAdapter.stopListening();
-        }
     }
 
     private void loadRaisedEvent(){
 
-        FirebaseUser cUser = cAuth.getCurrentUser();
+        cUser = cAuth.getCurrentUser();
+
         if (cUser != null) {
-            Variable.EVENT_REF.orderByChild("eventHandler").equalTo(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            raisedEventList = new ArrayList<>();
+
+            Variable.EVENT_REF.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    raisedEventList.clear();
+
+                    for(DataSnapshot dataSnapshot : snapshot.getChildren()){
+                        Event event = dataSnapshot.getValue(Event.class);
+
+                        if(event != null) {
+                            if (event.getEventHandler().equals(cUser.getUid())) {
+                                raisedEventList.add(event);
+                            }
+                        }
+                    }
+
+                    adapter = new RaisedEventListFragmentAdapter(raisedEventList, getContext());
+                    adapter.notifyDataSetChanged();
+                    raisedEventRV.setAdapter(adapter);
                     raisedEventListSRL.setRefreshing(false);
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Log.d("Database Error", error.getMessage());
+                    Log.d(TAG, "Database Error: " + error.getMessage());
                 }
             });
-
         }
     }
 

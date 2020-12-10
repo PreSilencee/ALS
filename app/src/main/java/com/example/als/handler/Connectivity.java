@@ -6,12 +6,16 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class Connectivity {
+
+    //context for connectivity class
     private Context context;
 
+    //constructor (context)
     public Connectivity(Context context){
         this.context = context;
     }
 
+    //return boolean method (Check whether have wifi or mobile)
     public boolean haveNetwork(){
 
         boolean have_WIFI = false;
@@ -37,6 +41,7 @@ public class Connectivity {
         return have_WIFI | have_MobileData;
     }
 
+    //return network error
     public String NetworkError(){
         return "No Network Connection";
     }

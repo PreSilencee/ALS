@@ -261,6 +261,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                                                                     if(newUser.getRole().equals(Variable.CONTRIBUTOR)){
                                                                                         Contributor contributor = new Contributor();
+                                                                                        contributor.setUserId(cUser.getUid());
                                                                                         contributor.setEmail(cUser.getEmail());
                                                                                         Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                             @Override
@@ -304,6 +305,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                                                     }
                                                                                     else{
                                                                                         Organization organization = new Organization();
+                                                                                        organization.setUserId(cUser.getUid());
                                                                                         organization.setOrganizationEmail(cUser.getEmail());
                                                                                         Variable.ORGANIZATION_REF.child(cUser.getUid()).setValue(organization).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                             @Override

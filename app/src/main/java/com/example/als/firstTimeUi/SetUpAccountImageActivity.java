@@ -66,6 +66,7 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
 
     //textview
     private TextView profileImageTitleTV;
+    private TextView setUpAccountSkipTV;
 
     //image url
     private Uri imageUri;
@@ -78,29 +79,46 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_up_account_image);
 
+        //initialize connectivity
         device = new Connectivity(SetUpAccountImageActivity.this);
 
+        //check connectivity of device
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_SHORT,true).show();
         }
         else{
+            //initialize firebase auth
             cAuth = FirebaseAuth.getInstance();
-            profileImageView = findViewById(R.id.profileImageView);
-            profileImageTitleTV = findViewById(R.id.setUpProfileImageTitle);
 
+            //find id for image view
+            profileImageView = findViewById(R.id.profileImageView);
+
+            //find id for text view
+            profileImageTitleTV = findViewById(R.id.setUpProfileImageTitle);
+            setUpAccountSkipTV = findViewById(R.id.setUpAccountSkipTextView);
+
+            //initialize firebase user
             FirebaseUser cUser = cAuth.getCurrentUser();
 
+            //if user not null
             if(cUser != null){
+                //go to api
                 Variable.USER_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        //if exists
                         if(snapshot.exists()){
                             Log.d(TAG, "userfoundIndatabase: failed");
+
+                            //get user object
                             User user = snapshot.getValue(User.class);
 
+                            //if user not null and role is organizartion
                             if(user != null && user.getRole().equals(Variable.ORGANIZATION)){
+                                //set new title
                                 String title = "SET UP ORGANIZATION PROFILE IMAGE";
                                 profileImageTitleTV.setText(title);
+                                setUpAccountSkipTV.setVisibility(View.GONE);
                             }
                         }
                         else{
@@ -114,40 +132,59 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                     }
                 });
             }
+
+            setUpAccountSkipTV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder alertDialogBuider = new AlertDialog.Builder(SetUpAccountImageActivity.this);
+                    alertDialogBuider.setMessage("Are you sure want to skip? You can edit profile later in the other page")
+                            .setCancelable(false)
+                            .setPositiveButton("SKIP", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                    AlertDialog alertDialog = alertDialogBuider.create();
+                    alertDialog.setTitle("SKIP");
+                    alertDialog.show();
+                }
+            });
         }
     }
 
+    //skip method which can let user dismiss this activity
     public void skip(View view) {
-        AlertDialog.Builder alertDialogBuider = new AlertDialog.Builder(SetUpAccountImageActivity.this);
-        alertDialogBuider.setMessage("Are you sure want to skip? You can edit profile later in the other page")
-                .setCancelable(false)
-                .setPositiveButton("SKIP", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
 
-        AlertDialog alertDialog = alertDialogBuider.create();
-        alertDialog.setTitle("SKIP");
-        alertDialog.show();
     }
 
+    @Override
+    public void onBackPressed() {
+        Toasty.warning(getApplicationContext(), "Please set up the profile image first", Toast.LENGTH_SHORT, true).show();
+    }
+
+    //next method which can let user go to next page
     public void next(View view) {
 
+        //check connectivity
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();
         }
         else{
+            //if image uri not null
             if(imageUri != null){
+
+                //initialize firebase user
                 final FirebaseUser cUser = cAuth.getCurrentUser();
 
+                //if user not null
                 if(cUser != null){
 
                     //initialize progress dialog
@@ -173,38 +210,54 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                     Variable.USER_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            //if exists
                             if(snapshot.exists()){
                                 Log.d(TAG, "userfoundInDatabase: success");
+
+                                //get user object
                                 User user = snapshot.getValue(User.class);
 
+                                //if user not null
                                 if(user != null){
+                                    //if user role is contributor
                                     if(user.getRole().equals(Variable.CONTRIBUTOR)){
+
+                                        //create new api
                                         final StorageReference profileImageSTR = Variable.CONTRIBUTOR_SR.child(cUser.getUid())
                                                 .child("profile").child(profileImageName);
+
+                                        //store the image to the api
                                         profileImageSTR.putFile(imageUri)
                                                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                                     @Override
                                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                                         Log.d(TAG, "uploadImage: success");
-
+                                                        //if success, store data to database
                                                         Variable.CONTRIBUTOR_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
                                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                //if exists
                                                                 if(snapshot.exists()){
+                                                                    //get contributor object
                                                                     Contributor contributor = snapshot.getValue(Contributor.class);
 
+                                                                    //if contributor object not null
                                                                     if(contributor != null){
-                                                                        contributor.setUserId(cUser.getUid());
+
+                                                                        //set contributor profile image name
                                                                         contributor.setProfileImageName(profileImageName);
 
+                                                                        //create an map which can store contributor values
                                                                         Map<String, Object> contributorValues = contributor.contributorMap();
 
+                                                                        //update children
                                                                         Variable.CONTRIBUTOR_REF.child(cUser.getUid()).updateChildren(contributorValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
                                                                             public void onSuccess(Void aVoid) {
                                                                                 Log.d(TAG, "saveImageNameToDatabase: success");
                                                                                 progressDialog.dismiss();
                                                                                 finish();
+                                                                                //go to set up contributor details activity
                                                                                 startActivity(new Intent(SetUpAccountImageActivity.this, SetUpContributorDetailsActivity.class));
                                                                             }
                                                                         })
@@ -252,10 +305,13 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                                                     }
                                                 });
                                     }
-
-                                    if(user.getRole().equals(Variable.ORGANIZATION)){
+                                    else{
+                                        //user role is organization
+                                        //create new api
                                         final StorageReference profileImageSTR = Variable.ORGANIZATION_SR.child(cUser.getUid())
                                                 .child("profile").child(profileImageName);
+
+                                        //store image to the api
                                         profileImageSTR.putFile(imageUri)
                                                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                                     @Override
@@ -265,20 +321,28 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                                                         Variable.ORGANIZATION_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
                                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                                                //if exists
                                                                 if(snapshot.exists()){
+
+                                                                    //get organization object
                                                                     Organization organization = snapshot.getValue(Organization.class);
 
+                                                                    //if organization not null
                                                                     if(organization != null){
-
-                                                                        organization.setUserId(cUser.getUid());
+                                                                        //set organization profile image name
                                                                         organization.setOrganizationProfileImageName(profileImageName);
+
+                                                                        //create a map that can store organization values
                                                                         Map<String, Object> organizationValues = organization.organizationMap();
 
+                                                                        //update children
                                                                         Variable.ORGANIZATION_REF.child(cUser.getUid()).updateChildren(organizationValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                             @Override
                                                                             public void onSuccess(Void aVoid) {
                                                                                 progressDialog.dismiss();
                                                                                 finish();
+                                                                                //go to the set up organization details page
                                                                                 startActivity(new Intent(SetUpAccountImageActivity.this, SetUpOrganizationDetailsActivity.class));
                                                                             }
                                                                         })
@@ -326,7 +390,6 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                                                     }
                                                 });
                                     }
-
                                 }
                             }
                             else{
@@ -351,6 +414,7 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
 
     public void setUpImage(View view) {
 
+        //check permission
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {
@@ -367,12 +431,14 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
 
     }
 
-
+    //on activity result
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //when the request code is equal to crop image
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            //get data from the crop image activity
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK && result.getUri() != null) {
                 imageUri = result.getUri();
@@ -385,12 +451,15 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
         }
     }
 
+    //on request permission
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        //if request code equal to permission code
         if (requestCode == PERMISSION_CODE) {
             if (grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 Log.d(TAG, "permission: granted");
+                //show crop image activity
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
                         .setAspectRatio(1, 1)
@@ -401,26 +470,31 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
         }
     }
 
+    //on start method
     @Override
     protected void onStart() {
         super.onStart();
-
+        //check connectivity
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_SHORT,true).show();
         }
     }
 
+    //on resume method
     @Override
     protected void onResume() {
         super.onResume();
+        //check connectivity
         if(!device.haveNetwork())
         {
             Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();
         }
     }
 
+    //on stop method
     @Override
     protected void onStop() {
+        //check connectivity
         if(!device.haveNetwork())
         {
             Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();

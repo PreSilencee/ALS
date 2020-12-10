@@ -48,13 +48,14 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/setUpAccountSkipTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@string/skip"
         style="@style/TextAppearance.AppCompat.Title"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:textColor="@color/colorAccent"
         android:layout_margin="10dp"
         android:onClick="skip"/>

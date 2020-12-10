@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.als.R;
 import com.example.als.adapter.DonationHistoryListFragmentAdapter;
@@ -31,12 +32,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.dmoral.toasty.Toasty;
+
 public class DonationHistoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = "DonationHistory";
     private DonationHistoryListFragmentAdapter donationHistoryListFragmentAdapter;
     private List<Donation> donationHistoryList;
-
+    private Connectivity device;
     private SwipeRefreshLayout donationHistoryListSRL;
     private AlsRecyclerView donationHistoryRecyclerView;
 
@@ -48,6 +51,7 @@ public class DonationHistoryFragment extends Fragment implements SwipeRefreshLay
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_donation_history, container, false);
 
+        device = new Connectivity(getContext());
         donationHistoryRecyclerView = root.findViewById(R.id.donationHistoryListRecyclerView);
         donationHistoryRecyclerView.setHasFixedSize(true);
         donationHistoryRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -68,14 +72,39 @@ public class DonationHistoryFragment extends Fragment implements SwipeRefreshLay
         donationHistoryListSRL.post(new Runnable() {
             @Override
             public void run() {
-                loadDonationHistoryList();
                 donationHistoryListSRL.setRefreshing(true);
+                loadDonationHistoryList();
             }
         });
 
-        loadDonationHistoryList();
-
         return root;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(!device.haveNetwork()) {
+            Toasty.error(requireContext(), device.NetworkError(), Toast.LENGTH_SHORT,true).show();
+        }
+        else{
+            loadDonationHistoryList();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!device.haveNetwork()) {
+            Toasty.error(requireContext(), device.NetworkError(), Toast.LENGTH_SHORT,true).show();
+        }
+        else{
+            loadDonationHistoryList();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -105,7 +134,7 @@ public class DonationHistoryFragment extends Fragment implements SwipeRefreshLay
 
                     }
 
-                    donationHistoryListFragmentAdapter = new DonationHistoryListFragmentAdapter(getContext(), donationHistoryList);
+                    donationHistoryListFragmentAdapter = new DonationHistoryListFragmentAdapter(donationHistoryList, getContext());
                     donationHistoryListFragmentAdapter.notifyDataSetChanged();
                     donationHistoryRecyclerView.setAdapter(donationHistoryListFragmentAdapter);
                     donationHistoryListSRL.setRefreshing(false);

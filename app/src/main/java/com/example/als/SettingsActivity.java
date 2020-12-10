@@ -36,6 +36,7 @@ import es.dmoral.toasty.Toasty;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    //console log
     private static final String TAG = "SettingsActivity";
     private Connectivity device;
     private FirebaseAuth cAuth;
@@ -45,8 +46,10 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        //initialize connectivity
         device = new Connectivity(SettingsActivity.this);
 
+        //initialize authentication
         cAuth = FirebaseAuth.getInstance();
     }
 
@@ -77,6 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onStop();
     }
 
+    //log out button
     public void logOutButton(View view) {
         AlertDialog.Builder alertDialogBuider = new AlertDialog.Builder(SettingsActivity.this);
         alertDialogBuider.setMessage("Are you sure want to log out?")

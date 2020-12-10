@@ -36,6 +36,7 @@ import es.dmoral.toasty.Toasty;
 
 public class SetUpOrganizationDetailsActivity extends AppCompatActivity {
 
+    //console log
     private static final String TAG = "SetUpOrganization";
     private Connectivity device;
     private TextInputLayout organizationNameTIL, registrationNumberTIL, descriptionTIL, addressTIL, phoneTIL;
@@ -48,31 +49,41 @@ public class SetUpOrganizationDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_up_organization_details);
 
+        //initialize connectivity
         device = new Connectivity(SetUpOrganizationDetailsActivity.this);
 
+        //check connectivity
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_SHORT,true).show();
         }
         else{
+            //initialize firebase auth
             cAuth = FirebaseAuth.getInstance();
+
+            //find id for text input layout
             organizationNameTIL = findViewById(R.id.organizationNameTextInputLayout);
-            typeSpinner = findViewById(R.id.organizationSpinner);
             registrationNumberTIL = findViewById(R.id.organizationRegistrationNumber);
             descriptionTIL = findViewById(R.id.organizationDescription);
             addressTIL = findViewById(R.id.organizationAddress);
             phoneTIL = findViewById(R.id.organizationPhone);
 
+            //find id for spinner
+            typeSpinner = findViewById(R.id.organizationSpinner);
+
+            //create an array list that store the type of organization
             List<String> organizationTypeList = new ArrayList<>();
             organizationTypeList.add("--Select Organization Type--");
             organizationTypeList.add("Government Organization (GO)");
             organizationTypeList.add("Non-Government Organization (NGO)");
 
+            //create array adapter for spinner
             ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(SetUpOrganizationDetailsActivity.this, android.R.layout.simple_list_item_1, organizationTypeList){
                 @Override
                 public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                     View view = super.getDropDownView(position, convertView, parent);
                     TextView tv = (TextView) view;
 
+                    //if list == "--Select Organization Type--"
                     if(position == 0)
                     {
                         tv.setTextColor(Color.GRAY);
@@ -90,12 +101,15 @@ public class SetUpOrganizationDetailsActivity extends AppCompatActivity {
                 }
             };
 
+            //set drop down resources
             myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            //set adapter to spinner
             typeSpinner.setAdapter(myAdapter);
 
             typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    //if current position not "--Select Organization Type--"
                     if(position > 0)
                     {
                         selectedType = (String) parent.getItemAtPosition(position);
@@ -110,18 +124,26 @@ public class SetUpOrganizationDetailsActivity extends AppCompatActivity {
         }
     }
 
+    //confirm button
     public void confirmOrganizationProfile(View view) {
+        //check the field whether is empty
         if(!validateOrganizationName() | !validateOrganizationType() | !validateRegistrationNumber() | !validateDescription()
                 | !validateAddress() | !validatePhone()){
             return;
         }
 
+        //check connectivity
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_SHORT,true).show();
         }
         else{
+            //initialize firebase user
             final FirebaseUser cUser = cAuth.getCurrentUser();
+
+            //if user not null
             if(cUser != null){
+
+                //set string from text input layout
                 final String organizationName = organizationNameTIL.getEditText().getText().toString().trim();
                 final String registrationNumber = registrationNumberTIL.getEditText().getText().toString().trim();
                 final String organizationDescription = descriptionTIL.getEditText().getText().toString().trim();
@@ -135,6 +157,7 @@ public class SetUpOrganizationDetailsActivity extends AppCompatActivity {
                             Organization organization = snapshot.getValue(Organization.class);
 
                             if(organization != null){
+                                //set the data into organization object
                                 organization.setOrganizationName(organizationName);
                                 organization.setOrganizationType(selectedType);
                                 organization.setOrganizationRegistrationNumber(registrationNumber);
@@ -143,8 +166,10 @@ public class SetUpOrganizationDetailsActivity extends AppCompatActivity {
                                 organization.setOrganizationPhone(organizationPhone);
                                 organization.setOrganizationVerifyStatus(false);
 
+                                //create a map that store all organization values
                                 Map<String, Object> organizationValues = organization.organizationMap();
 
+                                //update children
                                 Variable.ORGANIZATION_REF.child(cUser.getUid()).updateChildren(organizationValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -272,5 +297,39 @@ public class SetUpOrganizationDetailsActivity extends AppCompatActivity {
             phoneTIL.setError(null);
             return true;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Toasty.warning(getApplicationContext(), "Please set up the details first", Toast.LENGTH_SHORT, true).show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //check connectivity
+        if(!device.haveNetwork()){
+            Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_SHORT,true).show();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //check connectivity
+        if(!device.haveNetwork())
+        {
+            Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        //check connectivity
+        if(!device.haveNetwork())
+        {
+            Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();
+        }
+        super.onStop();
     }
 }

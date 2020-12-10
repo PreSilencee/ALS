@@ -123,7 +123,7 @@ public class MessageFragment extends Fragment{
                     }
                 }
 
-                messageChatUserListAdapter = new MessageChatUserListAdapter(getContext(), aUsers);
+                messageChatUserListAdapter = new MessageChatUserListAdapter(aUsers,getContext());
                 messageChatListRV.setAdapter(messageChatUserListAdapter);
                 messageChatUserListAdapter.setOnClickListener(new MessageChatUserListAdapter.OnChatListener() {
                     @Override

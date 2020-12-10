@@ -12,8 +12,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AESCrypt {
 
+    //encrypt method
     public static String encrypt(String value) throws Exception
     {
+        //create a key
         Key key = generateKey();
         Cipher cipher = Cipher.getInstance(Variable.ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -21,6 +23,7 @@ public class AESCrypt {
         return Base64.encodeToString(encryptedByteValue, Base64.DEFAULT);
     }
 
+    //decrypt method
     public static String decrypt(String value) throws Exception
     {
         Key key = generateKey();
@@ -32,6 +35,7 @@ public class AESCrypt {
 
     }
 
+    //static method
     private static Key generateKey() throws Exception
     {
         return new SecretKeySpec(Variable.encryptionKey, Variable.ALGORITHM);

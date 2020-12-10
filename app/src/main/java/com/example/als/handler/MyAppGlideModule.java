@@ -11,6 +11,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.InputStream;
 
+//register myappclide mode to use GlideApp
 @GlideModule
 public final class MyAppGlideModule extends AppGlideModule {
     @Override

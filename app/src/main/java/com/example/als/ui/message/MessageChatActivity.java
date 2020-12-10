@@ -439,7 +439,7 @@ public class MessageChatActivity extends AppCompatActivity {
                         messageList.add(message);
                     }
 
-                    messageChatItemAdapter = new MessageChatItemAdapter(MessageChatActivity.this, messageList);
+                    messageChatItemAdapter = new MessageChatItemAdapter(messageList, getApplicationContext());
                     messageChatRV.setAdapter(messageChatItemAdapter);
                 }
             }

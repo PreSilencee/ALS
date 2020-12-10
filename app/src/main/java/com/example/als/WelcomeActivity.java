@@ -33,7 +33,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
     //tag for console log
     private static final String TAG = "Welcome Activity";
-    //private GoogleSignInClient cGoogleSignInClient;
 
     //connectivity
     private Connectivity device;
@@ -46,9 +45,10 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
+        //initialize connectivity
         device = new Connectivity(WelcomeActivity.this);
 
-        //initialize firebase authentication
+        //initialize firebase auth
         cAuth = FirebaseAuth.getInstance();
 
     }
@@ -57,6 +57,7 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        //check connectivity
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_SHORT,true).show();
         }
@@ -88,6 +89,8 @@ public class WelcomeActivity extends AppCompatActivity {
                                     User user = snapshot.getValue(User.class);
 
                                     if(user != null){
+
+                                        //create date
                                         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
                                         Date dateObj = Calendar.getInstance().getTime();
                                         final String currentDateTime = simpleDateFormat.format(dateObj);

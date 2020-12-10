@@ -44,25 +44,37 @@ public class SetUpContributorDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_up_contributor_details);
 
+        //initialize connectivity
         device = new Connectivity(SetUpContributorDetailsActivity.this);
 
+        //initialize firebase auth
         cAuth = FirebaseAuth.getInstance();
 
+        //find id for text input layout
         displayNameTIL = findViewById(R.id.accountDisplayNameTextInputLayout);
     }
 
+    //complete button
     public void complete(View view) {
+        //check the text input layout
         if(!validateDisplayName()){
             return;
         }
 
+        //check connectivity
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_SHORT,true).show();
         }
         else{
+            //initialize firebase user
             final FirebaseUser cUser = cAuth.getCurrentUser();
+
+            //if user not null
             if(cUser != null){
+
+                //get string display name
                 final String displayName = displayNameTIL.getEditText().getText().toString().trim();
+
 
                 Variable.CONTRIBUTOR_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -71,10 +83,13 @@ public class SetUpContributorDetailsActivity extends AppCompatActivity {
                             Contributor contributor = snapshot.getValue(Contributor.class);
 
                             if(contributor != null){
+                                //set display name
                                 contributor.setName(displayName);
 
+                                //create map that store all contributor values
                                 Map<String, Object> contributorValues = contributor.contributorMap();
 
+                                //update children
                                 Variable.CONTRIBUTOR_REF.child(cUser.getUid()).updateChildren(contributorValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -129,9 +144,14 @@ public class SetUpContributorDetailsActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        Toasty.warning(getApplicationContext(), "Please set up the details first", Toast.LENGTH_SHORT, true).show();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
-
+        //check connectivity
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_SHORT,true).show();
         }
@@ -140,6 +160,7 @@ public class SetUpContributorDetailsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        //check connectivity
         if(!device.haveNetwork())
         {
             Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();
@@ -148,6 +169,7 @@ public class SetUpContributorDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        //check connectivity
         if(!device.haveNetwork())
         {
             Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();
