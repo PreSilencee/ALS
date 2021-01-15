@@ -12,6 +12,8 @@ public class Donation {
     private String donationEventId;
     private double donationAmount;
     private String donationDateTime;
+    private String donationState;
+    private String donationCurrencyCode;
 
     public Donation(){
         //
@@ -57,6 +59,22 @@ public class Donation {
         this.donationDateTime = donationDateTime;
     }
 
+    public String getDonationState() {
+        return donationState;
+    }
+
+    public void setDonationState(String donationState) {
+        this.donationState = donationState;
+    }
+
+    public String getDonationCurrencyCode() {
+        return donationCurrencyCode;
+    }
+
+    public void setDonationCurrencyCode(String donationCurrencyCode) {
+        this.donationCurrencyCode = donationCurrencyCode;
+    }
+
     @Exclude
     public Map<String, Object> donationMap(){
         HashMap<String,Object> result = new HashMap<>();
@@ -66,6 +84,8 @@ public class Donation {
         result.put("donationEventId", donationEventId);
         result.put("donationAmount", donationAmount);
         result.put("donationDateTime", donationDateTime);
+        result.put("donationState", donationState);
+        result.put("donationCurrencyCode", donationCurrencyCode);
 
         return result;
     }

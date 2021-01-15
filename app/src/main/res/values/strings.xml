@@ -120,4 +120,5 @@
     <string name="attachFiles">attachFiles</string>
     <string name="donationHistory">Donation History</string>
     <string name="empty_donation_history_found">No Donation History Found</string>
+    <string name="payWithPayPal">Pay With PayPal</string>
 </resources>

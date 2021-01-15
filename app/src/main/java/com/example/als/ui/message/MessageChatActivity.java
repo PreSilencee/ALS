@@ -2,18 +2,13 @@ package com.example.als.ui.message;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,7 +32,6 @@ import com.example.als.handler.GlideApp;
 import com.example.als.notification.Client;
 import com.example.als.notification.Data;
 import com.example.als.notification.MyResponse;
-import com.example.als.notification.OreoNotification;
 import com.example.als.notification.Sender;
 import com.example.als.notification.Token;
 import com.example.als.object.Contributor;
@@ -52,13 +46,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.StorageReference;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -276,17 +267,6 @@ public class MessageChatActivity extends AppCompatActivity {
         }
     }
 
-//    private void sendN(){
-//        NotificationCompat.Builder mBuilder =
-//                new NotificationCompat.Builder(getApplicationContext(), Variable.MESSAGE_CHANNEL_ID)
-//                        .setSmallIcon(R.drawable.ic_launcher_foreground)
-//                        .setContentTitle("Notification")
-//                        .setContentText("Yaa")
-//                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-//
-//        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
-//        notificationManagerCompat.notify(1, mBuilder.build());
-//    }
 
     private void sendMessage(String myId, String userId, final String content){
 
