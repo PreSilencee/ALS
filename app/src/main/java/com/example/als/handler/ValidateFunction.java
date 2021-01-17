@@ -7,15 +7,15 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class ValidateFunction {
 
-    //validate username
-    public static boolean validateUsername(TextInputLayout usernameTIL){
-        //get email
-        String usernameInput = usernameTIL.getEditText().getText().toString().trim();
+    //validate field
+    public static boolean validateTILField(TextInputLayout textInputLayout){
+        //get user input
+        String userInput = textInputLayout.getEditText().getText().toString().trim();
 
-        //if email == null
-        if(usernameInput.isEmpty())
+        //if user input == null
+        if(userInput.isEmpty())
         {
-            usernameTIL.getEditText().setError("Field can't be empty");
+            textInputLayout.getEditText().setError("Field can't be empty");
             return false;
         }
         else{

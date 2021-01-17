@@ -44,12 +44,6 @@
             android:name=".ui.settings.OrganizationProfileActivity"
             android:label="@string/title_organization_profile" />
         <activity
-            android:name=".firstTimeUi.SetUpOrganizationDetailsActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name=".firstTimeUi.SetUpContributorDetailsActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
             android:name=".firstTimeUi.SetUpAccountImageActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity

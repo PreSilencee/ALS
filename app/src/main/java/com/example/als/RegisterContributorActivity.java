@@ -72,156 +72,156 @@ public class RegisterContributorActivity extends AppCompatActivity {
     public void createContributorAccount(View view) {
 
         //check email, password and confirm password;
-        if(!ValidateFunction.validateUsername(createAccountUsernameTIL) | !ValidateFunction.validateEmail(createAccountEmailTIL)
+        if(!ValidateFunction.validateTILField(createAccountUsernameTIL) | !ValidateFunction.validateEmail(createAccountEmailTIL)
                 | !ValidateFunction.validatePassword(createAccountPasswordTIL)
                 | !ValidateFunction.validateConfirmPassword(createAccountPasswordTIL, createAccountConfirmPasswordTIL)){
             return;
         }
 
-        //get username that input by user
-        final String username = createAccountUsernameTIL.getEditText().getText().toString().trim();
-        //get email that input by user
-        final String email = createAccountEmailTIL.getEditText().getText().toString().trim();
-        //get password that input by user
-        final String password = createAccountPasswordTIL.getEditText().getText().toString().trim();
+        if(!device.haveNetwork()){
+            Toasty.error(this, device.NetworkError(), Toast.LENGTH_LONG).show();
+        }
+        else {
+            //get username that input by user
+            final String username = createAccountUsernameTIL.getEditText().getText().toString().trim();
+            //get email that input by user
+            final String email = createAccountEmailTIL.getEditText().getText().toString().trim();
+            //get password that input by user
+            final String password = createAccountPasswordTIL.getEditText().getText().toString().trim();
 
-        //a progress dialog to view progress of create account
-        final ProgressDialog progressDialog = new ProgressDialog(RegisterContributorActivity.this);
+            //a progress dialog to view progress of create account
+            final ProgressDialog progressDialog = new ProgressDialog(RegisterContributorActivity.this);
 
-        //set message for progress dialog
-        progressDialog.setMessage("One moment...");
+            //set message for progress dialog
+            progressDialog.setMessage("One moment...");
 
-        //show dialog
-        progressDialog.show();
+            //show dialog
+            progressDialog.show();
 
-        cAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    Log.d(TAG, "createUserWithEmail:success");
+            cAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "createUserWithEmail:success");
 
-                    //get current user
-                    final FirebaseUser cUser = cAuth.getCurrentUser();
+                        //get current user
+                        final FirebaseUser cUser = cAuth.getCurrentUser();
 
-                    //if user != null
-                    if(cUser != null) {
-                        //send the email verification to the user's email
-                        cUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
-                                    Date dateObj = Calendar.getInstance().getTime();
-                                    final String currentDateTime = simpleDateFormat.format(dateObj);
-                                    User newUser = new User();
-                                    newUser.setId(cUser.getUid());
-                                    newUser.setRole(Variable.CONTRIBUTOR);
-                                    newUser.setRegisterDateTime(currentDateTime);
-                                    newUser.setFirstTimeLoggedIn(true);
+                        //if user != null
+                        if (cUser != null) {
+                            //send the email verification to the user's email
+                            cUser.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
+                                        Date dateObj = Calendar.getInstance().getTime();
+                                        final String currentDateTime = simpleDateFormat.format(dateObj);
+                                        User newUser = new User();
+                                        newUser.setId(cUser.getUid());
+                                        newUser.setRole(Variable.CONTRIBUTOR);
+                                        newUser.setRegisterDateTime(currentDateTime);
+                                        newUser.setFirstTimeLoggedIn(true);
 
-                                    Variable.USER_REF.child(cUser.getUid()).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()){
-                                                Contributor contributor = new Contributor();
-                                                contributor.setName(username);
-                                                contributor.setUserId(cUser.getUid());
-                                                contributor.setEmail(cUser.getEmail());
+                                        Variable.USER_REF.child(cUser.getUid()).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    Contributor contributor = new Contributor();
+                                                    contributor.setName(username);
+                                                    contributor.setUserId(cUser.getUid());
+                                                    contributor.setEmail(cUser.getEmail());
 
-                                                Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if(task.isSuccessful()){
-                                                            Toasty.success(getApplicationContext(),"Create Account Successfully. " +
-                                                                            "Please check your email for verification",
-                                                                    Toast.LENGTH_LONG, true).show();
+                                                    Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                Toasty.success(getApplicationContext(), "Create Account Successfully. " +
+                                                                                "Please check your email for verification",
+                                                                        Toast.LENGTH_LONG, true).show();
 
-                                                            //hide the progress dialog
-                                                            progressDialog.dismiss();
+                                                                //hide the progress dialog
+                                                                progressDialog.dismiss();
 
-                                                            //clear the input field
-                                                            clearField();
+                                                                //clear the input field
+                                                                clearField();
 
-                                                            finish();
+                                                                finish();
 
-                                                            //sign out
-                                                            cAuth.signOut();
+                                                                //sign out
+                                                                cAuth.signOut();
+                                                            } else {
+                                                                //show warning message (create account is successful,
+                                                                // but database not include the user's data
+                                                                Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                                                "Please do not use the same email to create account again" +
+                                                                                "Please contact Administrator!"
+                                                                        , Toast.LENGTH_SHORT).show();
+
+                                                                //hide the progress dialog
+                                                                progressDialog.dismiss();
+
+                                                                //clear the input field
+                                                                clearField();
+
+                                                                //sign out
+                                                                cAuth.signOut();
+                                                            }
                                                         }
-                                                        else{
-                                                            //show warning message (create account is successful,
-                                                            // but database not include the user's data
-                                                            Toasty.warning(getApplicationContext(),"Something went wrong. " +
-                                                                            "Please do not use the same email to create account again" +
-                                                                            "Please contact Administrator!"
-                                                                    , Toast.LENGTH_SHORT).show();
+                                                    });
+                                                } else {
+                                                    //show warning message (create account is successful,
+                                                    // but database not include the user's data
+                                                    Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                                    "Please do not use the same email to create account again" +
+                                                                    "Please contact Administrator!"
+                                                            , Toast.LENGTH_SHORT).show();
 
-                                                            //hide the progress dialog
-                                                            progressDialog.dismiss();
+                                                    //hide the progress dialog
+                                                    progressDialog.dismiss();
 
-                                                            //clear the input field
-                                                            clearField();
+                                                    //clear the input field
+                                                    clearField();
 
-                                                            //sign out
-                                                            cAuth.signOut();
-                                                        }
-                                                    }
-                                                });
+                                                    //sign out
+                                                    cAuth.signOut();
+                                                }
                                             }
-                                            else{
-                                                //show warning message (create account is successful,
-                                                // but database not include the user's data
-                                                Toasty.warning(getApplicationContext(),"Something went wrong. " +
-                                                                "Please do not use the same email to create account again" +
-                                                                "Please contact Administrator!"
-                                                        , Toast.LENGTH_SHORT).show();
+                                        });
+                                    } else {
+                                        //show warning message (create account is successful,
+                                        // but database not include the user's data
+                                        Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                        "Please do not use the same email to create account again" +
+                                                        "Please contact Administrator!"
+                                                , Toast.LENGTH_SHORT).show();
 
-                                                //hide the progress dialog
-                                                progressDialog.dismiss();
+                                        //hide the progress dialog
+                                        progressDialog.dismiss();
 
-                                                //clear the input field
-                                                clearField();
+                                        //clear the input field
+                                        clearField();
 
-                                                //sign out
-                                                cAuth.signOut();
-                                            }
-                                        }
-                                    });
+                                        //sign out
+                                        cAuth.signOut();
+                                    }
                                 }
-                                else{
-                                    //show warning message (create account is successful,
-                                    // but database not include the user's data
-                                    Toasty.warning(getApplicationContext(),"Something went wrong. " +
-                                                    "Please do not use the same email to create account again" +
-                                                    "Please contact Administrator!"
-                                            , Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    } else {
+                        Log.d(TAG, "createUserWithEmail:failed");
 
-                                    //hide the progress dialog
-                                    progressDialog.dismiss();
+                        //show message
+                        Toasty.error(getApplicationContext(),
+                                "Create Account Failed. Please Try Again !"
+                                , Toast.LENGTH_SHORT).show();
 
-                                    //clear the input field
-                                    clearField();
-
-                                    //sign out
-                                    cAuth.signOut();
-                                }
-                            }
-                        });
+                        //hide the progress dialog
+                        progressDialog.dismiss();
                     }
                 }
-                else{
-                    Log.d(TAG, "createUserWithEmail:failed");
-
-                    //show message
-                    Toasty.error(getApplicationContext(),
-                            "Create Account Failed. Please Try Again !"
-                            , Toast.LENGTH_SHORT).show();
-
-                    //hide the progress dialog
-                    progressDialog.dismiss();
-                }
-            }
-        });
-
+            });
+        }
     }
 
     //clear fields that input by user

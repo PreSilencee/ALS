@@ -144,16 +144,17 @@ public class MainActivity extends AppCompatActivity{
                                 if(user.isFirstTimeLoggedIn()){
                                     user.setFirstTimeLoggedIn(false);
                                     Map<String,Object> userValues = user.userMap();
-                                    Variable.USER_REF.child(cUser.getUid()).setValue(userValues).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    Variable.USER_REF.child(cUser.getUid()).setValue(userValues).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "setValuetoDatabase: success");
-                                            startActivity(new Intent(MainActivity.this, SetUpAccountImageActivity.class));
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                Log.d(TAG, "setValuetoDatabase: success");
+                                                startActivity(new Intent(MainActivity.this, SetUpAccountImageActivity.class));
+                                            }
+                                            else{
+                                                Log.d(TAG, "setValuetoDatabase: failed");
+                                            }
                                         }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.d(TAG, "setValuetoDatabase: failed"); }
                                     });
                                 }
 
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity{
                                             }
                                         });
                                     }
-                                    else if(user.getRole().equals(Variable.ORGANIZATION)){
+                                    else{
                                         Variable.ORGANIZATION_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -314,34 +315,32 @@ public class MainActivity extends AppCompatActivity{
 
                                             Map<String, Object> tokenValues = token.tokenMap();
 
-                                            Variable.TOKEN_REF.child(cUser.getUid()).updateChildren(tokenValues).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            Variable.TOKEN_REF.child(cUser.getUid()).updateChildren(tokenValues).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Log.d(TAG, "Update Token: success");
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.d(TAG, "Exception: " + e.getMessage());
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        Log.d(TAG, "Update Token: success");
+                                                    }
+                                                    else{
+                                                        Log.d(TAG, "Update Token: failed");
+                                                    }
                                                 }
                                             });
                                         }
                                     }
                                     else{
                                         Token token = new Token(task.getResult().getToken());
-                                        Variable.TOKEN_REF.child(cUser.getUid()).setValue(token).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        Variable.TOKEN_REF.child(cUser.getUid()).setValue(token).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Log.d(TAG, "Update Token: success");
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()){
+                                                    Log.d(TAG, "Update Token: success");
+                                                }
+                                                else{
+                                                    Log.d(TAG, "Update Token: failed");
+                                                }
                                             }
-                                        })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.d(TAG, "Exception: " + e.getMessage());
-                                                    }
-                                                });
+                                        });
                                     }
                                 }
 
@@ -350,37 +349,6 @@ public class MainActivity extends AppCompatActivity{
                                     Log.d(TAG, "Database Error: " + error.getMessage());
                                 }
                             });
-//                            Variable.USER_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-//                                @Override
-//                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                    if(snapshot.exists()){
-//                                        User user = snapshot.getValue(User.class);
-//
-//                                        if(user != null){
-//                                            user.setToken(task.getResult().getToken());
-//                                            Map<String, Object> userValues = user.userMap();
-//
-//                                            Variable.USER_REF.child(cUser.getUid()).updateChildren(userValues).addOnSuccessListener(new OnSuccessListener<Void>() {
-//                                                @Override
-//                                                public void onSuccess(Void aVoid) {
-//                                                    Log.d(TAG, "Update Token: success");
-//                                                }
-//                                            })
-//                                            .addOnFailureListener(new OnFailureListener() {
-//                                                @Override
-//                                                public void onFailure(@NonNull Exception e) {
-//                                                    Log.d(TAG, "Exception: " + e.getMessage());
-//                                                }
-//                                            });
-//                                        }
-//                                    }
-//                                }
-//
-//                                @Override
-//                                public void onCancelled(@NonNull DatabaseError error) {
-//
-//                                }
-//                            });
                         }
                     }
                 });
@@ -404,12 +372,6 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    private void updateToken(String token){
-        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
-        Token token1 = new Token(token);
-        Variable.TOKEN_REF.child(cUser.getUid()).setValue(token1);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -419,19 +381,10 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    @Override
-    protected void onStop() {
-        if(!device.haveNetwork())
-        {
-            Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();
-        }
-        super.onStop();
-    }
-
     //run when user click back button
     @Override
     public void onBackPressed() {
-        //if backpressedtime more than system currenttime millies
+        //if back pressed time more than system currenttime millies
         if(backPressedTime + 2000 > System.currentTimeMillis()){
             //dismiss toast
             backToast.cancel();
@@ -443,7 +396,7 @@ public class MainActivity extends AppCompatActivity{
         else
         {
             //initialize the message
-            backToast = Toasty.info(getApplicationContext(),"Press back again to exit",Toast.LENGTH_SHORT,true);
+            backToast = Toasty.info(getApplicationContext(),"Press back again to exit",Toast.LENGTH_LONG);
 
             //show the message to the user
             backToast.show();

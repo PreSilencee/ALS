@@ -35,29 +35,30 @@
             android:onClick="setUpImage"/>
 
         <Button
+            android:id="@+id/setUpProfileImageDoneButton"
             android:layout_marginTop="40dp"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:background="@drawable/corner_button_main"
-            android:text="@string/next"
+            android:text="@string/done"
             android:textColor="@color/colorAccent"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_gravity="center"
-            android:onClick="next"/>
+            android:enabled="false"
+            android:onClick="done"/>
+
+        <TextView
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/skip"
+            android:textSize="15sp"
+            android:layout_gravity="center"
+            android:onClick="skip"/>
+
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/setUpAccountSkipTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/skip"
-        style="@style/TextAppearance.AppCompat.Title"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/colorAccent"
-        android:layout_margin="10dp"
-        android:onClick="skip"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

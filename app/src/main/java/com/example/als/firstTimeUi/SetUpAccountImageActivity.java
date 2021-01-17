@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,10 +67,12 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
 
     //textview
     private TextView profileImageTitleTV;
-    private TextView setUpAccountSkipTV;
 
     //image url
     private Uri imageUri;
+
+    //button
+    private Button setUpAccountImageDoneBtn;
 
     //image view
     private ImageView profileImageView;
@@ -95,7 +98,9 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
 
             //find id for text view
             profileImageTitleTV = findViewById(R.id.setUpProfileImageTitle);
-            setUpAccountSkipTV = findViewById(R.id.setUpAccountSkipTextView);
+
+            //find id for button
+            setUpAccountImageDoneBtn = findViewById(R.id.setUpProfileImageDoneButton);
 
             //initialize firebase user
             FirebaseUser cUser = cAuth.getCurrentUser();
@@ -113,12 +118,11 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                             //get user object
                             User user = snapshot.getValue(User.class);
 
-                            //if user not null and role is organizartion
+                            //if user not null and role is organization
                             if(user != null && user.getRole().equals(Variable.ORGANIZATION)){
                                 //set new title
                                 String title = "SET UP ORGANIZATION PROFILE IMAGE";
                                 profileImageTitleTV.setText(title);
-                                setUpAccountSkipTV.setVisibility(View.GONE);
                             }
                         }
                         else{
@@ -133,36 +137,12 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                 });
             }
 
-            setUpAccountSkipTV.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AlertDialog.Builder alertDialogBuider = new AlertDialog.Builder(SetUpAccountImageActivity.this);
-                    alertDialogBuider.setMessage("Are you sure want to skip? You can edit profile later in the other page")
-                            .setCancelable(false)
-                            .setPositiveButton("SKIP", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish();
-                                }
-                            })
-                            .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            });
-
-                    AlertDialog alertDialog = alertDialogBuider.create();
-                    alertDialog.setTitle("SKIP");
-                    alertDialog.show();
-                }
-            });
         }
     }
 
     //skip method which can let user dismiss this activity
     public void skip(View view) {
-
+        finish();
     }
 
     @Override
@@ -171,7 +151,7 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
     }
 
     //next method which can let user go to next page
-    public void next(View view) {
+    public void done(View view) {
 
         //check connectivity
         if(!device.haveNetwork()){
@@ -257,8 +237,6 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                                                                                 Log.d(TAG, "saveImageNameToDatabase: success");
                                                                                 progressDialog.dismiss();
                                                                                 finish();
-                                                                                //go to set up contributor details activity
-                                                                                startActivity(new Intent(SetUpAccountImageActivity.this, SetUpContributorDetailsActivity.class));
                                                                             }
                                                                         })
                                                                                 .addOnFailureListener(new OnFailureListener() {
@@ -342,8 +320,6 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
                                                                             public void onSuccess(Void aVoid) {
                                                                                 progressDialog.dismiss();
                                                                                 finish();
-                                                                                //go to the set up organization details page
-                                                                                startActivity(new Intent(SetUpAccountImageActivity.this, SetUpOrganizationDetailsActivity.class));
                                                                             }
                                                                         })
                                                                                 .addOnFailureListener(new OnFailureListener() {
@@ -442,7 +418,12 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK && result.getUri() != null) {
                 imageUri = result.getUri();
-                profileImageView.setImageURI(imageUri);
+
+                if(imageUri != null){
+                    profileImageView.setImageURI(imageUri);
+                    setUpAccountImageDoneBtn.setEnabled(true);
+                }
+
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
@@ -491,14 +472,4 @@ public class SetUpAccountImageActivity extends AppCompatActivity {
         }
     }
 
-    //on stop method
-    @Override
-    protected void onStop() {
-        //check connectivity
-        if(!device.haveNetwork())
-        {
-            Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();
-        }
-        super.onStop();
-    }
 }

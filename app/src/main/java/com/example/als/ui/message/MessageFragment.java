@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.als.R;
 import com.example.als.adapter.MessageChatUserListAdapter;
@@ -20,6 +21,7 @@ import com.example.als.object.Message;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
 import com.example.als.ui.home.HomeUserViewDetailsActivity;
+import com.example.als.widget.AlsRecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,13 +36,14 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageFragment extends Fragment{
+public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
     private static final String TAG = "MessageFragment";
     private MessageChatUserListAdapter messageChatUserListAdapter;
     private List<User> aUsers;
 
-    private RecyclerView messageChatListRV;
+    private SwipeRefreshLayout messageChatListSRL;
+    private AlsRecyclerView messageChatListRV;
 
     FirebaseUser cUser;
 
@@ -51,12 +54,29 @@ public class MessageFragment extends Fragment{
 
         View root = inflater.inflate(R.layout.fragment_message, container, false);
 
+        messageChatListSRL = root.findViewById(R.id.messageChatListSwipeRefreshLayout);
         messageChatListRV = root.findViewById(R.id.messageChatListRecyclerView);
         messageChatListRV.setHasFixedSize(true);
         messageChatListRV.setLayoutManager(new LinearLayoutManager(getContext()));
         messageChatListRV.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-
+        View messageChatEmptyView = root.findViewById(R.id.emptyMessageChatList);
+        messageChatListRV.showIfEmpty(messageChatEmptyView);
         cUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        //swipeRefreshLayout function
+        messageChatListSRL.setOnRefreshListener(this);
+        messageChatListSRL.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
+
+        messageChatListSRL.post(new Runnable() {
+            @Override
+            public void run() {
+                messageChatListSRL.setRefreshing(true);
+                readChatList();
+            }
+        });
 
         usersList = new ArrayList<>();
 
@@ -125,6 +145,7 @@ public class MessageFragment extends Fragment{
 
                 messageChatUserListAdapter = new MessageChatUserListAdapter(aUsers,getContext());
                 messageChatListRV.setAdapter(messageChatUserListAdapter);
+                messageChatListSRL.setRefreshing(false);
                 messageChatUserListAdapter.setOnClickListener(new MessageChatUserListAdapter.OnChatListener() {
                     @Override
                     public void onChatClicked(int position) {
@@ -140,5 +161,10 @@ public class MessageFragment extends Fragment{
                 Log.d(TAG, "databaseError: "+error.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        readChatList();
     }
 }

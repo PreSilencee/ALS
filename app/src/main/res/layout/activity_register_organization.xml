@@ -1,9 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".RegisterOrganizationActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/becomeOurOrganization"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/organizationNotice"
+            android:layout_gravity="center"
+            android:textStyle="italic"
+            android:textColor="@color/colorRed" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false"
+            app:startIconDrawable="@drawable/ic_outline_account_circle_24"
+            app:startIconTint="@color/colorAccent"
+            android:background="@drawable/card_view_border"
+            android:id="@+id/createOrganizationNameTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/organizationDetailsName"
+                android:inputType="text"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false"
+            app:startIconDrawable="@drawable/ic_outline_email_24"
+            app:startIconTint="@color/colorAccent"
+            android:background="@drawable/card_view_border"
+            android:id="@+id/createOrganizationAccountEmailTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/inputEmail"
+                android:inputType="textEmailAddress"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false"
+            app:startIconDrawable="@drawable/ic_outline_lock_open_24"
+            app:startIconTint="@color/colorAccent"
+            app:passwordToggleEnabled="true"
+            android:background="@drawable/card_view_border"
+            android:id="@+id/createOrganizationAccountPasswordTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/inputPassword"
+                android:inputType="textPassword"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false"
+            app:startIconDrawable="@drawable/ic_outline_lock_24"
+            app:startIconTint="@color/colorAccent"
+            app:passwordToggleEnabled="true"
+            android:background="@drawable/card_view_border"
+            android:id="@+id/createOrganizationAccountConfirmPasswordTextInputLayout"
+            android:layout_gravity="center">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/inputConfirmPassword"
+                android:inputType="textPassword"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:weightSum="2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal"
+            android:background="@drawable/card_view_border">
+
+            <ImageView
+                android:padding="10dp"
+                android:layout_weight="0.3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_outline_home_work_24"
+                app:tint="@color/colorAccent"
+                android:contentDescription="@string/organizationTypePrompt"/>
+
+            <Spinner
+                android:layout_weight="1.7"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/createOrganizationTypeSpinner" />
+
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false"
+            app:startIconDrawable="@drawable/ic_outline_vpn_key_24"
+            app:startIconTint="@color/colorAccent"
+            android:background="@drawable/card_view_border"
+            android:id="@+id/createOrganizationRegistrationNumberTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/organizationRegistrationNumber"
+                android:inputType="text"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false"
+            app:startIconDrawable="@drawable/ic_outline_description_24"
+            app:startIconTint="@color/colorAccent"
+            android:background="@drawable/card_view_border"
+            android:id="@+id/createOrganizationDescriptionTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/organizationDescription"
+                android:inputType="textMultiLine" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false"
+            app:startIconDrawable="@drawable/ic_outline_house_24"
+            app:startIconTint="@color/colorAccent"
+            android:background="@drawable/card_view_border"
+            android:id="@+id/createOrganizationAddressTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/address"
+                android:inputType="textPostalAddress"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:hintEnabled="false"
+            app:startIconDrawable="@drawable/ic_outline_phone_24"
+            app:startIconTint="@color/colorAccent"
+            android:background="@drawable/card_view_border"
+            android:id="@+id/createOrganizationPhoneTextInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="@string/phone"
+                android:inputType="phone"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/corner_button_main"
+            android:text="@string/createAccount"
+            android:textColor="@color/colorAccent"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_gravity="center"
+            android:onClick="createOrganizationAccount"/>
+
+    </LinearLayout>
+
+
+
+
+</ScrollView>

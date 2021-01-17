@@ -70,77 +70,69 @@ public class WelcomeActivity extends AppCompatActivity {
                 final ProgressDialog progressDialog = new ProgressDialog(WelcomeActivity.this);
 
                 //set message for progress dialog
-                progressDialog.setMessage("Signing in... " +
-                        "Please wait awhile, we are processing the account");
+                progressDialog.setMessage("Checking Authorization...");
 
                 //show dialog
                 progressDialog.show();
 
-                //delay 0.2 sec
-                new Handler().postDelayed(new Runnable() {
+                Variable.USER_REF.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void run() {
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()){
+                            Log.d(TAG, "findUserInDatabase: success");
+                            User user = snapshot.getValue(User.class);
 
-                        Variable.USER_REF.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if(snapshot.exists()){
-                                    Log.d(TAG, "findUserInDatabase: success");
-                                    User user = snapshot.getValue(User.class);
+                            if(user != null){
 
-                                    if(user != null){
+                                //create date
+                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
+                                Date dateObj = Calendar.getInstance().getTime();
+                                final String currentDateTime = simpleDateFormat.format(dateObj);
+                                user.setLoggedInDateTime(currentDateTime);
 
-                                        //create date
-                                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
-                                        Date dateObj = Calendar.getInstance().getTime();
-                                        final String currentDateTime = simpleDateFormat.format(dateObj);
-                                        user.setLoggedInDateTime(currentDateTime);
+                                Map<String, Object> userValues = user.userMap();
 
-                                        Map<String, Object> userValues = user.userMap();
+                                Variable.USER_REF.child(currentUser.getUid()).setValue(userValues).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "login: success");
+                                        //show success message to the user
+                                        Toasty.success(WelcomeActivity.this,
+                                                "Login Successfully",
+                                                Toast.LENGTH_SHORT, true).show();
 
-                                        Variable.USER_REF.child(currentUser.getUid()).setValue(userValues).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Log.d(TAG, "login: success");
-                                                //show success message to the user
-                                                Toasty.success(WelcomeActivity.this,
-                                                        "Login Successfully",
-                                                        Toast.LENGTH_SHORT, true).show();
+                                        //log into main activity
+                                        Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
+                                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(i);
 
-                                                //log into main activity
-                                                Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
-                                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                startActivity(i);
+                                        //hide the progress dialog
+                                        progressDialog.dismiss();
 
-                                                //hide the progress dialog
-                                                progressDialog.dismiss();
-
-                                                //finish the activity
-                                                finish();
-                                            }
-                                        })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.d(TAG, "login: failed");
-                                                    }
-                                                });
+                                        //finish the activity
+                                        finish();
                                     }
-                                }
-                                else
-                                {
-                                    Log.d(TAG, "findUserInDatabase: failed");
-                                }
+                                })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.d(TAG, "login: failed");
+                                            }
+                                        });
                             }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                Log.d(TAG, "databaseerror:" + error.getMessage());
-                            }
-                        });
-
+                        }
+                        else
+                        {
+                            Log.d(TAG, "findUserInDatabase: failed");
+                        }
                     }
-                },200);
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.d(TAG, "databaseerror:" + error.getMessage());
+                    }
+                });
+
             }
             else{
                 new Handler().postDelayed(new Runnable() {
@@ -153,25 +145,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
             }
         }
-
-
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(!device.haveNetwork())
-        {
-            Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        if(!device.haveNetwork())
-        {
-            Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();
-        }
-        super.onStop();
-    }
 }

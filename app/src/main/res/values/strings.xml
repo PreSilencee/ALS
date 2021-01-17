@@ -56,6 +56,7 @@
     <string name="setupdisplayname">SET UP DISPLAY NAME</string>
     <string name="displayname">Display Name</string>
     <string name="complete">Complete</string>
+    <string name="done">Done</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
     <string name="setupprofile">SET UP ORGANIZATION PROFILE</string>
@@ -123,4 +124,5 @@
     <string name="accountType">Select Account Type</string>
     <string name="becomeOurContributor">Become Our Contributor</string>
     <string name="becomeOurOrganization">Become Our Organization</string>
+    <string name="empty_message_chat_found">No Message Chat Found</string>
 </resources>

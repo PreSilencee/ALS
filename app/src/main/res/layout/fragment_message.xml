@@ -7,13 +7,28 @@
     android:layout_height="match_parent"
     tools:context=".ui.message.MessageFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/messageChatListRecyclerView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/messageChatListSwipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-    </androidx.recyclerview.widget.RecyclerView>
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.example.als.widget.AlsRecyclerView
+            android:id="@+id/messageChatListRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/emptyMessageChatList"
+        layout="@layout/empty_message_chat_list" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

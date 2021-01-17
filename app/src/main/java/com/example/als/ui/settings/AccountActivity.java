@@ -192,6 +192,9 @@ public class AccountActivity extends AppCompatActivity {
 
 
                                                     }
+                                                    else{
+                                                        accountIV.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
+                                                    }
 
                                                     if(existedContributor.getName() == null){
                                                         usernameTV.setText("-");
@@ -220,7 +223,7 @@ public class AccountActivity extends AppCompatActivity {
                                         }
                                     });
                                 }
-                                else if(user.getRole().equals(Variable.ORGANIZATION)){
+                                else{
                                     accountProfileBtn.setText(organizationProfileText);
                                     Variable.ORGANIZATION_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
                                         @Override
@@ -255,6 +258,9 @@ public class AccountActivity extends AppCompatActivity {
                                                                 });
 
 
+                                                    }
+                                                    else{
+                                                        accountIV.setImageResource(R.drawable.ic_baseline_home_work_color_accent_24);
                                                     }
 
                                                     if(existedOrganization.getOrganizationName() == null){
