@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">ALS</string>
-    <string name="welcome_app_name">A Little Share (ALS)\n A Charity Mobile Application</string>
+    <string name="app_name">AlittleShare</string>
     <string name="login">LOGIN</string>
     <string name="inputUsername">Enter Display Name</string>
     <string name="inputEmail">Enter email</string>
@@ -8,14 +7,22 @@
     <string name="inputConfirmPassword">Enter Confirm Password</string>
     <string name="forgotPassword">Forgot Password?</string>
     <string name="aboutUs">About Us</string>
-    <string name="signInWith">Sign In With</string>
+    <string name="signInWithEmail">Sign In With Email</string>
+    <string name="signInWithGoogle">Sign In With Google</string>
+    <string name="signInWithFacebook">Sign In With Facebook</string>
+    <string name="go">GO</string>
     <string name="doesnothaveAccount">Don\'t have an account?</string>
     <string name="createOne">Create One</string>
+    <string name="facebook_app_id">256580089410895</string>
+    <string name="fb_login_protocol_scheme">fb256580089410895</string>
     <string name="title_activity_main">Ma2</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
+    <string name="searchDesc">Search Description</string>
+    <string name="searchHint">Search Something</string>
 
+    <string name="app_Name">AlittleShare</string>
     <string name="menu_home">Home</string>
     <string name="logOut">Log Out</string>
     <string name="title_change_password">Change Password</string>
@@ -125,4 +132,10 @@
     <string name="becomeOurContributor">Become Our Contributor</string>
     <string name="becomeOurOrganization">Become Our Organization</string>
     <string name="empty_message_chat_found">No Message Chat Found</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
 </resources>

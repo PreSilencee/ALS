@@ -2,12 +2,17 @@ package com.example.als;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.view.ViewCompat;
 
+import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Pair;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.als.handler.Connectivity;
@@ -40,6 +45,8 @@ public class WelcomeActivity extends AppCompatActivity {
     //firebase auth variable
     private FirebaseAuth cAuth;
 
+    ImageView logoImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,11 +58,7 @@ public class WelcomeActivity extends AppCompatActivity {
         //initialize firebase auth
         cAuth = FirebaseAuth.getInstance();
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+        logoImageView = findViewById(R.id.logoImageView);
 
         //check connectivity
         if(!device.haveNetwork()){
@@ -138,13 +141,17 @@ public class WelcomeActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
+                        Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(WelcomeActivity.this, logoImageView, ViewCompat.getTransitionName(logoImageView));
+                        startActivity(intent, options.toBundle());
                         finish();
                     }
                 },300);
 
             }
         }
+
     }
+
 
 }

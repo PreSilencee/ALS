@@ -5,39 +5,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/welcome_background"
     tools:context=".WelcomeActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/logo"
+        android:transitionName="logoImageTransition"
+        android:contentDescription="@string/app_name"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:orientation="vertical"
-        android:gravity="center">
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageView"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/logo"
-            app:civ_border_color="@color/colorAccent"
-            app:civ_border_width="2dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="italic"
-            android:text="@string/welcome_app_name"
-            android:padding="10dp"
-            android:layout_margin="10dp"
-            style="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/colorWhite"
-            android:gravity="center"/>
-
-    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:text="@string/app_name"
+        android:padding="10dp"
+        android:layout_marginBottom="40dp"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@color/colorAccent"
+        android:textSize="30sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 
