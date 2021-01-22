@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.example.als.handler.Connectivity;
@@ -49,6 +50,8 @@ public class RegisterContributorActivity extends AppCompatActivity {
     //textinputlayout for email, password, confirm password
     private TextInputLayout createAccountUsernameTIL, createAccountEmailTIL, createAccountPasswordTIL, createAccountConfirmPasswordTIL;
 
+    CheckBox contributorAgreeCB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +68,8 @@ public class RegisterContributorActivity extends AppCompatActivity {
         //get confirm password from XML
         createAccountConfirmPasswordTIL = findViewById(R.id.createAccountConfirmPassword);
 
+        contributorAgreeCB = findViewById(R.id.contributorAgreeCheckBox);
+
         //initialize firebase authentication
         cAuth = FirebaseAuth.getInstance();
     }
@@ -75,6 +80,11 @@ public class RegisterContributorActivity extends AppCompatActivity {
         if(!ValidateFunction.validateTILField(createAccountUsernameTIL) | !ValidateFunction.validateEmail(createAccountEmailTIL)
                 | !ValidateFunction.validatePassword(createAccountPasswordTIL)
                 | !ValidateFunction.validateConfirmPassword(createAccountPasswordTIL, createAccountConfirmPasswordTIL)){
+            return;
+        }
+
+        if(!contributorAgreeCB.isChecked()){
+            Toasty.warning(getApplicationContext(), "You must agree our terms & conditions first before signing up.", Toast.LENGTH_LONG).show();
             return;
         }
 

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".ui.raised_event.EventFragment">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/createEventCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_weight="0.4"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_baseline_person_color_accent_24"
+                app:civ_border_color="@color/colorGray"
+                app:civ_border_width="2dp"
+                android:layout_margin="5dp"/>
+
+            <Button
+                android:id="@+id/startCreateEventButton"
+                android:layout_weight="1.6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rectangle_background_no_filled"
+                android:layout_margin="5dp"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:text="@string/helpPeople"
+                android:textAlignment="viewStart"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textAllCaps="false"/>
+
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/createEventViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/createEventCardView">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/createEventTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabGravity="fill"
+            app:tabInlineLabel="true"
+            app:tabMode="fixed" />
+
+    </androidx.viewpager.widget.ViewPager>
+
+<!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
+<!--        android:id="@+id/raisedEventListSwipeRefreshLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:layout_marginStart="5dp"-->
+<!--        android:layout_marginEnd="5dp"-->
+<!--        android:layout_marginBottom="5dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/createEventCardView"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent">-->
+
+<!--        <com.example.als.widget.AlsRecyclerView-->
+<!--            android:id="@+id/raisedEventListRecyclerView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"/>-->
+
+<!--    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
+
+<!--    <include-->
+<!--        android:id="@+id/empty_raised_event_list"-->
+<!--        layout="@layout/empty_raised_event_list" />-->
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,39 +2,24 @@ package com.example.als;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Menu;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.als.adapter.ViewPagerAdapter;
-import com.example.als.firstTimeUi.SetUpAccountImageActivity;
 import com.example.als.handler.Connectivity;
-import com.example.als.handler.GlideApp;
 import com.example.als.notification.Token;
-import com.example.als.object.Contributor;
-import com.example.als.object.Organization;
-import com.example.als.object.User;
 import com.example.als.object.Variable;
-import com.example.als.ui.DashboardFragment;
 import com.example.als.ui.SearchActivity;
-import com.example.als.ui.SettingFragment;
+import com.example.als.ui.settings.SettingFragment;
 import com.example.als.ui.donationHistory.DonationHistoryFragment;
 import com.example.als.ui.home.HomeFragment;
 import com.example.als.ui.message.MessageFragment;
-import com.example.als.ui.raised_event.RaisedEventListFragment;
+import com.example.als.ui.raised_event.EventFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,14 +28,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.storage.StorageReference;
 
 import androidx.annotation.NonNull;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
@@ -342,11 +321,11 @@ public class MainActivity extends AppCompatActivity{
     private void setupViewPager(ViewPager viewPager)
     {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
-        adapter.addFragment(new HomeFragment());
-        adapter.addFragment(new RaisedEventListFragment());
-        adapter.addFragment(new DonationHistoryFragment());
-        adapter.addFragment(new MessageFragment());
-        adapter.addFragment(new SettingFragment());
+        adapter.addFragment(new HomeFragment(), "");
+        adapter.addFragment(new EventFragment(), "");
+        adapter.addFragment(new DonationHistoryFragment(), "");
+        adapter.addFragment(new MessageFragment(), "");
+        adapter.addFragment(new SettingFragment(), "");
 
         viewPager.setAdapter(adapter);
     }

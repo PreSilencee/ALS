@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/nav_raised_event_list"
-        android:name="com.example.als.ui.raised_event.RaisedEventListFragment"
+        android:name="com.example.als.ui.raised_event.EventFragment"
         android:label="@string/raisedEventList"
-        tools:layout="@layout/fragment_raised_event" />
+        tools:layout="@layout/fragment_event" />
 
     <fragment
         android:id="@+id/nav_message"

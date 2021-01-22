@@ -3,6 +3,7 @@ package com.example.als;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
@@ -58,12 +59,22 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
     private boolean onClickStartDateImageBtnStatus = false;
     private boolean onClickEndDateImageBtnStatus = false;
 
+    Toolbar customizeCreateEventToolbar;
+    TextView publishTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
         device = new Connectivity(CreateEventActivity.this);
+
+        customizeCreateEventToolbar = findViewById(R.id.customizeCreateEventToolbar);
+        publishTextView = findViewById(R.id.publishTextView);
+        setSupportActionBar(customizeCreateEventToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Create Event");
 
         if(!device.haveNetwork()){
             //show error message
@@ -151,6 +162,21 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
                 }
             }
         });
+
+
+        eventNameTIL.getEditText().addTextChangedListener(createEventTextWatcher);
+        eventDescriptionTIL.getEditText().addTextChangedListener(createEventTextWatcher);
+        eventStartDateTV.addTextChangedListener(createEventTextWatcher);
+        eventEndDateTV.addTextChangedListener(createEventTextWatcher);
+        eventTargetFundsTIL.getEditText().addTextChangedListener(createEventTextWatcher);
+
+
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override
@@ -304,6 +330,42 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         }
     }
 
+    private TextWatcher createEventTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String eventName = eventNameTIL.getEditText().getText().toString().trim();
+            String eventDescription = eventDescriptionTIL.getEditText().getText().toString().trim();
+            String eventStartDate = eventStartDateTV.getText().toString().trim();
+            String eventEndDate = eventEndDateTV.getText().toString().trim();
+            String eventTargetFund = eventTargetFundsTIL.getEditText().getText().toString().trim();
+
+            publishTextView.setEnabled(!eventName.isEmpty() && !eventDescription.isEmpty() && !eventStartDate.isEmpty() && !eventEndDate.isEmpty() && !eventTargetFund.isEmpty());
+
+            if(!publishTextView.isEnabled()){
+                publishTextView.setTextColor(getColor(R.color.colorGray));
+            }
+            else{
+                publishTextView.setTextColor(getColor(R.color.colorAccent));
+                publishTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
     public void createEvent(View view) {
         if(!validateEventMainImage() | !validateEventName() | !validateEventDescription() | !validateEventStartDate() | !validateEventEndDate() | !validateEventTargetFund()){
             return;
@@ -335,8 +397,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
             final ProgressDialog progressDialog = new ProgressDialog(CreateEventActivity.this);
 
             //set message for progress dialog
-            progressDialog.setMessage("Creating Event... " +
-                    "Please wait awhile, we are processing");
+            progressDialog.setMessage("Creating Event...");
 
             //show dialog
             progressDialog.show();

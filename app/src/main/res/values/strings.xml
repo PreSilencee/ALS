@@ -11,6 +11,7 @@
     <string name="signInWithGoogle">Sign In With Google</string>
     <string name="signInWithFacebook">Sign In With Facebook</string>
     <string name="go">GO</string>
+    <string name="or">OR</string>
     <string name="doesnothaveAccount">Don\'t have an account?</string>
     <string name="createOne">Create One</string>
     <string name="facebook_app_id">256580089410895</string>
@@ -66,6 +67,8 @@
     <string name="done">Done</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
+    <string name="agree">I agree to the</string>
+    <string name="termAndCondition">terms &amp; conditions</string>
     <string name="setupprofile">SET UP ORGANIZATION PROFILE</string>
     <string name="organizationNotice">* Note: Organization profile will be verified before published</string>
     <string name="captureImage">Capture an Image</string>
@@ -80,7 +83,7 @@
     <string name="verifiedStatus">Verified Status</string>
     <string name="organizationProfileNotice">* Note: Please contact our administration support if you would like to edit organization\'s profile</string>
     <string name="contactUs">Contact Our Support</string>
-    <string name="phoneNum">03-XXX XXXX</string>
+    <string name="phoneNum">03–321 4321</string>
     <string name="aboutUsDes">A Little Share (ALS) is a charity mobile application that provide a charity platform to the user.
         The charity platform allows the user to represent the contributor or organization to raise the charity event.
         The mobile application also includes the several functions which are chat system, published event.</string>
@@ -133,6 +136,8 @@
     <string name="becomeOurOrganization">Become Our Organization</string>
     <string name="empty_message_chat_found">No Message Chat Found</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="helpPeople">Help people with one click</string>
+    <string name="publish">Publish</string>
     <!--
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.

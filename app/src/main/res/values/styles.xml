@@ -23,4 +23,8 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="FacebookLoginButton">
+        <item name="android:background">@drawable/customize_facebook_background</item>
+    </style>
+
 </resources>

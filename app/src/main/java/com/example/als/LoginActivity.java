@@ -4,17 +4,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.als.handler.Connectivity;
@@ -28,6 +33,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
+import com.facebook.GraphRequestBatch;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -85,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
     //textinputlayout for loginemail, loginpassword
     private TextInputLayout inputLoginEmail, inputLoginPassword;
 
-    Button signInWithEmailBtn, signInWithGoogleBtn;
+    Button signInWithEmailBtn, signInWithGoogleBtn, signInEmailPasswordBtn;
     CardView expandedCardView;
 
     CallbackManager callbackManager;
@@ -99,6 +105,7 @@ public class LoginActivity extends AppCompatActivity {
         device = new Connectivity(LoginActivity.this);
 
         signInWithEmailBtn = findViewById(R.id.signInWithEmailPasswordButton);
+        signInEmailPasswordBtn = findViewById(R.id.signInEmailPassButton);
 
         expandedCardView = findViewById(R.id.expandedView);
         inputLoginEmail = findViewById(R.id.loggedInEmailTextInputLayout);
@@ -165,7 +172,45 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        inputLoginEmail.getEditText().addTextChangedListener(loginTextWatcher);
+        inputLoginPassword.getEditText().addTextChangedListener(loginTextWatcher);
+
+
     }
+
+    private final TextWatcher loginTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String inputEmail = inputLoginEmail.getEditText().getText().toString().trim();
+            String inputPassword = inputLoginPassword.getEditText().getText().toString().trim();
+
+            signInEmailPasswordBtn.setEnabled(!inputEmail.isEmpty() && !inputPassword.isEmpty());
+
+            if(!signInEmailPasswordBtn.isEnabled()){
+                signInEmailPasswordBtn.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.corner_button_gray_filled));
+            }
+            else{
+                signInEmailPasswordBtn.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.corner_button_main_filled));
+                signInEmailPasswordBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        signInWithEmailPassword();
+                    }
+                });
+            }
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
     @Override
     protected void onStart() {
@@ -259,11 +304,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     //login button onclick
-    public void signInWithEmailPassword(View view) {
-        if(!ValidateFunction.validateEmail(inputLoginEmail)| !ValidateFunction.validatePassword(inputLoginPassword)){
-            return;
-        }
-
+    public void signInWithEmailPassword() {
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_LONG).show();
         }
@@ -428,37 +469,87 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     final FirebaseUser cUser = cAuth.getCurrentUser();
-                    final GoogleSignInAccount googleSignInAccount = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
-                    if(googleSignInAccount != null){
 
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
-                        Date dateObj = Calendar.getInstance().getTime();
-                        final String currentDateTime = simpleDateFormat.format(dateObj);
-                        User newUser = new User();
-                        newUser.setId(cUser.getUid());
-                        newUser.setRole(Variable.CONTRIBUTOR);
-                        newUser.setRegisterDateTime(currentDateTime);
-                        newUser.setFirstTimeLoggedIn(true);
+                    Variable.USER_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if(snapshot.exists()){
+                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
+                                Date dateObj = Calendar.getInstance().getTime();
+                                final String currentDateTime = simpleDateFormat.format(dateObj);
+                                User user = new User();
+                                user.setLoggedInDateTime(currentDateTime);
 
-                        Variable.USER_REF.child(cUser.getUid()).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Contributor contributor = new Contributor();
-                                    contributor.setName(googleSignInAccount.getDisplayName());
-                                    contributor.setUserId(cUser.getUid());
-                                    contributor.setEmail(cUser.getEmail());
+                                Map<String, Object> userValues = user.userMap();
 
-                                    Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                Variable.USER_REF.child(cUser.getUid()).setValue(userValues).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(i);
+
+                                            //hide the progress dialog
+                                            progressDialog.dismiss();
+                                        }
+                                        else{
+                                            Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                            "Please Try Again"
+                                                    , Toast.LENGTH_SHORT).show();
+
+                                            //hide the progress dialog
+                                            progressDialog.dismiss();
+                                        }
+                                    }
+                                });
+                            }
+                            else{
+                                final GoogleSignInAccount googleSignInAccount = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+                                if(googleSignInAccount != null){
+
+                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
+                                    Date dateObj = Calendar.getInstance().getTime();
+                                    final String currentDateTime = simpleDateFormat.format(dateObj);
+                                    User newUser = new User();
+                                    newUser.setId(cUser.getUid());
+                                    newUser.setRole(Variable.CONTRIBUTOR);
+                                    newUser.setRegisterDateTime(currentDateTime);
+                                    newUser.setFirstTimeLoggedIn(false);
+                                    newUser.setLoggedInDateTime(currentDateTime);
+
+                                    Variable.USER_REF.child(cUser.getUid()).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if(task.isSuccessful()){
-                                                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                startActivity(i);
+                                                Contributor contributor = new Contributor();
+                                                contributor.setName(googleSignInAccount.getDisplayName());
+                                                contributor.setUserId(cUser.getUid());
+                                                contributor.setEmail(cUser.getEmail());
 
-                                                //hide the progress dialog
-                                                progressDialog.dismiss();
+                                                Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if(task.isSuccessful()){
+                                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                            startActivity(i);
+
+                                                            //hide the progress dialog
+                                                            progressDialog.dismiss();
+                                                        }
+                                                        else{
+                                                            //show warning message (create account is successful,
+                                                            // but database not include the user's data
+                                                            Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                                            "Please Try Again"
+                                                                    , Toast.LENGTH_SHORT).show();
+
+                                                            //hide the progress dialog
+                                                            progressDialog.dismiss();
+                                                        }
+                                                    }
+                                                });
                                             }
                                             else{
                                                 //show warning message (create account is successful,
@@ -472,34 +563,31 @@ public class LoginActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
+
+
+
                                 }
                                 else{
-                                    //show warning message (create account is successful,
-                                    // but database not include the user's data
-                                    Toasty.warning(getApplicationContext(), "Something went wrong. " +
-                                                    "Please Try Again"
-                                            , Toast.LENGTH_SHORT).show();
+                                    Log.d(TAG, "loginWithGoogle: failed");
+
+                                    //show error message
+                                    Toasty.error(getApplicationContext(),
+                                            "Authentication with google failed. Please Try Again",
+                                            Toast.LENGTH_LONG).show();
 
                                     //hide the progress dialog
                                     progressDialog.dismiss();
                                 }
                             }
-                        });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.d(TAG, "databaseError: " + error.getMessage());
+                        }
+                    });
 
 
-
-                    }
-                    else{
-                        Log.d(TAG, "loginWithGoogle: failed");
-
-                        //show error message
-                        Toasty.error(getApplicationContext(),
-                                "Authentication with google failed. Please Try Again",
-                                Toast.LENGTH_LONG).show();
-
-                        //hide the progress dialog
-                        progressDialog.dismiss();
-                    }
                 }
                 else{
                     Log.d(TAG, "loginWithGoogle: failed");
@@ -533,67 +621,111 @@ public class LoginActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     final FirebaseUser cUser = cAuth.getCurrentUser();
-
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
-                    Date dateObj = Calendar.getInstance().getTime();
-                    final String currentDateTime = simpleDateFormat.format(dateObj);
-                    User newUser = new User();
-                    newUser.setId(cUser.getUid());
-                    newUser.setRole(Variable.CONTRIBUTOR);
-                    newUser.setRegisterDateTime(currentDateTime);
-                    newUser.setFirstTimeLoggedIn(true);
-
-                    Variable.USER_REF.child(cUser.getUid()).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    Variable.USER_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if(snapshot.exists()){
+                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
+                                Date dateObj = Calendar.getInstance().getTime();
+                                final String currentDateTime = simpleDateFormat.format(dateObj);
+                                User user = new User();
+                                user.setLoggedInDateTime(currentDateTime);
 
-                                GraphRequest request = GraphRequest.newMeRequest(token, new GraphRequest.GraphJSONObjectCallback() {
+                                Map<String, Object> userValues = user.userMap();
+
+                                Variable.USER_REF.child(cUser.getUid()).setValue(userValues).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
-                                    public void onCompleted(JSONObject object, GraphResponse response) {
-                                        if(object != null){
-                                            try{
-                                                Contributor contributor = new Contributor();
-                                                contributor.setName(object.getString("name"));
-                                                contributor.setUserId(cUser.getUid());
-                                                contributor.setEmail(object.getString("email"));
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            startActivity(i);
 
-                                                Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if(task.isSuccessful()){
-                                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                            startActivity(i);
+                                            //hide the progress dialog
+                                            progressDialog.dismiss();
+                                        }
+                                        else{
+                                            Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                            "Please Try Again"
+                                                    , Toast.LENGTH_SHORT).show();
 
-                                                            //hide the progress dialog
-                                                            progressDialog.dismiss();
-                                                        }
-                                                        else{
-                                                            //show warning message (create account is successful,
-                                                            // but database not include the user's data
-                                                            Toasty.warning(getApplicationContext(), "Something went wrong. " +
-                                                                            "Please Try Again"
-                                                                    , Toast.LENGTH_SHORT).show();
-
-                                                            //hide the progress dialog
-                                                            progressDialog.dismiss();
-                                                        }
-                                                    }
-                                                });
-
-                                            } catch (JSONException | NullPointerException e){
-                                                e.printStackTrace();
-                                            }
+                                            //hide the progress dialog
+                                            progressDialog.dismiss();
                                         }
                                     }
                                 });
+                            }
+                            else{
+                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
+                                Date dateObj = Calendar.getInstance().getTime();
+                                final String currentDateTime = simpleDateFormat.format(dateObj);
+                                User newUser = new User();
+                                newUser.setId(cUser.getUid());
+                                newUser.setRole(Variable.CONTRIBUTOR);
+                                newUser.setRegisterDateTime(currentDateTime);
+                                newUser.setFirstTimeLoggedIn(false);
+                                newUser.setLoggedInDateTime(currentDateTime);
 
-                                request.executeAsync();
+                                Variable.USER_REF.child(cUser.getUid()).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            GraphRequest request = GraphRequest.newMeRequest(token, new GraphRequest.GraphJSONObjectCallback() {
+                                                @Override
+                                                public void onCompleted(JSONObject object, GraphResponse response) {
+                                                    if(object != null){
+                                                        try{
+                                                            Contributor contributor = new Contributor();
+                                                            contributor.setName(object.getString("name"));
+                                                            contributor.setUserId(cUser.getUid());
+                                                            contributor.setEmail(object.getString("email"));
+
+                                                            Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if(task.isSuccessful()){
+                                                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                                                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                                        startActivity(i);
+
+                                                                        //hide the progress dialog
+                                                                        progressDialog.dismiss();
+                                                                    }
+                                                                    else{
+                                                                        //show warning message (create account is successful,
+                                                                        // but database not include the user's data
+                                                                        Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                                                        "Please Try Again"
+                                                                                , Toast.LENGTH_SHORT).show();
+
+                                                                        //hide the progress dialog
+                                                                        progressDialog.dismiss();
+                                                                    }
+                                                                }
+                                                            });
+
+                                                        } catch (JSONException | NullPointerException e){
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                }
+                                            });
+
+                                            Bundle parameters = new Bundle();
+                                            parameters.putString("fields", "id,name,email,link");
+                                            request.setParameters(parameters);
+                                            request.executeAsync();
+                                        }
+                                    }
+                                });
                             }
                         }
-                    });
 
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.d(TAG, "databaseError: "+error.getMessage());
+                        }
+                    });
 
                 }
                 else{

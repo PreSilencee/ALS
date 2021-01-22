@@ -67,7 +67,7 @@ public class WelcomeActivity extends AppCompatActivity {
         else{
             // Check if user is signed in (non-null)
             final FirebaseUser currentUser = cAuth.getCurrentUser();
-            if(currentUser != null && currentUser.isEmailVerified())
+            if(currentUser != null)
             {
                 //a progress dialog to view progress of create account
                 final ProgressDialog progressDialog = new ProgressDialog(WelcomeActivity.this);

@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/welcome_background"
     tools:context=".AboutUsActivity">
 
     <TextView
@@ -19,17 +18,17 @@
         android:text="@string/aboutUs"
         style="@style/TextAppearance.AppCompat.Title" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/aboutUsImageView"
+    <ImageView
+        android:id="@+id/aboutLogoImageView"
+        android:layout_marginTop="70dp"
         android:layout_width="120dp"
         android:layout_height="120dp"
-        android:layout_marginTop="20dp"
         android:src="@drawable/logo"
-        app:civ_border_color="@color/colorAccent"
-        app:civ_border_width="2dp"
+        android:transitionName="logoImageTransition"
+        android:contentDescription="@string/app_name"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/aboutUsTitle"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/aboutUsDescription"
@@ -38,7 +37,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/aboutUsImageView"
+        app:layout_constraintTop_toBottomOf="@id/aboutLogoImageView"
         android:text="@string/aboutUsDes"
         android:padding="10dp"
         android:textSize="18sp"
@@ -59,6 +58,7 @@
         android:textStyle="italic"/>
 
     <LinearLayout
+        android:id="@+id/aboutUsPhoneCallLinearLayout"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_width="match_parent"
@@ -87,8 +87,7 @@
             android:text="@string/phoneNum"
             android:textSize="18sp"
             android:padding="10dp"
-            android:layout_gravity="center"
-            android:id="@+id/organizationPhoneTextView"/>
+            android:layout_gravity="center"/>
 
     </LinearLayout>
 

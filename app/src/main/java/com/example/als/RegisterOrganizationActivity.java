@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +56,8 @@ public class RegisterOrganizationActivity extends AppCompatActivity {
     //firebase authentication variable
     private FirebaseAuth cAuth;
 
+    CheckBox organizationAgreeCB;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,76 +74,80 @@ public class RegisterOrganizationActivity extends AppCompatActivity {
         else{
             //initialize firebase auth
             cAuth = FirebaseAuth.getInstance();
-
-            //get email id from XML
-            createOrganizationAccountEmailTIL = findViewById(R.id.createOrganizationAccountEmailTextInputLayout);
-            //get password id from XML
-            createOrganizationAccountPasswordTIL = findViewById(R.id.createOrganizationAccountPasswordTextInputLayout);
-            //get confirm password from XML
-            createOrganizationAccountConfirmPasswordTIL = findViewById(R.id.createOrganizationAccountConfirmPasswordTextInputLayout);
-
-            //find id for text input layout
-            createOrganizationNameTIL = findViewById(R.id.createOrganizationNameTextInputLayout);
-            createOrganizationRegistrationNumberTIL = findViewById(R.id.createOrganizationRegistrationNumberTextInputLayout);
-            createOrganizationDescriptionTIL = findViewById(R.id.createOrganizationDescriptionTextInputLayout);
-            createOrganizationAddressTIL = findViewById(R.id.createOrganizationAddressTextInputLayout);
-            createOrganizationPhoneTIL = findViewById(R.id.createOrganizationPhoneTextInputLayout);
-
-            //find id for spinner
-            createOrganizationtypeSpinn = findViewById(R.id.createOrganizationTypeSpinner);
-
-            //create an array list that store the type of organization
-            List<String> organizationTypeList = new ArrayList<>();
-            organizationTypeList.add("--Select Organization Type--");
-            organizationTypeList.add("Government Organization (GO)");
-            organizationTypeList.add("Non-Government Organization (NGO)");
-
-            //create array adapter for spinner
-            ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, organizationTypeList){
-                @Override
-                public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                    View view = super.getDropDownView(position, convertView, parent);
-                    TextView tv = (TextView) view;
-
-                    //if list == "--Select Organization Type--"
-                    if(position == 0)
-                    {
-                        tv.setTextColor(Color.GRAY);
-                    }
-                    else
-                    {
-                        tv.setTextColor(Color.BLACK);
-                    }
-                    return view;
-                }
-
-                @Override
-                public boolean isEnabled(int position) {
-                    return position != 0;
-                }
-            };
-
-            //set drop down resources
-            myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            //set adapter to spinner
-            createOrganizationtypeSpinn.setAdapter(myAdapter);
-
-            createOrganizationtypeSpinn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    //if current position not "--Select Organization Type--"
-                    if(position > 0)
-                    {
-                        selectedType = (String) parent.getItemAtPosition(position);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                    //
-                }
-            });
         }
+
+        organizationAgreeCB = findViewById(R.id.organizationAgreeCheckBox);
+
+        //get email id from XML
+        createOrganizationAccountEmailTIL = findViewById(R.id.createOrganizationAccountEmailTextInputLayout);
+        //get password id from XML
+        createOrganizationAccountPasswordTIL = findViewById(R.id.createOrganizationAccountPasswordTextInputLayout);
+        //get confirm password from XML
+        createOrganizationAccountConfirmPasswordTIL = findViewById(R.id.createOrganizationAccountConfirmPasswordTextInputLayout);
+
+        //find id for text input layout
+        createOrganizationNameTIL = findViewById(R.id.createOrganizationNameTextInputLayout);
+        createOrganizationRegistrationNumberTIL = findViewById(R.id.createOrganizationRegistrationNumberTextInputLayout);
+        createOrganizationDescriptionTIL = findViewById(R.id.createOrganizationDescriptionTextInputLayout);
+        createOrganizationAddressTIL = findViewById(R.id.createOrganizationAddressTextInputLayout);
+        createOrganizationPhoneTIL = findViewById(R.id.createOrganizationPhoneTextInputLayout);
+
+        //find id for spinner
+        createOrganizationtypeSpinn = findViewById(R.id.createOrganizationTypeSpinner);
+
+        //create an array list that store the type of organization
+        List<String> organizationTypeList = new ArrayList<>();
+        organizationTypeList.add("--Select Organization Type--");
+        organizationTypeList.add("Government Organization (GO)");
+        organizationTypeList.add("Non-Government Organization (NGO)");
+
+        //create array adapter for spinner
+        ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, organizationTypeList){
+            @Override
+            public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                //if list == "--Select Organization Type--"
+                if(position == 0)
+                {
+                    tv.setTextColor(Color.GRAY);
+                }
+                else
+                {
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+
+            @Override
+            public boolean isEnabled(int position) {
+                return position != 0;
+            }
+        };
+
+        //set drop down resources
+        myAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //set adapter to spinner
+        createOrganizationtypeSpinn.setAdapter(myAdapter);
+
+        createOrganizationtypeSpinn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //if current position not "--Select Organization Type--"
+                if(position > 0)
+                {
+                    selectedType = (String) parent.getItemAtPosition(position);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //
+            }
+        });
+
+
     }
 
     //validate organizationType
@@ -166,6 +173,11 @@ public class RegisterOrganizationActivity extends AppCompatActivity {
                 | !ValidateFunction.validateTILField(createOrganizationDescriptionTIL)
                 | !ValidateFunction.validateTILField(createOrganizationAddressTIL)
                 | !ValidateFunction.validateTILField(createOrganizationPhoneTIL)){
+            return;
+        }
+
+        if(!organizationAgreeCB.isChecked()){
+            Toasty.warning(getApplicationContext(), "You must agree our terms & conditions first before signing up.", Toast.LENGTH_LONG).show();
             return;
         }
 
