@@ -2,6 +2,7 @@ package com.example.als.ui.home;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,6 +26,7 @@ import com.example.als.object.Contributor;
 import com.example.als.object.Organization;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
+import com.example.als.ui.SearchActivity;
 import com.example.als.ui.message.MessageChatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -74,7 +77,16 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
             homeUserViewDetailsOrganizationDescriptionV, homeUserViewDetailsOrganizationAddressV;
 
     //button
-    private Button homeUserSendMessageBtn;
+    Button becameFriendSendMessageBtn, noFriendLayoutAddFriendBtn, followingLayoutUnFollowBtn, followingLayoutFollowBtn;
+
+    //image button
+    ImageButton becameFriendImageBtn, noFriendLayoutSendMessageImageBtn, noFollowLayoutSendMessageImageBtn, followingLayoutSendMessageImageBtn;
+
+    //linear layout
+    LinearLayout becameFriendLayout, noFriendLayout, noFollowLayout, followingLayout;
+
+    Toolbar homeCustomizeSearchViewToolbar;
+    Button homeCustomizeSearchBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +96,64 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
         //initialize connectivity
         device = new Connectivity(HomeUserViewDetailsActivity.this);
 
+        homeCustomizeSearchViewToolbar = findViewById(R.id.customizeHomeUserToolbar);
+        homeCustomizeSearchBtn = findViewById(R.id.customizeHomeUserSearchButton);
+
+        setSupportActionBar(homeCustomizeSearchViewToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        homeCustomizeSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(HomeUserViewDetailsActivity.this, SearchActivity.class));
+            }
+        });
+
+        //find id for image view
+        homeUserViewDetailsIV = findViewById(R.id.homeUserViewDetailsImageView);
+
+        becameFriendLayout = findViewById(R.id.becameFriendLayout);
+        noFriendLayout = findViewById(R.id.noFriendLayout);
+        noFollowLayout = findViewById(R.id.noFollowLayout);
+        followingLayout = findViewById(R.id.followingLayout);
+
+        becameFriendSendMessageBtn = findViewById(R.id.becameFriendSendMessageButton);
+        noFriendLayoutAddFriendBtn = findViewById(R.id.noFriendLayoutAddFriendButton);
+        followingLayoutUnFollowBtn = findViewById(R.id.noFollowLayoutFollowButton);
+        followingLayoutFollowBtn = findViewById(R.id.followingLayoutUnFollowButton);
+        becameFriendImageBtn = findViewById(R.id.becameFriendImageButton);
+        noFriendLayoutSendMessageImageBtn = findViewById(R.id.noFriendLayoutSendMessageImageButton);
+        noFollowLayoutSendMessageImageBtn = findViewById(R.id.noFollowLayoutSendMessageImageButton);
+        followingLayoutSendMessageImageBtn = findViewById(R.id.followingLayoutSendMessageImageButton);
+
+        //find id for text view
+        homeUserViewDetailsNameTV = findViewById(R.id.homeUserViewDetailsNameTextView);
+        homeUserViewDetailsPositionTitleTV = findViewById(R.id.homeUserViewDetailsPositionTitleTextView);
+        homeUserViewDetailsOrganizationTypeTV = findViewById(R.id.homeUserViewOrganizationTypeTextView);
+        homeUserViewDetailsOrganizationRegistrationNumberTV = findViewById(R.id.homeUserViewOrganizationRegistrationNumberTextView);
+        homeUserViewDetailsEmailTV = findViewById(R.id.homeUserViewEmailTextView);
+        homeUserViewDetailsPhoneTV = findViewById(R.id.homeUserViewPhoneTextView);
+        homeUserViewDetailsOrganizationDescriptionTV = findViewById(R.id.homeUserViewOrganizationDescriptionTextView);
+        homeUserViewDetailsOrganizationAddressTV = findViewById(R.id.homeUserViewOrganizationAddressTextView);
+        homeUserViewDetailsNameTV = findViewById(R.id.homeUserViewDetailsNameTextView);
+        homeUserViewDetailsPositionTitleTV = findViewById(R.id.homeUserViewDetailsPositionTitleTextView);
+
+        //find id for linear layout
+        homeUserViewDetailsOrganizationTypeLL = findViewById(R.id.homeUserViewDetailsOrganizationTypeLinearLayout);
+        homeUserViewDetailsOrganizationRegistrationNumberLL = findViewById(R.id.homeUserViewDetailsOrganizationRegistrationNumberLinearLayout);
+        homeUserViewDetailsOrganizationDescriptionLL = findViewById(R.id.homeUserViewDetailsOrganizationDescriptionLinearLayout);
+        homeUserViewDetailsOrganizationAddressLL = findViewById(R.id.homeUserViewDetailsOrganizationAddressLinearLayout);
+
+        //find id for view
+        homeUserViewDetailsOrganizationTypeV = findViewById(R.id.homeUserViewDetailsOrganizationTypeView);
+        homeUserViewDetailsOrganizationRegistrationNumberV = findViewById(R.id.homeUserViewDetailsOrganizationRegistrationNumberView);
+        homeUserViewDetailsOrganizationDescriptionV = findViewById(R.id.homeUserViewDetailsOrganizationDescriptionView);
+        homeUserViewDetailsOrganizationAddressV = findViewById(R.id.homeUserViewDetailsOrganizationAddressView);
+
+        //homeUserSendMessageBtn = findViewById(R.id.homeUserSendMessageButton);
+
         //check connectivity
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(), device.NetworkError(), Toast.LENGTH_SHORT,true).show();
@@ -91,6 +161,12 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
         else{
             initialize();
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     @Override
@@ -181,41 +257,8 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
 
         //if user not null
         if(cUser != null){
-            //find id for image view
-            homeUserViewDetailsIV = findViewById(R.id.homeUserViewDetailsImageView);
-
-            //find id for text view
-            homeUserViewDetailsNameTV = findViewById(R.id.homeUserViewDetailsNameTextView);
-            homeUserViewDetailsPositionTitleTV = findViewById(R.id.homeUserViewDetailsPositionTitleTextView);
-            homeUserViewDetailsOrganizationTypeTV = findViewById(R.id.homeUserViewOrganizationTypeTextView);
-            homeUserViewDetailsOrganizationRegistrationNumberTV = findViewById(R.id.homeUserViewOrganizationRegistrationNumberTextView);
-            homeUserViewDetailsEmailTV = findViewById(R.id.homeUserViewEmailTextView);
-            homeUserViewDetailsPhoneTV = findViewById(R.id.homeUserViewPhoneTextView);
-            homeUserViewDetailsOrganizationDescriptionTV = findViewById(R.id.homeUserViewOrganizationDescriptionTextView);
-            homeUserViewDetailsOrganizationAddressTV = findViewById(R.id.homeUserViewOrganizationAddressTextView);
-            homeUserViewDetailsNameTV = findViewById(R.id.homeUserViewDetailsNameTextView);
-            homeUserViewDetailsPositionTitleTV = findViewById(R.id.homeUserViewDetailsPositionTitleTextView);
-
-            //find id for linear layout
-            homeUserViewDetailsOrganizationTypeLL = findViewById(R.id.homeUserViewDetailsOrganizationTypeLinearLayout);
-            homeUserViewDetailsOrganizationRegistrationNumberLL = findViewById(R.id.homeUserViewDetailsOrganizationRegistrationNumberLinearLayout);
-            homeUserViewDetailsOrganizationDescriptionLL = findViewById(R.id.homeUserViewDetailsOrganizationDescriptionLinearLayout);
-            homeUserViewDetailsOrganizationAddressLL = findViewById(R.id.homeUserViewDetailsOrganizationAddressLinearLayout);
-
-            //find id for view
-            homeUserViewDetailsOrganizationTypeV = findViewById(R.id.homeUserViewDetailsOrganizationTypeView);
-            homeUserViewDetailsOrganizationRegistrationNumberV = findViewById(R.id.homeUserViewDetailsOrganizationRegistrationNumberView);
-            homeUserViewDetailsOrganizationDescriptionV = findViewById(R.id.homeUserViewDetailsOrganizationDescriptionView);
-            homeUserViewDetailsOrganizationAddressV = findViewById(R.id.homeUserViewDetailsOrganizationAddressView);
-
-            homeUserSendMessageBtn = findViewById(R.id.homeUserSendMessageButton);
-
 
             if(homeUserSessionId != null){
-
-                if(cUser.getUid().equals(homeUserSessionId)){
-                    homeUserSendMessageBtn.setVisibility(View.GONE);
-                }
 
                 Variable.USER_REF.child(homeUserSessionId).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -225,6 +268,7 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
 
                             if(user != null){
                                 if(user.getRole().equals(Variable.CONTRIBUTOR)){
+                                    becameFriendLayout.setVisibility(View.VISIBLE);
                                     //set visibility to gone for unnecessary view
                                     homeUserViewDetailsOrganizationTypeLL.setVisibility(View.GONE);
                                     homeUserViewDetailsOrganizationRegistrationNumberLL.setVisibility(View.GONE);
@@ -266,9 +310,14 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
                                                         homeUserViewDetailsPhoneTV.setText("-");
                                                     }
 
-
-
-                                                    if(contributor.getProfileImageName() != null){
+                                                    if(cUser.getPhotoUrl() != null){
+                                                        Log.d(TAG, "loadImage: success");
+                                                        GlideApp.with(getApplicationContext())
+                                                                .load(cUser.getPhotoUrl())
+                                                                .placeholder(R.drawable.loading_image)
+                                                                .into(homeUserViewDetailsIV);
+                                                    }
+                                                    else if(contributor.getProfileImageName() != null){
                                                         StorageReference imageRef = Variable.CONTRIBUTOR_SR.child(homeUserSessionId)
                                                                 .child("profile").child(contributor.getProfileImageName());
 
@@ -291,10 +340,6 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
                                                                 });
 
                                                     }
-
-
-
-
                                                 }
 
                                             }
@@ -307,6 +352,7 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
                                     });
                                 }
                                 else{
+                                    noFollowLayout.setVisibility(View.VISIBLE);
                                     Variable.ORGANIZATION_REF.child(homeUserSessionId).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -440,14 +486,14 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity {
             startActivity(i);
         }
 
-        homeUserSendMessageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(HomeUserViewDetailsActivity.this, MessageChatActivity.class);
-                i.putExtra(Variable.MESSAGE_USER_SESSION_ID, homeUserSessionId);
-                startActivity(i);
-            }
-        });
+//        homeUserSendMessageBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent i = new Intent(HomeUserViewDetailsActivity.this, MessageChatActivity.class);
+//                i.putExtra(Variable.MESSAGE_USER_SESSION_ID, homeUserSessionId);
+//                startActivity(i);
+//            }
+//        });
     }
 
 }

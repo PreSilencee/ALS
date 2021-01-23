@@ -477,7 +477,7 @@ public class LoginActivity extends AppCompatActivity {
                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
                                 Date dateObj = Calendar.getInstance().getTime();
                                 final String currentDateTime = simpleDateFormat.format(dateObj);
-                                User user = new User();
+                                User user = snapshot.getValue(User.class);
                                 user.setLoggedInDateTime(currentDateTime);
 
                                 Map<String, Object> userValues = user.userMap();
@@ -628,7 +628,7 @@ public class LoginActivity extends AppCompatActivity {
                                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
                                 Date dateObj = Calendar.getInstance().getTime();
                                 final String currentDateTime = simpleDateFormat.format(dateObj);
-                                User user = new User();
+                                User user = snapshot.getValue(User.class);
                                 user.setLoggedInDateTime(currentDateTime);
 
                                 Map<String, Object> userValues = user.userMap();

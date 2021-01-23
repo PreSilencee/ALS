@@ -9,8 +9,10 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.als.adapter.ViewPagerAdapter;
+import com.example.als.firstTimeUi.SetUpAccountImageActivity;
 import com.example.als.handler.Connectivity;
 import com.example.als.notification.Token;
+import com.example.als.object.User;
 import com.example.als.object.Variable;
 import com.example.als.ui.SearchActivity;
 import com.example.als.ui.settings.SettingFragment;
@@ -57,18 +59,18 @@ public class MainActivity extends AppCompatActivity{
     //Toast for back button
     private Toast backToast;
 
-//    private AppBarConfiguration mAppBarConfiguration;
-//
-//    private ImageView headerImageView;
-//
-//    private TextView headerUIDTV, headerPositionTV, headerEmailTV;
-
+    //view pager
     ViewPager mainViewPager;
+    //maintablayout
     TabLayout mainTabLayout;
 
+    //toolbar view
     View toolbarView;
+
+    //toolbar
     Toolbar customizeToolbar;
 
+    //image button
     ImageButton searchImageBtn;
 
     @Override
@@ -82,18 +84,26 @@ public class MainActivity extends AppCompatActivity{
             user_session_id = session.getStringExtra(Variable.USER_SESSION_ID);
         }
 
+        //find id from XML
         mainViewPager = findViewById(R.id.mainViewPager);
         mainTabLayout = findViewById(R.id.mainTabLayout);
         toolbarView = findViewById(R.id.toolbarView);
         customizeToolbar = findViewById(R.id.customizeToolbar);
         searchImageBtn = findViewById(R.id.searchImageButton);
 
+        //set up customize toolbar
         setSupportActionBar(customizeToolbar);
 
+        //set up view pager
         setupViewPager(mainViewPager);
+
+        //set up tab layout into view pager
         mainTabLayout.setupWithViewPager(mainViewPager);
+
+        //set up tab icon
         setUpTabIcons();
 
+        //change color of tab icon if selected
         mainTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -152,174 +162,60 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
-
-
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startActivity(new Intent(MainActivity.this, CreateEventActivity.class));
-//            }
-//        });
-//        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-//        NavigationView navigationView = findViewById(R.id.nav_view);
-//        View headerView = navigationView.getHeaderView(0);
-//        // Passing each menu ID as a set of Ids because each
-//        // menu should be considered as top level destinations.
-//        mAppBarConfiguration = new AppBarConfiguration.Builder(
-//                R.id.nav_home, R.id.nav_raised_event_list, R.id.nav_message, R.id.nav_donation_history)
-//                .setDrawerLayout(drawer)
-//                .build();
-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-//        NavigationUI.setupWithNavController(navigationView, navController);
-//
-//        headerImageView = headerView.findViewById(R.id.headerProfileImageView);
-//        headerUIDTV = headerView.findViewById(R.id.headerUIDTextView);
-//        headerPositionTV = headerView.findViewById(R.id.headerPositionTextView);
-//        headerEmailTV = headerView.findViewById(R.id.headerEmailTextView);
-
         //initialize connectivity device
         device = new Connectivity(MainActivity.this);
 
+        //get firebase authentication instance
         cAuth = FirebaseAuth.getInstance();
 
-//        if(!device.haveNetwork()){
-//            Toasty.error(MainActivity.this, device.NetworkError(), Toast.LENGTH_SHORT,true).show();
-//        }
-//        else{
-//            //initialize firebase auth
-//            cAuth = FirebaseAuth.getInstance();
-//            final FirebaseUser cUser = cAuth.getCurrentUser();
-//
-//            if(cUser != null){
-//                headerUIDTV.setText(cUser.getUid());
-//                headerEmailTV.setText(cUser.getEmail());
-//                Variable.USER_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        if(snapshot.exists()){
-//                            Log.d(TAG, "userfoundindatabase: success");
-//                            User user = snapshot.getValue(User.class);
-//
-//                            if(user != null){
-//                                if(user.isFirstTimeLoggedIn()){
-//                                    user.setFirstTimeLoggedIn(false);
-//                                    Map<String,Object> userValues = user.userMap();
-//                                    Variable.USER_REF.child(cUser.getUid()).setValue(userValues).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                        @Override
-//                                        public void onComplete(@NonNull Task<Void> task) {
-//                                            if(task.isSuccessful()){
-//                                                Log.d(TAG, "setValuetoDatabase: success");
-//                                                startActivity(new Intent(MainActivity.this, SetUpAccountImageActivity.class));
-//                                            }
-//                                            else{
-//                                                Log.d(TAG, "setValuetoDatabase: failed");
-//                                            }
-//                                        }
-//                                    });
-//                                }
-//
-//                                if(user.getRole() != null){
-//                                    headerPositionTV.setText(user.getRole());
-//
-//                                    if(user.getRole().equals(Variable.CONTRIBUTOR)){
-//                                        Variable.CONTRIBUTOR_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
-//                                            @Override
-//                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                                if(snapshot.exists()){
-//                                                    Contributor contributor = snapshot.getValue(Contributor.class);
-//
-//                                                    if(contributor != null){
-//                                                        if(contributor.getProfileImageName() != null){
-//                                                            StorageReference imageRef = Variable.CONTRIBUTOR_SR.child(cUser.getUid())
-//                                                                    .child("profile").child(contributor.getProfileImageName());
-//
-//                                                            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                                                                @Override
-//                                                                public void onSuccess(Uri uri) {
-//                                                                    Log.d(TAG, "loadImage: success");
-//                                                                    GlideApp.with(getApplicationContext())
-//                                                                            .load(uri)
-//                                                                            .placeholder(R.drawable.loading_image)
-//                                                                            .into(headerImageView);
-//                                                                }
-//                                                            })
-//                                                                    .addOnFailureListener(new OnFailureListener() {
-//                                                                        @Override
-//                                                                        public void onFailure(@NonNull Exception e) {
-//                                                                            Log.d(TAG, "loadImage:Failed");
-//                                                                            headerImageView.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
-//                                                                        }
-//                                                                    });
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }
-//
-//                                            @Override
-//                                            public void onCancelled(@NonNull DatabaseError error) {
-//                                                Log.d(TAG, "databaseError: "+error.getMessage());
-//                                            }
-//                                        });
-//                                    }
-//                                    else{
-//                                        Variable.ORGANIZATION_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
-//                                            @Override
-//                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                                if(snapshot.exists()){
-//                                                    Organization organization = snapshot.getValue(Organization.class);
-//
-//                                                    if(organization != null){
-//                                                        if(organization.getOrganizationProfileImageName() != null){
-//                                                            StorageReference imageRef = Variable.ORGANIZATION_SR.child(cUser.getUid())
-//                                                                    .child("profile").child(organization.getOrganizationProfileImageName());
-//
-//                                                            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                                                                @Override
-//                                                                public void onSuccess(Uri uri) {
-//                                                                    Log.d(TAG, "loadImage: success");
-//                                                                    GlideApp.with(getApplicationContext())
-//                                                                            .load(uri)
-//                                                                            .placeholder(R.drawable.loading_image)
-//                                                                            .into(headerImageView);
-//                                                                }
-//                                                            })
-//                                                                    .addOnFailureListener(new OnFailureListener() {
-//                                                                        @Override
-//                                                                        public void onFailure(@NonNull Exception e) {
-//                                                                            Log.d(TAG, "loadImage:Failed");
-//                                                                            headerImageView.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
-//                                                                        }
-//                                                                    });
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }
-//
-//                                            @Override
-//                                            public void onCancelled(@NonNull DatabaseError error) {
-//                                                Log.d(TAG, "databaseError: "+error.getMessage());
-//                                            }
-//                                        });
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Log.d(TAG, "userfoundindatabase: failed");
-//                        Log.d(TAG, "databaseerror: failed");
-//                    }
-//                });
-//            }
-//        }
+        if(!device.haveNetwork()){
+            Toasty.error(MainActivity.this, device.NetworkError(), Toast.LENGTH_SHORT,true).show();
+        }
+        else{
+            //initialize firebase auth
+            cAuth = FirebaseAuth.getInstance();
+            final FirebaseUser cUser = cAuth.getCurrentUser();
+
+            if(cUser != null){
+                Variable.USER_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()){
+                            Log.d(TAG, "userfoundindatabase: success");
+                            User user = snapshot.getValue(User.class);
+
+                            if(user != null){
+                                if(user.isFirstTimeLoggedIn()){
+                                    user.setFirstTimeLoggedIn(false);
+                                    Map<String,Object> userValues = user.userMap();
+                                    Variable.USER_REF.child(cUser.getUid()).setValue(userValues).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                Log.d(TAG, "setValuetoDatabase: success");
+                                                startActivity(new Intent(MainActivity.this, SetUpAccountImageActivity.class));
+                                            }
+                                            else{
+                                                Log.d(TAG, "setValuetoDatabase: failed");
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.d(TAG, "userfoundindatabase: failed");
+                        Log.d(TAG, "databaseerror: failed");
+                    }
+                });
+            }
+        }
     }
 
-    private void setupViewPager(ViewPager viewPager)
-    {
+    private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
         adapter.addFragment(new HomeFragment(), "");
         adapter.addFragment(new EventFragment(), "");
@@ -338,31 +234,7 @@ public class MainActivity extends AppCompatActivity{
         mainTabLayout.getTabAt(4).setIcon(R.drawable.ic_outline_settings_24);
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onSupportNavigateUp() {
-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-//                || super.onSupportNavigateUp();
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        if (item.getItemId() == R.id.action_settings) {
-//            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//
-//    }
-
-//    //run after create layout
+    //run after create layout
     @Override
     protected void onStart() {
         super.onStart();
@@ -377,8 +249,7 @@ public class MainActivity extends AppCompatActivity{
             final FirebaseUser cUser = cAuth.getCurrentUser();
 
             //if user != null
-            if(cUser != null)
-            {
+            if(cUser != null) {
                 //show success message to console log
                 Log.d(TAG, "getCurrentUser: success");
                 FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -436,8 +307,7 @@ public class MainActivity extends AppCompatActivity{
                 });
 
             }
-            else
-            {
+            else {
                 //show error message to console log
                 Log.d(TAG, "getCurrentUser: failed");
 
@@ -475,8 +345,7 @@ public class MainActivity extends AppCompatActivity{
             super.onBackPressed();
             return;
         }
-        else
-        {
+        else {
             //initialize the message
             backToast = Toasty.info(getApplicationContext(),"Press back again to exit",Toast.LENGTH_LONG);
 

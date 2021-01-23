@@ -121,6 +121,9 @@
     <string name="inputAmount">Enter Amount</string>
     <string name="payWithStripe">Pay With Stripe</string>
     <string name="sendMessage">Send Message</string>
+    <string name="addFriend">Add Friend</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
     <string name="organizationInformation">Organization Information</string>
     <string name="personalInformation">Personal Information</string>
     <string name="contribution">Contribution</string>

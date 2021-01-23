@@ -163,7 +163,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
             }
         });
 
-
+        promptEventImageTV.addTextChangedListener(createEventTextWatcher);
         eventNameTIL.getEditText().addTextChangedListener(createEventTextWatcher);
         eventDescriptionTIL.getEditText().addTextChangedListener(createEventTextWatcher);
         eventStartDateTV.addTextChangedListener(createEventTextWatcher);
@@ -330,7 +330,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         }
     }
 
-    private TextWatcher createEventTextWatcher = new TextWatcher() {
+    private final TextWatcher createEventTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -338,13 +338,14 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String eventImage = promptEventImageTV.getText().toString().trim();
             String eventName = eventNameTIL.getEditText().getText().toString().trim();
             String eventDescription = eventDescriptionTIL.getEditText().getText().toString().trim();
             String eventStartDate = eventStartDateTV.getText().toString().trim();
             String eventEndDate = eventEndDateTV.getText().toString().trim();
             String eventTargetFund = eventTargetFundsTIL.getEditText().getText().toString().trim();
 
-            publishTextView.setEnabled(!eventName.isEmpty() && !eventDescription.isEmpty() && !eventStartDate.isEmpty() && !eventEndDate.isEmpty() && !eventTargetFund.isEmpty());
+            publishTextView.setEnabled(!eventImage.isEmpty() && !eventName.isEmpty() && !eventDescription.isEmpty() && !eventStartDate.isEmpty() && !eventEndDate.isEmpty() && !eventTargetFund.isEmpty());
 
             if(!publishTextView.isEnabled()){
                 publishTextView.setTextColor(getColor(R.color.colorGray));
@@ -354,7 +355,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
                 publishTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        createEvent();
                     }
                 });
             }
@@ -366,105 +367,107 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
         }
     };
 
-    public void createEvent(View view) {
-        if(!validateEventMainImage() | !validateEventName() | !validateEventDescription() | !validateEventStartDate() | !validateEventEndDate() | !validateEventTargetFund()){
-            return;
-        }
+    public void createEvent() {
 
         final FirebaseUser cUser = cAuth.getCurrentUser();
 
-        if(cUser != null){
-            final String eventName = eventNameTIL.getEditText().getText().toString().trim();
-            final String eventDescription = eventDescriptionTIL.getEditText().getText().toString().trim();
-            final String eventStartDate = eventStartDateTV.getText().toString().trim();
-            final String eventEndDate = eventEndDateTV.getText().toString().trim();
-            final double eventTargetFund = Double.parseDouble(eventTargetFundsTIL.getEditText().getText().toString().trim());
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
-            Date dateObj = Calendar.getInstance().getTime();
-            final String dateTimeCreated = simpleDateFormat.format(dateObj);
-            //get extension from image uri
-
-            //initialize pattern of date
-            SimpleDateFormat imageSimpleDateFormat = new SimpleDateFormat("ddMMyyyyhhmmss", Locale.US);
-            //initialize date object
-            Date imageDateObj = Calendar.getInstance().getTime();
-            //initialize string for current date time use the pattern above
-            final String imageDateTime = imageSimpleDateFormat.format(imageDateObj);
-            String extension = imageUri.toString().substring(imageUri.toString().lastIndexOf("."));
-            final String eventImageName = "event"+imageDateTime+extension;
-
-            //a progress dialog to view progress of create account
-            final ProgressDialog progressDialog = new ProgressDialog(CreateEventActivity.this);
-
-            //set message for progress dialog
-            progressDialog.setMessage("Creating Event...");
-
-            //show dialog
-            progressDialog.show();
-
-            Variable.EVENT_SR.child(eventImageName).putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Log.d(TAG, "uploadEventImage: failed");
-                    Event newEvent = new Event();
-                    newEvent.setEventTitle(eventName);
-                    newEvent.setEventDescription(eventDescription);
-                    newEvent.setEventStartDate(eventStartDate);
-                    newEvent.setEventEndDate(eventEndDate);
-                    newEvent.setEventTargetAmount(eventTargetFund);
-                    newEvent.setEventCurrentAmount(0);
-                    newEvent.setEventDateTimeCreated(dateTimeCreated);
-                    newEvent.setEventHandler(cUser.getUid());
-                    newEvent.setEventImageName(eventImageName);
-                    newEvent.setEventVerifyStatus(false);
-
-                    DatabaseReference pushedEvent = Variable.EVENT_REF.push();
-                    String id = pushedEvent.getKey();
-                    newEvent.setEventId(id);
-                    Variable.EVENT_REF.child(newEvent.getEventId()).setValue(newEvent).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            progressDialog.dismiss();
-                            Log.d(TAG, "uploadEventData: success");
-                            Toasty.success(CreateEventActivity.this, "Create Event Successfully",Toast.LENGTH_SHORT, true).show();
-                            finish();
-                        }
-                    })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    progressDialog.dismiss();
-                                    Log.d(TAG, "uploadEventData: failed");
-                                    Toasty.error(CreateEventActivity.this, "Something went Wrong. Please Contact Administrator",Toast.LENGTH_SHORT, true).show();
-                                }
-                            });
-
-                }
-            })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Log.d(TAG, "uploadEventImage: failed");
-                            Toasty.error(CreateEventActivity.this, "Create Event Failed. Please Try Again",Toast.LENGTH_SHORT, true).show();
-                        }
-                    });
+        if(!device.haveNetwork()){
+            //show error message
+            Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_LONG).show();
         }
         else{
-            //show error message to console log
-            Log.d(TAG, "getCurrentUser: failed");
+            if(cUser != null){
+                final String eventName = eventNameTIL.getEditText().getText().toString().trim();
+                final String eventDescription = eventDescriptionTIL.getEditText().getText().toString().trim();
+                final String eventStartDate = eventStartDateTV.getText().toString().trim();
+                final String eventEndDate = eventEndDateTV.getText().toString().trim();
+                final double eventTargetFund = Double.parseDouble(eventTargetFundsTIL.getEditText().getText().toString().trim());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
+                Date dateObj = Calendar.getInstance().getTime();
+                final String dateTimeCreated = simpleDateFormat.format(dateObj);
+                //get extension from image uri
 
-            //show error message to user
-            Toasty.error(getApplicationContext(), "Session is expired. Please relogin.", Toast.LENGTH_SHORT,true).show();
+                //initialize pattern of date
+                SimpleDateFormat imageSimpleDateFormat = new SimpleDateFormat("ddMMyyyyhhmmss", Locale.US);
+                //initialize date object
+                Date imageDateObj = Calendar.getInstance().getTime();
+                //initialize string for current date time use the pattern above
+                final String imageDateTime = imageSimpleDateFormat.format(imageDateObj);
+                String extension = imageUri.toString().substring(imageUri.toString().lastIndexOf("."));
+                final String eventImageName = "event"+imageDateTime+extension;
 
-            //intent user to login page (relogin)
-            Intent i = new Intent(CreateEventActivity.this, LoginActivity.class);
+                //a progress dialog to view progress of create account
+                final ProgressDialog progressDialog = new ProgressDialog(CreateEventActivity.this);
 
-            //clear the background task
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(i);
+                //set message for progress dialog
+                progressDialog.setMessage("Creating Event...");
+
+                //show dialog
+                progressDialog.show();
+
+                Variable.EVENT_SR.child(eventImageName).putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.d(TAG, "uploadEventImage: failed");
+                        Event newEvent = new Event();
+                        newEvent.setEventTitle(eventName);
+                        newEvent.setEventDescription(eventDescription);
+                        newEvent.setEventStartDate(eventStartDate);
+                        newEvent.setEventEndDate(eventEndDate);
+                        newEvent.setEventTargetAmount(eventTargetFund);
+                        newEvent.setEventCurrentAmount(0);
+                        newEvent.setEventDateTimeCreated(dateTimeCreated);
+                        newEvent.setEventHandler(cUser.getUid());
+                        newEvent.setEventImageName(eventImageName);
+                        newEvent.setEventVerifyStatus(false);
+
+                        DatabaseReference pushedEvent = Variable.EVENT_REF.push();
+                        String id = pushedEvent.getKey();
+                        newEvent.setEventId(id);
+                        Variable.EVENT_REF.child(newEvent.getEventId()).setValue(newEvent).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                progressDialog.dismiss();
+                                Log.d(TAG, "uploadEventData: success");
+                                Toasty.success(CreateEventActivity.this, "Create Event Successfully",Toast.LENGTH_SHORT, true).show();
+                                finish();
+                            }
+                        })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        progressDialog.dismiss();
+                                        Log.d(TAG, "uploadEventData: failed");
+                                        Toasty.error(CreateEventActivity.this, "Something went Wrong. Please Contact Administrator",Toast.LENGTH_SHORT, true).show();
+                                    }
+                                });
+
+                    }
+                })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                progressDialog.dismiss();
+                                Log.d(TAG, "uploadEventImage: failed");
+                                Toasty.error(CreateEventActivity.this, "Create Event Failed. Please Try Again",Toast.LENGTH_SHORT, true).show();
+                            }
+                        });
+            }
+            else{
+                //show error message to console log
+                Log.d(TAG, "getCurrentUser: failed");
+
+                //show error message to user
+                Toasty.error(getApplicationContext(), "Session is expired. Please relogin.", Toast.LENGTH_SHORT,true).show();
+
+                //intent user to login page (relogin)
+                Intent i = new Intent(CreateEventActivity.this, LoginActivity.class);
+
+                //clear the background task
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
+            }
         }
-
 
     }
 
@@ -477,6 +480,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
                 promptEventImageTV.setVisibility(View.GONE);
                 eventImageView.setVisibility(View.VISIBLE);
                 imageUri = result.getUri();
+                promptEventImageTV.setText(imageUri.toString());
                 eventImageView.setImageURI(imageUri);
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {

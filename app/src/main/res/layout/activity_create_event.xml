@@ -22,7 +22,7 @@
             android:layout_height="200dp"
             android:background="@drawable/select_image_view"
             android:layout_margin="10dp"
-            android:text="@string/eventImage"
+            android:hint="@string/eventImage"
             android:gravity="center"
             android:onClick="chooseImage" />
 

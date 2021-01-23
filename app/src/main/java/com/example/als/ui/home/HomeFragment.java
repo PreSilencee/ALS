@@ -86,29 +86,7 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
         return root;
     }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.home, menu);
-
-        MenuItem action_search = menu.findItem(R.id.action_search_view);
-
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(action_search);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+    
 
     @Override
     public void onStart() {

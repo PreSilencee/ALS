@@ -26,6 +26,7 @@ import com.example.als.object.Organization;
 import com.example.als.object.Variable;
 import com.example.als.ui.home.HomeDonateActivity;
 import com.example.als.ui.home.HomeUserViewDetailsActivity;
+import com.example.als.ui.settings.AccountActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
@@ -93,11 +94,18 @@ public class HomeEventListFragmentAdapter extends RecyclerView.Adapter<HomeEvent
                                 holder.homeEventListProfileNameTV.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-
-                                        //go to the home user details page
-                                        Intent i = new Intent(context, HomeUserViewDetailsActivity.class);
-                                        i.putExtra(Variable.HOME_USER_SESSION_ID, organization.getUserId());
-                                        context.startActivity(i);
+                                        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+                                        if(cUser != null){
+                                            if(event.getEventHandler().equals(cUser.getUid())){
+                                                context.startActivity(new Intent(context, AccountActivity.class));
+                                            }
+                                            else{
+                                                //go to the home user details page
+                                                Intent i = new Intent(context, HomeUserViewDetailsActivity.class);
+                                                i.putExtra(Variable.HOME_USER_SESSION_ID, organization.getUserId());
+                                                context.startActivity(i);
+                                            }
+                                        }
                                     }
                                 });
                             }
@@ -164,10 +172,19 @@ public class HomeEventListFragmentAdapter extends RecyclerView.Adapter<HomeEvent
                                             holder.homeEventListProfileNameTV.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    //go to the home user details page
-                                                    Intent i = new Intent(context, HomeUserViewDetailsActivity.class);
-                                                    i.putExtra(Variable.HOME_USER_SESSION_ID, contributor.getUserId());
-                                                    context.startActivity(i);
+                                                    FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+                                                    if(cUser != null){
+                                                        if(event.getEventHandler().equals(cUser.getUid())){
+                                                            context.startActivity(new Intent(context, AccountActivity.class));
+                                                        }
+                                                        else{
+                                                            //go to the home user details page
+                                                            Intent i = new Intent(context, HomeUserViewDetailsActivity.class);
+                                                            i.putExtra(Variable.HOME_USER_SESSION_ID, contributor.getUserId());
+                                                            context.startActivity(i);
+                                                        }
+                                                    }
+
                                                 }
                                             });
                                         }
