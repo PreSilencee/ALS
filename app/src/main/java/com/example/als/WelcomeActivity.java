@@ -16,12 +16,20 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.als.handler.Connectivity;
+import com.example.als.object.Contributor;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
+import com.facebook.AccessToken;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -67,6 +75,8 @@ public class WelcomeActivity extends AppCompatActivity {
         else{
             // Check if user is signed in (non-null)
             final FirebaseUser currentUser = cAuth.getCurrentUser();
+            final AccessToken accessToken = AccessToken.getCurrentAccessToken();
+            final GoogleSignInAccount googleSignInAccount = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
             if(currentUser != null)
             {
                 //a progress dialog to view progress of create account
@@ -98,22 +108,145 @@ public class WelcomeActivity extends AppCompatActivity {
                                 Variable.USER_REF.child(currentUser.getUid()).setValue(userValues).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        Log.d(TAG, "login: success");
-                                        //show success message to the user
-                                        Toasty.success(WelcomeActivity.this,
-                                                "Login Successfully",
-                                                Toast.LENGTH_SHORT, true).show();
 
-                                        //log into main activity
-                                        Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
-                                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        startActivity(i);
+                                        if(accessToken != null || googleSignInAccount != null){
+                                            Variable.CONTRIBUTOR_REF.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if(snapshot.exists()){
+                                                        Contributor contributor = snapshot.getValue(Contributor.class);
 
-                                        //hide the progress dialog
-                                        progressDialog.dismiss();
+                                                        if(contributor != null){
+                                                            contributor.setName(currentUser.getDisplayName());
+                                                            contributor.setUserId(currentUser.getUid());
+                                                            contributor.setEmail(currentUser.getEmail());
+                                                            contributor.setProfileImageUrl(currentUser.getPhotoUrl().toString());
+                                                            contributor.setPhone(currentUser.getPhoneNumber());
 
-                                        //finish the activity
-                                        finish();
+                                                            Map<String, Object> contributorValues = contributor.contributorMap();
+
+                                                            Variable.CONTRIBUTOR_REF.child(currentUser.getUid()).updateChildren(contributorValues).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if(task.isSuccessful()){
+                                                                        Log.d(TAG, "login: success");
+                                                                        //show success message to the user
+                                                                        Toasty.success(WelcomeActivity.this,
+                                                                                "Login Successfully",
+                                                                                Toast.LENGTH_SHORT, true).show();
+
+                                                                        //log into main activity
+                                                                        Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
+                                                                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                                        startActivity(i);
+
+                                                                        //hide the progress dialog
+                                                                        progressDialog.dismiss();
+
+                                                                        //finish the activity
+                                                                        finish();
+                                                                    }
+                                                                    else{
+                                                                        Toasty.error(WelcomeActivity.this,
+                                                                                "Something went wrong. Please proceed login session",
+                                                                                Toast.LENGTH_SHORT, true).show();
+                                                                        progressDialog.dismiss();
+                                                                        Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                                                                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(WelcomeActivity.this, logoImageView, ViewCompat.getTransitionName(logoImageView));
+                                                                        startActivity(intent, options.toBundle());
+                                                                        finish();
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                    Log.d(TAG, "databaseerror:" + error.getMessage());
+                                                }
+                                            });
+                                        }
+//                                        else if(currentUser.getProviderId().equals(FacebookAuthProvider.PROVIDER_ID)){
+//                                            Variable.CONTRIBUTOR_REF.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+//                                                @Override
+//                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                                    if(snapshot.exists()){
+//                                                        Contributor contributor = snapshot.getValue(Contributor.class);
+//
+//                                                        if(contributor != null){
+//                                                            contributor.setName(currentUser.getDisplayName());
+//                                                            contributor.setUserId(currentUser.getUid());
+//                                                            contributor.setEmail(currentUser.getEmail());
+//                                                            contributor.setProfileImageUrl(currentUser.getPhotoUrl().toString());
+//                                                            contributor.setPhone(currentUser.getPhoneNumber());
+//
+//                                                            Map<String, Object> contributorValues = contributor.contributorMap();
+//
+//                                                            Variable.CONTRIBUTOR_REF.child(currentUser.getUid()).updateChildren(contributorValues).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                                @Override
+//                                                                public void onComplete(@NonNull Task<Void> task) {
+//                                                                    if(task.isSuccessful()){
+//                                                                        Log.d(TAG, "login: success");
+//                                                                        //show success message to the user
+//                                                                        Toasty.success(WelcomeActivity.this,
+//                                                                                "Login Successfully",
+//                                                                                Toast.LENGTH_SHORT, true).show();
+//
+//                                                                        //log into main activity
+//                                                                        Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
+//                                                                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                                                                        startActivity(i);
+//
+//                                                                        //hide the progress dialog
+//                                                                        progressDialog.dismiss();
+//
+//                                                                        //finish the activity
+//                                                                        finish();
+//                                                                    }
+//                                                                    else{
+//                                                                        Toasty.error(WelcomeActivity.this,
+//                                                                                "Something went wrong. Please proceed login session",
+//                                                                                Toast.LENGTH_SHORT, true).show();
+//                                                                        progressDialog.dismiss();
+//                                                                        Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+//                                                                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(WelcomeActivity.this, logoImageView, ViewCompat.getTransitionName(logoImageView));
+//                                                                        startActivity(intent, options.toBundle());
+//                                                                        finish();
+//                                                                    }
+//                                                                }
+//                                                            });
+//                                                        }
+//                                                    }
+//                                                }
+//
+//                                                @Override
+//                                                public void onCancelled(@NonNull DatabaseError error) {
+//                                                    Log.d(TAG, "databaseerror:" + error.getMessage());
+//                                                }
+//                                            });
+//                                        }
+                                        else{
+                                            Toasty.info(WelcomeActivity.this, "hello", Toast.LENGTH_LONG).show();
+//                                            Log.d(TAG, "login: success");
+//                                            //show success message to the user
+//                                            Toasty.success(WelcomeActivity.this,
+//                                                    "Login Successfully",
+//                                                    Toast.LENGTH_SHORT, true).show();
+//
+//                                            //log into main activity
+//                                            Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
+//                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                                            startActivity(i);
+//
+//                                            //hide the progress dialog
+//                                            progressDialog.dismiss();
+//
+//                                            //finish the activity
+//                                            finish();
+                                        }
+
                                     }
                                 })
                                         .addOnFailureListener(new OnFailureListener() {

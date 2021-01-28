@@ -56,6 +56,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.JsonIOException;
 import com.paypal.android.sdk.payments.PayPalPayment;
 
@@ -208,97 +210,22 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
-
+            //
         }
     };
 
     @Override
     protected void onStart() {
         super.onStart();
-
         if(!device.haveNetwork()){
             Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_LONG).show();
         }
-        else{
-            // Check if user is signed in (non-null)
-            final FirebaseUser currentUser = cAuth.getCurrentUser();
-            if(currentUser != null)
-            {
-                //a progress dialog to view progress of create account
-                final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
-
-                //set message for progress dialog
-                progressDialog.setMessage("Signing in...");
-
-                //show dialog
-                progressDialog.show();
-
-                Variable.USER_REF.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull final DataSnapshot snapshot) {
-                        if(snapshot.exists()){
-                            Log.d(TAG, "findUserInDatabase: success");
-                            User user = snapshot.getValue(User.class);
-
-                            if(user != null){
-                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
-                                Date dateObj = Calendar.getInstance().getTime();
-                                final String currentDateTime = simpleDateFormat.format(dateObj);
-                                user.setLoggedInDateTime(currentDateTime);
-
-                                Map<String, Object> userValues = user.userMap();
-
-                                Variable.USER_REF.child(currentUser.getUid()).setValue(userValues).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
-                                            Log.d(TAG, "login: success");
-                                            //show success message to the user
-                                            Toasty.success(LoginActivity.this,
-                                                    "Login Successfully",
-                                                    Toast.LENGTH_SHORT, true).show();
-
-                                            //log into main activity
-                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                            i.putExtra(Variable.USER_SESSION_ID, snapshot.getKey());
-                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(i);
-
-                                            //hide the progress dialog
-                                            progressDialog.dismiss();
-
-                                            //finish the activity
-                                            finish();
-                                        }
-                                        else{
-                                            Log.d(TAG, "login: failed");
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                        else
-                        {
-                            Log.d(TAG, "findUserInDatabase: failed");
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.d(TAG, "databaseerror:" + error.getMessage());
-                    }
-                });
-            }
-        }
-
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(!device.haveNetwork())
-        {
+        if(!device.haveNetwork()) {
             Toasty.error(getApplicationContext(),device.NetworkError(),Toast.LENGTH_SHORT,true).show();
         }
     }
@@ -486,14 +413,63 @@ public class LoginActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
-                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(i);
+                                            Variable.CONTRIBUTOR_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if(snapshot.exists()){
+                                                        Contributor contributor = snapshot.getValue(Contributor.class);
+                                                        contributor.setEmail(cUser.getEmail());
+                                                        contributor.setUserId(cUser.getUid());
+                                                        contributor.setName(cUser.getDisplayName());
+                                                        contributor.setProfileImageUrl(cUser.getPhotoUrl().toString());
+                                                        contributor.setPhone(cUser.getPhoneNumber());
 
-                                            //hide the progress dialog
-                                            progressDialog.dismiss();
+                                                        Map<String, Object> contributorValues = contributor.contributorMap();
+
+                                                        Variable.CONTRIBUTOR_REF.child(cUser.getUid()).updateChildren(contributorValues).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if(task.isSuccessful()){
+                                                                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                                    startActivity(i);
+
+                                                                    //hide the progress dialog
+                                                                    progressDialog.dismiss();
+                                                                }
+                                                                else{
+                                                                    Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                                                    "Please Try Again"
+                                                                            , Toast.LENGTH_SHORT).show();
+
+                                                                    //hide the progress dialog
+                                                                    progressDialog.dismiss();
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                    else{
+                                                        //show warning message (create account is successful,
+                                                        // but database not include the user's data
+                                                        Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                                        "Please Try Again"
+                                                                , Toast.LENGTH_SHORT).show();
+
+                                                        //hide the progress dialog
+                                                        progressDialog.dismiss();
+                                                    }
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                    Log.d(TAG, "databaseError: " + error.getMessage());
+                                                }
+                                            });
                                         }
                                         else{
+                                            //show warning message (create account is successful,
+                                            // but database not include the user's data
                                             Toasty.warning(getApplicationContext(), "Something went wrong. " +
                                                             "Please Try Again"
                                                     , Toast.LENGTH_SHORT).show();
@@ -504,80 +480,69 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                 });
                             }
+                            //set new contributor
                             else{
-                                final GoogleSignInAccount googleSignInAccount = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
-                                if(googleSignInAccount != null){
 
-                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
-                                    Date dateObj = Calendar.getInstance().getTime();
-                                    final String currentDateTime = simpleDateFormat.format(dateObj);
-                                    User newUser = new User();
-                                    newUser.setId(cUser.getUid());
-                                    newUser.setRole(Variable.CONTRIBUTOR);
-                                    newUser.setRegisterDateTime(currentDateTime);
-                                    newUser.setFirstTimeLoggedIn(false);
-                                    newUser.setLoggedInDateTime(currentDateTime);
+                                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
+                                Date dateObj = Calendar.getInstance().getTime();
+                                final String currentDateTime = simpleDateFormat.format(dateObj);
+                                User newUser = new User();
+                                newUser.setId(cUser.getUid());
+                                newUser.setRole(Variable.CONTRIBUTOR);
+                                newUser.setRegisterDateTime(currentDateTime);
+                                newUser.setFirstTimeLoggedIn(false);
+                                newUser.setLoggedInDateTime(currentDateTime);
 
-                                    Variable.USER_REF.child(cUser.getUid()).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()){
-                                                Contributor contributor = new Contributor();
-                                                contributor.setName(googleSignInAccount.getDisplayName());
-                                                contributor.setUserId(cUser.getUid());
-                                                contributor.setEmail(cUser.getEmail());
+                                Variable.USER_REF.child(cUser.getUid()).setValue(newUser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()){
+                                            Contributor contributor = new Contributor();
 
-                                                Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if(task.isSuccessful()){
-                                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                            startActivity(i);
+                                            contributor.setName(cUser.getDisplayName());
+                                            contributor.setUserId(cUser.getUid());
+                                            contributor.setEmail(cUser.getEmail());
+                                            contributor.setProfileImageUrl(cUser.getPhotoUrl().toString());
+                                            contributor.setPhone(cUser.getPhoneNumber());
 
-                                                            //hide the progress dialog
-                                                            progressDialog.dismiss();
-                                                        }
-                                                        else{
-                                                            //show warning message (create account is successful,
-                                                            // but database not include the user's data
-                                                            Toasty.warning(getApplicationContext(), "Something went wrong. " +
-                                                                            "Please Try Again"
-                                                                    , Toast.LENGTH_SHORT).show();
+                                            Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                        startActivity(i);
 
-                                                            //hide the progress dialog
-                                                            progressDialog.dismiss();
-                                                        }
+                                                        //hide the progress dialog
+                                                        progressDialog.dismiss();
                                                     }
-                                                });
-                                            }
-                                            else{
-                                                //show warning message (create account is successful,
-                                                // but database not include the user's data
-                                                Toasty.warning(getApplicationContext(), "Something went wrong. " +
-                                                                "Please Try Again"
-                                                        , Toast.LENGTH_SHORT).show();
+                                                    else{
+                                                        //show warning message (create account is successful,
+                                                        // but database not include the user's data
+                                                        Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                                        "Please Try Again"
+                                                                , Toast.LENGTH_SHORT).show();
 
-                                                //hide the progress dialog
-                                                progressDialog.dismiss();
-                                            }
+                                                        //hide the progress dialog
+                                                        progressDialog.dismiss();
+                                                    }
+                                                }
+                                            });
+
                                         }
-                                    });
+                                        else{
+                                            //show warning message (create account is successful,
+                                            // but database not include the user's data
+                                            Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                            "Please Try Again"
+                                                    , Toast.LENGTH_SHORT).show();
 
+                                            //hide the progress dialog
+                                            progressDialog.dismiss();
+                                        }
 
-
-                                }
-                                else{
-                                    Log.d(TAG, "loginWithGoogle: failed");
-
-                                    //show error message
-                                    Toasty.error(getApplicationContext(),
-                                            "Authentication with google failed. Please Try Again",
-                                            Toast.LENGTH_LONG).show();
-
-                                    //hide the progress dialog
-                                    progressDialog.dismiss();
-                                }
+                                    }
+                                });
                             }
                         }
 
@@ -586,8 +551,6 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d(TAG, "databaseError: " + error.getMessage());
                         }
                     });
-
-
                 }
                 else{
                     Log.d(TAG, "loginWithGoogle: failed");
@@ -633,18 +596,65 @@ public class LoginActivity extends AppCompatActivity {
 
                                 Map<String, Object> userValues = user.userMap();
 
-                                Variable.USER_REF.child(cUser.getUid()).setValue(userValues).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                Variable.USER_REF.child(cUser.getUid()).updateChildren(userValues).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
-                                            Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(i);
+                                            Variable.CONTRIBUTOR_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if(snapshot.exists()){
+                                                        Contributor contributor = snapshot.getValue(Contributor.class);
+                                                        contributor.setEmail(cUser.getEmail());
+                                                        contributor.setUserId(cUser.getUid());
+                                                        contributor.setName(cUser.getDisplayName());
+                                                        contributor.setProfileImageUrl(cUser.getPhotoUrl().toString());
+                                                        contributor.setPhone(cUser.getPhoneNumber());
 
-                                            //hide the progress dialog
-                                            progressDialog.dismiss();
+                                                        Map<String, Object> contributorValues = contributor.contributorMap();
+
+                                                        Variable.CONTRIBUTOR_REF.child(cUser.getUid()).updateChildren(contributorValues).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if(task.isSuccessful()){
+                                                                    Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                                                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                                    startActivity(i);
+
+                                                                    //hide the progress dialog
+                                                                    progressDialog.dismiss();
+                                                                }
+                                                                else{
+                                                                    Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                                                    "Please Try Again"
+                                                                            , Toast.LENGTH_SHORT).show();
+
+                                                                    //hide the progress dialog
+                                                                    progressDialog.dismiss();
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                    else{
+                                                        Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                                        "Please Try Again"
+                                                                , Toast.LENGTH_SHORT).show();
+
+                                                        //hide the progress dialog
+                                                        progressDialog.dismiss();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                    Log.d(TAG, "databaseError: "+error.getMessage());
+                                                }
+                                            });
+
                                         }
                                         else{
+                                            //show warning message (create account is successful,
+                                            // but database not include the user's data
                                             Toasty.warning(getApplicationContext(), "Something went wrong. " +
                                                             "Please Try Again"
                                                     , Toast.LENGTH_SHORT).show();
@@ -670,51 +680,38 @@ public class LoginActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
-                                            GraphRequest request = GraphRequest.newMeRequest(token, new GraphRequest.GraphJSONObjectCallback() {
+
+                                            Contributor contributor = new Contributor();
+
+                                            contributor.setName(cUser.getDisplayName());
+                                            contributor.setUserId(cUser.getUid());
+                                            contributor.setEmail(cUser.getEmail());
+                                            contributor.setProfileImageUrl(cUser.getPhotoUrl().toString());
+                                            contributor.setPhone(cUser.getPhoneNumber());
+
+                                            Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
-                                                public void onCompleted(JSONObject object, GraphResponse response) {
-                                                    if(object != null){
-                                                        try{
-                                                            Contributor contributor = new Contributor();
-                                                            contributor.setName(object.getString("name"));
-                                                            contributor.setUserId(cUser.getUid());
-                                                            contributor.setEmail(object.getString("email"));
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                        startActivity(i);
 
-                                                            Variable.CONTRIBUTOR_REF.child(cUser.getUid()).setValue(contributor).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<Void> task) {
-                                                                    if(task.isSuccessful()){
-                                                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                                                                        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                                        startActivity(i);
+                                                        //hide the progress dialog
+                                                        progressDialog.dismiss();
+                                                    }
+                                                    else{
+                                                        //show warning message (create account is successful,
+                                                        // but database not include the user's data
+                                                        Toasty.warning(getApplicationContext(), "Something went wrong. " +
+                                                                        "Please Try Again"
+                                                                , Toast.LENGTH_SHORT).show();
 
-                                                                        //hide the progress dialog
-                                                                        progressDialog.dismiss();
-                                                                    }
-                                                                    else{
-                                                                        //show warning message (create account is successful,
-                                                                        // but database not include the user's data
-                                                                        Toasty.warning(getApplicationContext(), "Something went wrong. " +
-                                                                                        "Please Try Again"
-                                                                                , Toast.LENGTH_SHORT).show();
-
-                                                                        //hide the progress dialog
-                                                                        progressDialog.dismiss();
-                                                                    }
-                                                                }
-                                                            });
-
-                                                        } catch (JSONException | NullPointerException e){
-                                                            e.printStackTrace();
-                                                        }
+                                                        //hide the progress dialog
+                                                        progressDialog.dismiss();
                                                     }
                                                 }
                                             });
-
-                                            Bundle parameters = new Bundle();
-                                            parameters.putString("fields", "id,name,email,link");
-                                            request.setParameters(parameters);
-                                            request.executeAsync();
                                         }
                                     }
                                 });

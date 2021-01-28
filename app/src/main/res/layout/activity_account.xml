@@ -7,188 +7,199 @@
     android:layout_height="match_parent"
     tools:context=".ui.settings.AccountActivity">
 
-    <LinearLayout
-        android:id="@+id/dataImageContainer"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/accountSwipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/accountCustomizeSearchViewToolbarView">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            app:civ_border_width="2dp"
-            app:civ_border_color="@color/colorGray"
-            android:layout_gravity="center"
-            android:id="@+id/accountImageView"
-            android:src="@drawable/ic_baseline_person_color_accent_24"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:padding="5dp"
-            android:hint="@string/uid"
-            android:layout_gravity="center"
-            android:id="@+id/uidTextView"
-            android:textStyle="italic"
-            style="@style/TextAppearance.AppCompat.Title"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="@string/title"
-            android:layout_gravity="center"
-            android:textStyle="italic"
-            android:id="@+id/positionTitleTextView"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/dataContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/dataImageContainer"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:background="@drawable/card_view_border">
-
-        <LinearLayout
-            android:id="@+id/accountNameLinearLayout"
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
 
-            <ImageView
-                android:layout_weight="0.5"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:padding="10dp"
-                android:src="@drawable/ic_outline_account_circle_24"
-                android:contentDescription="@string/accountName"
-                app:tint="@color/colorAccent" />
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_weight="1.5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:padding="10dp"
-                android:text="@string/accountName"
-                android:textSize="18sp"
-                android:id="@+id/usernameTextView"/>
+                <LinearLayout
+                    android:id="@+id/dataImageContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/welcome_background"
+                    android:orientation="vertical">
 
-        </LinearLayout>
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/accountImageView"
+                        android:layout_width="125dp"
+                        android:layout_height="125dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:src="@drawable/ic_baseline_person_color_accent_24"
+                        app:civ_border_color="@color/colorGray"
+                        app:civ_border_width="2dp" />
 
-        <View
-            android:id="@+id/accountNameView"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorAccent"
-            android:alpha="0.5"/>
+                    <TextView
+                        android:id="@+id/accountNameTextView"
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:hint="@string/accountName"
+                        android:padding="5dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
+                    <TextView
+                        android:id="@+id/accountPositionTitleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="5dp"
+                        android:text="@string/title"
+                        android:textStyle="italic" />
 
-            <ImageView
-                android:layout_weight="0.5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:padding="10dp"
-                android:src="@drawable/ic_outline_email_24"
-                android:contentDescription="@string/email"
-                app:tint="@color/colorAccent" />
+                    <LinearLayout
+                        android:id="@+id/accountSettingView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:weightSum="2"
+                        android:visibility="gone">
 
-            <TextView
-                android:layout_weight="1.5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:padding="10dp"
-                android:text="@string/email"
-                android:textSize="18sp"
-                android:id="@+id/emailTextView" />
+                        <Button
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/corner_button_main_filled"
+                            android:drawableStart="@drawable/ic_outline_image_24"
+                            android:drawableTint="@color/colorWhite"
+                            android:padding="10dp"
+                            android:text="@string/changeProfileImage"
+                            android:textAllCaps="false"
+                            android:textColor="@color/colorWhite"
+                            android:onClick="changeProfileImage"/>
 
-        </LinearLayout>
-
-        <View
-            android:id="@+id/phoneViewLine"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorAccent"
-            android:alpha="0.5"/>
-
-        <LinearLayout
-            android:id="@+id/phoneLinearLayoutView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <ImageView
-                android:layout_weight="0.5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:padding="10dp"
-                android:src="@drawable/ic_baseline_phone_android_24"
-                android:contentDescription="@string/phone"
-                app:tint="@color/colorAccent" />
-
-            <TextView
-                android:layout_weight="1.5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:padding="10dp"
-                android:text="@string/phone"
-                android:textSize="18sp"
-                android:id="@+id/phoneTextView"/>
-
-        </LinearLayout>
+                        <Button
+                            android:id="@+id/accountEditProfileButton"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/corner_button_main"
+                            android:text="@string/edit_profile"
+                            android:textAllCaps="false"
+                            android:textColor="@color/colorAccent"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:onClick="editProfile"/>
 
 
-    </LinearLayout>
+                    </LinearLayout>
 
-    <Button
-        android:id="@+id/accountProfileButton"
-        android:layout_marginTop="20dp"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/dataContainer"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:background="@drawable/corner_button_main"
-        android:text="@string/edit_profile"
-        android:textColor="@color/colorAccent"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_gravity="center" />
+                    <Button
+                        android:id="@+id/organizationProfileButton"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/corner_button_main"
+                        android:text="@string/organizationProfile"
+                        android:textAllCaps="false"
+                        android:textColor="@color/colorAccent"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_gravity="center"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/homeUserViewDetailsTitleTextView"
+                    style="@style/TextAppearance.AppCompat.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@string/personalInformation" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/card_view_border">
+
+                    <TextView
+                        android:id="@+id/emailTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:drawableStartCompat="@drawable/ic_outline_email_24"
+                        app:drawableTint="@color/colorAccent"
+                        android:drawablePadding="10dp"
+                        android:padding="10dp"
+                        android:hint="@string/email"/>
+
+                    <View
+                        android:id="@+id/phoneViewLine"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorAccent"
+                        android:alpha="0.5"/>
+
+                    <TextView
+                        android:id="@+id/phoneTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:drawableStartCompat="@drawable/ic_outline_email_24"
+                        app:drawableTint="@color/colorAccent"
+                        android:drawablePadding="10dp"
+                        android:padding="10dp"
+                        android:hint="@string/phone"/>
+
+                </LinearLayout>
+
+                <com.example.als.widget.AlsRecyclerView
+                    android:id="@+id/homeEventListRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="80dp"
+                    android:descendantFocusability="blocksDescendants"
+                    android:fitsSystemWindows="true"
+                    android:focusableInTouchMode="true" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/accountCustomizeSearchViewToolbarView"
+        layout="@layout/customize_home_user_details_toolbar"/>
+
+
+
+
 
 
 

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorAccent"
+    android:background="@color/colorWhite"
     android:orientation="horizontal"
     android:weightSum="2">
 
@@ -30,7 +30,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/accountName"
-            android:textColor="@android:color/background_light"
             android:textStyle="bold"
             android:textSize="18sp"/>
 

@@ -1,5 +1,7 @@
 package com.example.als.object;
 
+import android.net.Uri;
+
 import com.google.firebase.database.Exclude;
 
 import java.util.HashMap;
@@ -12,6 +14,7 @@ public class Contributor {
     private String name;
     private String phone;
     private String profileImageName;
+    private String profileImageUrl;
 
     public Contributor(){
         //
@@ -57,6 +60,14 @@ public class Contributor {
         this.userId = userId;
     }
 
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
     @Exclude
     public Map<String, Object> contributorMap(){
         HashMap<String,Object> result = new HashMap<>();
@@ -66,6 +77,7 @@ public class Contributor {
         result.put("email", email);
         result.put("phone", phone);
         result.put("profileImageName", profileImageName);
+        result.put("profileImageUrl", profileImageUrl);
 
         return result;
     }

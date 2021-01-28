@@ -73,7 +73,7 @@ public class SettingFragment extends Fragment {
         settingAccountBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(requireActivity(), AccountActivity.class));
             }
         });
 

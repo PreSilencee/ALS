@@ -3,7 +3,9 @@ package com.example.als.ui.settings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -31,11 +33,18 @@ import com.example.als.object.Contributor;
 import com.example.als.object.Organization;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
+import com.example.als.ui.SearchActivity;
+import com.example.als.ui.home.HomeUserViewDetailsActivity;
+import com.facebook.AccessToken;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -53,7 +62,7 @@ import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 
-public class AccountActivity extends AppCompatActivity {
+public class AccountActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     //tag for console log
     private static final String TAG = "AccountActivity";
@@ -72,16 +81,16 @@ public class AccountActivity extends AppCompatActivity {
     private ImageView accountIV;
 
     //variable textview
-    private TextView uidTV, positionTitleTV, usernameTV, emailTV, phoneTV;
+    private TextView accountNameTV, positionTitleTV, emailTV, phoneTV;
 
     //view
-    private View accountNameV, accountPhoneV;
+    private View accountPhoneV;
 
-    //linear layout
-    private LinearLayout accountNameLL, accountPhoneLL;
+    //Linear layout
+    private LinearLayout accountSettingView;
 
     //button
-    private Button accountProfileBtn;
+    private Button accountProfileBtn , organizationProfileBtn;
 
     //uri
     private Uri updateImageUri;
@@ -89,15 +98,17 @@ public class AccountActivity extends AppCompatActivity {
     //user
     private User user;
 
-    //contributor
-    private Contributor existedContributor;
+    private SwipeRefreshLayout accountSRL;
 
-    //organization
+    private Contributor existedContributor;
     private Organization existedOrganization;
 
-    private static final String editProfileText = "EDIT PROFILE";
+    Toolbar accountCustomizeSearchViewToolbar;
+    Button accountCustomizeSearchBtn;
 
-    private static final String organizationProfileText = "ORGANIZATION PROFILE";
+    AccessToken accessToken;
+    GoogleSignInAccount googleSignInAccount;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,24 +118,63 @@ public class AccountActivity extends AppCompatActivity {
         //initialize connectivity
         device = new Connectivity(AccountActivity.this);
 
+        accountCustomizeSearchViewToolbar = findViewById(R.id.customizeHomeUserToolbar);
+        accountCustomizeSearchBtn = findViewById(R.id.customizeHomeUserSearchButton);
+
+        setSupportActionBar(accountCustomizeSearchViewToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        accountCustomizeSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AccountActivity.this, SearchActivity.class));
+            }
+        });
+
 
 
         //initialize image view
         accountIV = findViewById(R.id.accountImageView);
 
         //initialize text view
-        uidTV = findViewById(R.id.uidTextView);
-        positionTitleTV = findViewById(R.id.positionTitleTextView);
-        usernameTV = findViewById(R.id.usernameTextView);
+        accountNameTV = findViewById(R.id.accountNameTextView);
+        positionTitleTV = findViewById(R.id.accountPositionTitleTextView);
         emailTV = findViewById(R.id.emailTextView);
         phoneTV = findViewById(R.id.phoneTextView);
-        accountNameV = findViewById(R.id.accountNameView);
-        accountNameLL = findViewById(R.id.accountNameLinearLayout);
         accountPhoneV = findViewById(R.id.phoneViewLine);
-        accountPhoneLL = findViewById(R.id.phoneLinearLayoutView);
 
-        accountProfileBtn = findViewById(R.id.accountProfileButton);
+        accountSettingView = findViewById(R.id.accountSettingView);
+        accountProfileBtn = findViewById(R.id.accountEditProfileButton);
+        organizationProfileBtn = findViewById(R.id.organizationProfileButton);
 
+        accountSRL = findViewById(R.id.accountSwipeRefreshLayout);
+        //swipeRefreshLayout function
+        accountSRL.setOnRefreshListener(this);
+        accountSRL.setColorSchemeResources(R.color.colorPrimary,
+                android.R.color.holo_green_dark,
+                android.R.color.holo_orange_dark,
+                android.R.color.holo_blue_dark);
+
+        accountSRL.post(new Runnable() {
+            @Override
+            public void run() {
+                accountSRL.setRefreshing(true);
+                initialize();
+            }
+        });
+
+
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    private void initialize(){
         if(!device.haveNetwork()){
             //show error message
             Toasty.error(getApplicationContext(),device.NetworkError(), Toast.LENGTH_SHORT,true).show();
@@ -137,158 +187,171 @@ public class AccountActivity extends AppCompatActivity {
 
             if(cUser != null){
                 emailTV.setText(cUser.getEmail());
+                accessToken = AccessToken.getCurrentAccessToken();
+                googleSignInAccount = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
 
-                Variable.USER_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
+                if(accessToken != null || googleSignInAccount != null){
+                    accountSettingView.setVisibility(View.GONE);
+                }
+                else{
+                    accountSettingView.setVisibility(View.VISIBLE);
+                }
+
+                Variable.USER_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if(snapshot.exists()){
                             user = snapshot.getValue(User.class);
 
                             if(user != null) {
-                                String uidtext = "UID: "+cUser.getUid();
-                                uidTV.setText(uidtext);
 
                                 if(user.getRole() != null){
-                                    String positionText = "POSITION: "+user.getRole();
-                                    positionTitleTV.setText(positionText);
+                                    positionTitleTV.setText(user.getRole());
+
+                                    if(user.getRole().equals(Variable.CONTRIBUTOR)){
+
+
+                                        Variable.CONTRIBUTOR_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                if(snapshot.exists()){
+                                                    Log.d(TAG, "userfoundinDatabse: success");
+                                                    existedContributor = snapshot.getValue(Contributor.class);
+
+                                                    if(existedContributor != null){
+
+                                                        if(existedContributor.getProfileImageUrl() != null){
+                                                            Log.d(TAG, "loadImage: success");
+                                                            Uri photoUri = Uri.parse(existedContributor.getProfileImageUrl());
+                                                            GlideApp.with(getApplicationContext())
+                                                                    .load(photoUri)
+                                                                    .placeholder(R.drawable.loading_image)
+                                                                    .into(accountIV);
+                                                        }
+                                                        else if(existedContributor.getProfileImageName() != null){
+
+                                                            StorageReference imageRef = Variable.CONTRIBUTOR_SR.child(cUser.getUid())
+                                                                    .child("profile").child(existedContributor.getProfileImageName());
+
+                                                            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                                @Override
+                                                                public void onSuccess(Uri uri) {
+                                                                    Log.d(TAG, "loadImage: success");
+                                                                    GlideApp.with(getApplicationContext())
+                                                                            .load(uri)
+                                                                            .placeholder(R.drawable.loading_image)
+                                                                            .into(accountIV);
+                                                                }
+                                                            })
+                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Log.d(TAG, "loadImage:Failed");
+                                                                            accountIV.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
+                                                                        }
+                                                                    });
+                                                        }
+                                                        else{
+                                                            accountIV.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
+                                                        }
+
+                                                        if(existedContributor.getName() == null){
+                                                            accountNameTV.setText("-");
+                                                        }
+                                                        else{
+                                                            accountNameTV.setText(existedContributor.getName());
+                                                        }
+
+                                                        if(existedContributor.getPhone() == null){
+                                                            phoneTV.setText("-");
+                                                        }
+                                                        else if(existedContributor.getPhone().equals(""))
+                                                        {
+                                                            phoneTV.setText("-");
+                                                        }
+                                                        else{
+                                                            phoneTV.setText(existedContributor.getPhone());
+                                                        }
+                                                    }
+                                                }
+                                                else{
+                                                    Log.d(TAG, "contributorfoundinDatabse: failed");
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                Log.d(TAG, "contributor database error: " + error.getMessage());
+                                            }
+                                        });
+
+                                    }
+                                    else{
+                                        organizationProfileBtn.setVisibility(View.VISIBLE);
+                                        Variable.ORGANIZATION_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                if(snapshot.exists()){
+                                                    Log.d(TAG, "userfoundinDatabse: success");
+                                                    existedOrganization = snapshot.getValue(Organization.class);
+
+                                                    if(existedOrganization != null){
+
+                                                        if(existedOrganization.getOrganizationProfileImageName() != null){
+
+                                                            StorageReference imageRef = Variable.ORGANIZATION_SR.child(cUser.getUid())
+                                                                    .child("profile").child(existedOrganization.getOrganizationProfileImageName());
+
+                                                            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                                @Override
+                                                                public void onSuccess(Uri uri) {
+                                                                    Log.d(TAG, "loadImage: success");
+                                                                    GlideApp.with(getApplicationContext())
+                                                                            .load(uri)
+                                                                            .placeholder(R.drawable.loading_image)
+                                                                            .into(accountIV);
+                                                                }
+                                                            })
+                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Log.d(TAG, "loadImage:Failed");
+                                                                            accountIV.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
+                                                                        }
+                                                                    });
+
+
+                                                        }
+                                                        else{
+                                                            accountIV.setImageResource(R.drawable.ic_baseline_home_work_color_accent_24);
+                                                        }
+
+                                                        if(existedOrganization.getOrganizationName() == null){
+                                                            accountNameTV.setText("-");
+                                                        }
+                                                        else{
+                                                            accountNameTV.setText(existedOrganization.getOrganizationName());
+                                                        }
+
+                                                        accountPhoneV.setVisibility(View.GONE);
+                                                        phoneTV.setVisibility(View.GONE);
+                                                    }
+                                                }
+                                                else{
+                                                    Log.d(TAG, "contributorfoundinDatabse: failed");
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                Log.d(TAG, "contributor database error: " + error.getMessage());
+                                            }
+                                        });
+                                    }
                                 }
                                 else{
                                     positionTitleTV.setText("-");
                                 }
-
-                                if(user.getRole().equals(Variable.CONTRIBUTOR)){
-                                    accountProfileBtn.setText(editProfileText);
-                                    Variable.CONTRIBUTOR_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            if(snapshot.exists()){
-                                                Log.d(TAG, "userfoundinDatabse: success");
-                                                existedContributor = snapshot.getValue(Contributor.class);
-
-                                                if(existedContributor != null){
-
-                                                    if(existedContributor.getProfileImageName() != null){
-
-                                                        StorageReference imageRef = Variable.CONTRIBUTOR_SR.child(cUser.getUid())
-                                                                .child("profile").child(existedContributor.getProfileImageName());
-
-                                                        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                            @Override
-                                                            public void onSuccess(Uri uri) {
-                                                                Log.d(TAG, "loadImage: success");
-                                                                GlideApp.with(getApplicationContext())
-                                                                        .load(uri)
-                                                                        .placeholder(R.drawable.loading_image)
-                                                                        .into(accountIV);
-                                                            }
-                                                        })
-                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                        Log.d(TAG, "loadImage:Failed");
-                                                                        accountIV.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
-                                                                    }
-                                                                });
-
-
-                                                    }
-                                                    else{
-                                                        accountIV.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
-                                                    }
-
-                                                    if(existedContributor.getName() == null){
-                                                        usernameTV.setText("-");
-                                                    }
-                                                    else{
-                                                        usernameTV.setText(existedContributor.getName());
-                                                    }
-
-                                                    if(existedContributor.getPhone() == null){
-                                                        phoneTV.setText("-");
-                                                    }
-                                                    else
-                                                    {
-                                                        phoneTV.setText(existedContributor.getPhone());
-                                                    }
-                                                }
-                                            }
-                                            else{
-                                                Log.d(TAG, "contributorfoundinDatabse: failed");
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-                                            Log.d(TAG, "contributor database error: " + error.getMessage());
-                                        }
-                                    });
-                                }
-                                else{
-                                    accountProfileBtn.setText(organizationProfileText);
-                                    Variable.ORGANIZATION_REF.child(cUser.getUid()).addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            if(snapshot.exists()){
-                                                Log.d(TAG, "userfoundinDatabse: success");
-                                                existedOrganization = snapshot.getValue(Organization.class);
-
-                                                if(existedOrganization != null){
-
-                                                    if(existedOrganization.getOrganizationProfileImageName() != null){
-
-                                                        StorageReference imageRef = Variable.ORGANIZATION_SR.child(cUser.getUid())
-                                                                .child("profile").child(existedOrganization.getOrganizationProfileImageName());
-
-                                                        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                            @Override
-                                                            public void onSuccess(Uri uri) {
-                                                                Log.d(TAG, "loadImage: success");
-                                                                GlideApp.with(getApplicationContext())
-                                                                        .load(uri)
-                                                                        .placeholder(R.drawable.loading_image)
-                                                                        .into(accountIV);
-                                                            }
-                                                        })
-                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                        Log.d(TAG, "loadImage:Failed");
-                                                                        accountIV.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
-                                                                    }
-                                                                });
-
-
-                                                    }
-                                                    else{
-                                                        accountIV.setImageResource(R.drawable.ic_baseline_home_work_color_accent_24);
-                                                    }
-
-                                                    if(existedOrganization.getOrganizationName() == null){
-                                                        usernameTV.setText("-");
-                                                    }
-                                                    else{
-                                                        usernameTV.setText(existedOrganization.getOrganizationName());
-                                                    }
-
-                                                    accountNameV.setVisibility(View.GONE);
-                                                    accountNameLL.setVisibility(View.GONE);
-                                                    accountPhoneV.setVisibility(View.GONE);
-                                                    phoneTV.setVisibility(View.GONE);
-                                                    accountPhoneLL.setVisibility(View.GONE);
-                                                }
-                                            }
-                                            else{
-                                                Log.d(TAG, "contributorfoundinDatabse: failed");
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-                                            Log.d(TAG, "contributor database error: " + error.getMessage());
-                                        }
-                                    });
-                                }
-
                             }
                         }
                     }
@@ -300,28 +363,13 @@ public class AccountActivity extends AppCompatActivity {
                 });
             }
 
-            accountIV.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    configureImage();
-                    return true;
-                }
-            });
-
-            accountProfileBtn.setOnClickListener(new View.OnClickListener() {
+            organizationProfileBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(user.getRole().equals(Variable.CONTRIBUTOR)){
-                        openEditDialog();
-                    }
-                    else if(user.getRole().equals(Variable.ORGANIZATION)){
-                        startActivity(new Intent(AccountActivity.this, OrganizationProfileActivity.class));
-                    }
+                    startActivity(new Intent(AccountActivity.this, OrganizationProfileActivity.class));
                 }
             });
-
-
-
+            accountSRL.setRefreshing(false);
         }
     }
 
@@ -359,7 +407,7 @@ public class AccountActivity extends AppCompatActivity {
         }
         else{
             //get current user
-            FirebaseUser cUser = cAuth.getCurrentUser();
+            FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
 
             //if user != null
             if(cUser != null)
@@ -711,5 +759,18 @@ public class AccountActivity extends AppCompatActivity {
                 Log.d(TAG, "permission: denied");
             }
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        initialize();
+    }
+
+    public void changeProfileImage(View view) {
+        configureImage();
+    }
+
+    public void editProfile(View view) {
+        openEditDialog();
     }
 }

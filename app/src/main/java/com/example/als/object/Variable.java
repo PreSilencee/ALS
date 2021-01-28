@@ -38,6 +38,9 @@ public class Variable {
     public static final DatabaseReference DONATION_REF =
             FirebaseDatabase.getInstance()
                     .getReference().child("donation");
+    public static final DatabaseReference FOLLOW_REF =
+            FirebaseDatabase.getInstance()
+                    .getReference().child("follow");
 
 
     //storage reference

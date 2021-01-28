@@ -193,8 +193,17 @@ public class HomeEventListFragmentAdapter extends RecyclerView.Adapter<HomeEvent
                                             holder.homeEventListProfileNameTV.setText("-");
                                         }
 
+                                        if(contributor.getProfileImageUrl() != null){
+                                            Uri photoUri = Uri.parse(contributor.getProfileImageUrl());
+                                            Log.d(TAG, "loadProfileImage: success");
+                                            //push image into image view
+                                            Glide.with(context)
+                                                    .load(photoUri)
+                                                    .placeholder(R.drawable.loading_image)
+                                                    .into(holder.homeEventListProfileIV);
+                                        }
                                         //if contributor profile image name not null
-                                        if(contributor.getProfileImageName() != null){
+                                        else if(contributor.getProfileImageName() != null){
 
                                             //go to the firebase storage reference
                                             StorageReference profileImageRef = Variable.CONTRIBUTOR_SR.child(event.getEventHandler())
