@@ -17,8 +17,12 @@
         android:roundIcon="@mipmap/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.home.HomeOrganizationViewDetailsActivity"></activity>
+        <activity android:name=".ui.home.HomeOrganizationViewDetailsActivity"/>
         <activity android:name=".ui.more.DonationHistoryActivity" />
+
+        <meta-data
+            android:name="com.razorpay.ApiKey"
+            android:value="rzp_test_DXEon21PSbySPB"/>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -43,10 +47,6 @@
         <activity android:name=".ui.SearchActivity" />
         <activity android:name=".RegisterOrganizationActivity" />
         <activity android:name=".RegisterContributorActivity" />
-
-        <service
-            android:name="com.paypal.android.sdk.payments.PayPalService"
-            android:exported="false" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

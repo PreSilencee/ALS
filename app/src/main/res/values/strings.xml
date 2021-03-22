@@ -145,6 +145,7 @@
     <string name="view">View</string>
     <string name="percent">per%</string>
     <string name="emptyOrganization">No Organization has been found</string>
+    <string name="pay_with_razorpay">Pay With RazorPay</string>
 
 
 </resources>

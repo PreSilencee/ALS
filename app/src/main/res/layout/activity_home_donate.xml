@@ -73,19 +73,15 @@
         android:visibility="gone"/>
 
     <Button
-        android:id="@+id/homeDonatePayPalButton"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        android:id="@+id/homeDonateRazorPayButton"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:background="@drawable/corner_button_blue_filled"
-        android:text="@string/payWithPayPal"
+        android:backgroundTint="@color/colorBlue"
         android:textSize="20sp"
+        android:text="@string/pay_with_razorpay"
         android:textColor="@color/colorWhite"
-        android:clickable="true"
-        android:focusable="true"
-        app:rippleColor="@color/colorBlue"
         android:visibility="gone"/>
 
 

@@ -47,10 +47,10 @@ public class DonationHistoryListFragmentAdapter extends RecyclerView.Adapter<Don
         if(donation.getDonationDateTime() != null){
 
             //separate the date and time
-            String[] separatedDateAndTime = donation.getDonationDateTime().split("T");
+            String[] separatedDateAndTime = donation.getDonationDateTime().split(" ");
 
             //get date
-            String[] separatedDate = separatedDateAndTime[0].split("-");
+            String[] separatedDate = separatedDateAndTime[0].split("/");
 
             //separate the year, day, month of date to three text view
             holder.donationHistoryListYearTV.setText(separatedDate[0]);

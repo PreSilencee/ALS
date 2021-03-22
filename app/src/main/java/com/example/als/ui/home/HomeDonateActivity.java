@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -39,35 +40,25 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.paypal.android.sdk.payments.PayPalAuthorization;
-import com.paypal.android.sdk.payments.PayPalConfiguration;
-import com.paypal.android.sdk.payments.PayPalFuturePaymentActivity;
-import com.paypal.android.sdk.payments.PayPalPayment;
-import com.paypal.android.sdk.payments.PayPalService;
-import com.paypal.android.sdk.payments.PaymentActivity;
-import com.paypal.android.sdk.payments.PaymentConfirmation;
 
+import com.razorpay.Checkout;
+import com.razorpay.PaymentResultListener;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
 
 
-public class HomeDonateActivity extends AppCompatActivity{
-
-    public static final int PAYPAL_REQUEST_CODE = 7171;
-    public static final int PAYPAL_REQUEST_FUTURE_CODE = 7172;
-
-    private static final String CONFIG_ENVIRONMENT = PayPalConfiguration.ENVIRONMENT_SANDBOX;
-    private static PayPalConfiguration config;
+public class HomeDonateActivity extends AppCompatActivity implements PaymentResultListener {
 
     //tag for console log
     private static final String TAG = "HomeDonateActivity";
-    //private GoogleSignInClient cGoogleSignInClient;
 
     //connectivity
     private Connectivity device;
@@ -85,14 +76,14 @@ public class HomeDonateActivity extends AppCompatActivity{
     //textview
     private TextView homeDonatePaymentMethodTV;
 
-    //button
-    private Button homeDonatePayPalBtn;
-
     //edit text
     private EditText homeDonateOtherAmountET;
 
     private String userId;
     private String eventId;
+    private String eventName;
+
+    Button homeDonateRazorPayBtn;
 
 
     @Override
@@ -101,7 +92,8 @@ public class HomeDonateActivity extends AppCompatActivity{
         setContentView(R.layout.activity_home_donate);
 
         device = new Connectivity(HomeDonateActivity.this);
-        configPayPal();
+        Checkout.preload(getApplicationContext());
+
 
         Intent session = getIntent();
 
@@ -118,6 +110,15 @@ public class HomeDonateActivity extends AppCompatActivity{
         if(session.hasExtra(Variable.HOME_EVENT_SESSION_ID)){
             eventId = session.getStringExtra(Variable.HOME_EVENT_SESSION_ID);
             Log.d(TAG, "eventId: "+ eventId);
+        }
+        else{
+            Toasty.warning(getApplicationContext(), "Something went wrong. Please Try Again",Toast.LENGTH_SHORT,true).show();
+            finish();
+        }
+
+        if(session.hasExtra(Variable.HOME_EVENT_NAME_SESSION_ID)){
+            eventName = session.getStringExtra(Variable.HOME_EVENT_NAME_SESSION_ID);
+            Log.d(TAG, "eventName: "+ eventName);
         }
         else{
             Toasty.warning(getApplicationContext(), "Something went wrong. Please Try Again",Toast.LENGTH_SHORT,true).show();
@@ -141,18 +142,18 @@ public class HomeDonateActivity extends AppCompatActivity{
                 homeDonateOtherAmountRB = findViewById(R.id.homeDonateOtherAmountRadioButton);
                 homeDonateOtherAmountET = findViewById(R.id.homeDonateOtherAmountEditText);
                 homeDonatePaymentMethodTV = findViewById(R.id.homeDonatePaymentMethodTextView);
-                homeDonatePayPalBtn = findViewById(R.id.homeDonatePayPalButton);
+                homeDonateRazorPayBtn = findViewById(R.id.homeDonateRazorPayButton);
 
                 homeDonateRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(RadioGroup group, int checkedId) {
                         if(checkedId == -1){
                             homeDonatePaymentMethodTV.setVisibility(View.GONE);
-                            homeDonatePayPalBtn.setVisibility(View.GONE);
+                            homeDonateRazorPayBtn.setVisibility(View.GONE);
                         }
                         else{
                             homeDonatePaymentMethodTV.setVisibility(View.VISIBLE);
-                            homeDonatePayPalBtn.setVisibility(View.VISIBLE);
+                            homeDonateRazorPayBtn.setVisibility(View.VISIBLE);
                         }
                     }
                 });
@@ -169,10 +170,10 @@ public class HomeDonateActivity extends AppCompatActivity{
                     }
                 });
 
-                homeDonatePayPalBtn.setOnClickListener(new View.OnClickListener() {
+                homeDonateRazorPayBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startPayPalDonation();
+                        startPayment();
                     }
                 });
 
@@ -193,29 +194,6 @@ public class HomeDonateActivity extends AppCompatActivity{
             }
         }
 
-    }
-
-    private void configPayPal(){
-        config = new PayPalConfiguration()
-                .environment(CONFIG_ENVIRONMENT)
-                .clientId(Config.PAYPAL_CLIENT_ID);
-    }
-
-    private void startPayPalDonation(){
-        if(getSelectedAmount() != 0.0){
-            Intent intent = new Intent(this, PayPalService.class);
-            intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
-            startService(intent);
-            PayPalPayment payPalPayment = new PayPalPayment(BigDecimal.valueOf(getSelectedAmount()), "MYR",
-                    "Donation for "+eventId, PayPalPayment.PAYMENT_INTENT_SALE);
-            Intent payment = new Intent(this, PaymentActivity.class);
-            payment.putExtra(PaymentActivity.EXTRA_PAYMENT, payPalPayment);
-            payment.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
-            startActivityForResult(payment, PAYPAL_REQUEST_CODE);
-        }
-        else{
-            Toasty.error(getApplicationContext(), "Please Select/Type a valid amount", Toast.LENGTH_SHORT, true).show();
-        }
     }
 
     @Override
@@ -262,6 +240,8 @@ public class HomeDonateActivity extends AppCompatActivity{
         }
         super.onStop();
     }
+
+
 
     @Override
     protected void onResume() {
@@ -331,146 +311,90 @@ public class HomeDonateActivity extends AppCompatActivity{
         super.onDestroy();
     }
 
+    public void startPayment() {
+
+        if(getSelectedAmount() != 0.0){
+            double amount = getSelectedAmount() * 100;
+            Checkout checkout = new Checkout();
+            checkout.setImage(R.mipmap.ic_logo);
+            final Activity activity = this;
+
+            try {
+                JSONObject options = new JSONObject();
+
+                options.put("name", "AlittleShare");
+                options.put("description", "Donation for "+eventName);
+                options.put("currency", "MYR");
+                options.put("amount", amount);
+
+                checkout.open(activity, options);
+
+            } catch(Exception e) {
+                Log.e(TAG, "Error in starting Razorpay Checkout", e);
+            }
+        }
+        else{
+            Toasty.warning(getApplicationContext(), "Please enter valid donation", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onPaymentSuccess(String s) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
+        Date dateObj = Calendar.getInstance().getTime();
+        final String currentDateTime = simpleDateFormat.format(dateObj);
+        final Donation donation = new Donation();
+        donation.setDonationCurrencyCode("MYR");
+        donation.setDonationState(Variable.SUCCESS);
+        donation.setDonationAmount(getSelectedAmount());
+        donation.setDonationId(s);
+        donation.setDonationDateTime(currentDateTime);
+        donation.setDonationEventId(eventId);
+        donation.setDonationUserId(userId);
 
-        if(requestCode == PAYPAL_REQUEST_CODE){
-            if(resultCode == RESULT_OK){
-                PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
-                if(confirmation != null){
-                    try{
-                        System.out.println(confirmation.toJSONObject().toString(4));
-                        System.out.println(confirmation.getPayment().toJSONObject().toString(4));
-                        JSONObject response = confirmation.toJSONObject().getJSONObject("response");
-                        final Donation donation = new Donation();
-                        donation.setDonationId(response.getString("id"));
-                        donation.setDonationAmount(getSelectedAmount());
-                        donation.setDonationDateTime(response.getString("create_time"));
-                        donation.setDonationUserId(userId);
-                        donation.setDonationEventId(eventId);
-                        donation.setDonationState(response.getString("state"));
-                        donation.setDonationCurrencyCode("MYR");
+        Variable.DONATION_REF.child(s).setValue(donation).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Variable.EVENT_REF.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if(snapshot.exists()){
+                                Event event = snapshot.getValue(Event.class);
 
-                        Variable.DONATION_REF.child(donation.getDonationId()).setValue(donation).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful()){
-                                    Variable.EVENT_REF.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                if(event != null){
+                                    event.setEventCurrentAmount(event.getEventCurrentAmount() + donation.getDonationAmount());
+                                    Map<String, Object> eventValues = event.eventMap();
+                                    Variable.EVENT_REF.child(eventId).updateChildren(eventValues).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            if(snapshot.exists()){
-                                                Event event = snapshot.getValue(Event.class);
-
-                                                if(event != null){
-                                                    event.setEventCurrentAmount(event.getEventCurrentAmount() + donation.getDonationAmount());
-                                                    Map<String, Object> eventValues = event.eventMap();
-                                                    Variable.EVENT_REF.child(eventId).updateChildren(eventValues).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            if(task.isSuccessful()){
-                                                                Toasty.success(getApplicationContext(), "Donate Successfully", Toast.LENGTH_SHORT, true).show();
-                                                                finish();
-                                                            }
-                                                            else{
-                                                                Toasty.error(getApplicationContext(), "Something went wrong. Please contact administrator", Toast.LENGTH_SHORT,true).show();
-                                                            }
-                                                        }
-                                                    });
-                                                }
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                Toasty.success(getApplicationContext(), "Donate Successfully", Toast.LENGTH_SHORT, true).show();
+                                                finish();
                                             }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-                                            Log.d(TAG, "databaseError: "+ error.getDetails());
+                                            else{
+                                                Toasty.error(getApplicationContext(), "Something went wrong. Please contact administrator", Toast.LENGTH_SHORT,true).show();
+                                            }
                                         }
                                     });
                                 }
                             }
-                        });
-
-                    } catch (JSONException e){
-                        Toasty.error(this, e.toString(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-            else if(resultCode == RESULT_CANCELED){
-                Toasty.error(this, "Payment has been cancelled", Toast.LENGTH_SHORT).show();
-            }else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID){
-                Toasty.error(this, "Error Occured", Toast.LENGTH_SHORT).show();
-            }
-        }
-        else if(requestCode == PAYPAL_REQUEST_FUTURE_CODE){
-            if(requestCode == RESULT_OK){
-                PayPalAuthorization authorization = data.getParcelableExtra(PayPalFuturePaymentActivity.EXTRA_RESULT_AUTHORIZATION);
-
-                if(authorization != null){
-                    String authorization_code = authorization.getAuthorizationCode();
-
-                    if(authorization_code != null){
-                        PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
-                        if(confirmation != null){
-                            try{
-                                System.out.println(confirmation.toJSONObject().toString(4));
-                                System.out.println(confirmation.getPayment().toJSONObject().toString(4));
-                                JSONObject response = confirmation.toJSONObject().getJSONObject("response");
-                                final Donation donation = new Donation();
-                                donation.setDonationId(response.getString("id"));
-                                donation.setDonationAmount(getSelectedAmount());
-                                donation.setDonationDateTime(response.getString("create_time"));
-                                donation.setDonationUserId(userId);
-                                donation.setDonationEventId(eventId);
-                                donation.setDonationState(response.getString("state"));
-                                donation.setDonationCurrencyCode("MYR");
-
-                                Variable.DONATION_REF.child(donation.getDonationId()).setValue(donation).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if(task.isSuccessful()){
-                                            Variable.EVENT_REF.child(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    if(snapshot.exists()){
-                                                        Event event = snapshot.getValue(Event.class);
-
-                                                        if(event != null){
-                                                            event.setEventCurrentAmount(event.getEventCurrentAmount() + donation.getDonationAmount());
-                                                            Map<String, Object> eventValues = event.eventMap();
-                                                            Variable.EVENT_REF.child(eventId).updateChildren(eventValues).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<Void> task) {
-                                                                    if(task.isSuccessful()){
-                                                                        Toasty.success(getApplicationContext(), "Donate Successfully", Toast.LENGTH_SHORT, true).show();
-                                                                        finish();
-                                                                    }
-                                                                    else{
-                                                                        Toasty.error(getApplicationContext(), "Something went wrong. Please contact administrator", Toast.LENGTH_SHORT,true).show();
-                                                                    }
-                                                                }
-                                                            });
-                                                        }
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
-                                                    Log.d(TAG, "databaseError: "+ error.getDetails());
-                                                }
-                                            });
-                                        }
-                                    }
-                                });
-                            }
-                            catch (JSONException e){
-                                Toasty.error(this, e.toString(), Toast.LENGTH_SHORT).show();
-                            }
                         }
 
-                    }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.d(TAG, "databaseError: "+ error.getDetails());
+                        }
+                    });
                 }
             }
-        }
+        });
+    }
 
+    @Override
+    public void onPaymentError(int i, String s) {
+        setResult(RESULT_CANCELED);
+        Toasty.error(getApplicationContext(), "Payment failed", Toast.LENGTH_LONG).show();
     }
 }

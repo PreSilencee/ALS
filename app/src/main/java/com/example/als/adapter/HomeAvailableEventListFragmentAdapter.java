@@ -360,6 +360,7 @@ public class HomeAvailableEventListFragmentAdapter extends RecyclerView.Adapter<
                     Intent i = new Intent(context, HomeDonateActivity.class);
                     i.putExtra(Variable.HOME_USER_SESSION_ID, cUser.getUid());
                     i.putExtra(Variable.HOME_EVENT_SESSION_ID, event.getEventId());
+                    i.putExtra(Variable.HOME_EVENT_NAME_SESSION_ID, event.getEventTitle());
                     context.startActivity(i);
                 }
 

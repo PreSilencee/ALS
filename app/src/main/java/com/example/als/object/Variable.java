@@ -66,6 +66,7 @@ public class Variable {
     public static final String EVENT_SESSION_ID = "eventSessionId";
     public static final String USER_SESSION_ID = "userSessionId";
     public static final String HOME_EVENT_SESSION_ID = "homeEventSessionId";
+    public static final String HOME_EVENT_NAME_SESSION_ID = "homeEventNameSessionId";
     public static final String HOME_USER_SESSION_ID = "homeUserSessionId";
     public static final String HOME_ORGANIZATION_SESSION_ID = "homeOrganizationSessionId";
     public static final String HOME_USER_SESSION_POSITION = "homeUserPositionSessionId";
@@ -86,6 +87,8 @@ public class Variable {
     public static final String MESSAGE_CHANNEL_NAME = "MESSAGE_CHANNEL_NAME";
     public static final String MESSAGE_CHANNEL_DESC = "MESSAGE_CHANNEL_DESCRIPTION";
 
+    public static final String SUCCESS = "Success";
+    public static final String FAILED = "Failed";
 
 }
 
