@@ -15,8 +15,7 @@ import com.example.als.notification.Token;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
 import com.example.als.ui.SearchActivity;
-import com.example.als.ui.settings.SettingFragment;
-import com.example.als.ui.donationHistory.DonationHistoryFragment;
+import com.example.als.ui.more.SettingFragment;
 import com.example.als.ui.home.HomeFragment;
 import com.example.als.ui.message.MessageFragment;
 import com.example.als.ui.raised_event.EventFragment;
@@ -136,13 +135,6 @@ public class MainActivity extends AppCompatActivity{
                 else{
                     mainTabLayout.getTabAt(3).getIcon().setColorFilter(getResources().getColor(R.color.colorGray), PorterDuff.Mode.SRC_IN);
                 }
-
-                if(tab.getPosition() == 4){
-                    mainTabLayout.getTabAt(4).getIcon().setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_IN);
-                }
-                else{
-                    mainTabLayout.getTabAt(4).getIcon().setColorFilter(getResources().getColor(R.color.colorGray), PorterDuff.Mode.SRC_IN);
-                }
             }
 
             @Override
@@ -219,7 +211,6 @@ public class MainActivity extends AppCompatActivity{
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
         adapter.addFragment(new HomeFragment(), "");
         adapter.addFragment(new EventFragment(), "");
-        adapter.addFragment(new DonationHistoryFragment(), "");
         adapter.addFragment(new MessageFragment(), "");
         adapter.addFragment(new SettingFragment(), "");
 
@@ -229,9 +220,8 @@ public class MainActivity extends AppCompatActivity{
     private void setUpTabIcons(){
         mainTabLayout.getTabAt(0).setIcon(R.drawable.ic_outline_home_24);
         mainTabLayout.getTabAt(1).setIcon(R.drawable.ic_outline_event_note_24);
-        mainTabLayout.getTabAt(2).setIcon(R.drawable.ic_outline_payment_24);
-        mainTabLayout.getTabAt(3).setIcon(R.drawable.ic_outline_chat_24);
-        mainTabLayout.getTabAt(4).setIcon(R.drawable.ic_outline_settings_24);
+        mainTabLayout.getTabAt(2).setIcon(R.drawable.ic_outline_chat_24);
+        mainTabLayout.getTabAt(3).setIcon(R.drawable.ic_baseline_view_headline_24);
     }
 
     //run after create layout

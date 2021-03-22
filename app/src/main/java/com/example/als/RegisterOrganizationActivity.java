@@ -245,7 +245,7 @@ public class RegisterOrganizationActivity extends AppCompatActivity {
                                                     organization.setOrganizationDescription(organizationDescription);
                                                     organization.setOrganizationAddress(organizationAddress);
                                                     organization.setOrganizationPhone(organizationPhone);
-                                                    organization.setOrganizationVerifyStatus(false);
+                                                    organization.setOrganizationVerifyStatus(Variable.PENDING);
 
                                                     Variable.ORGANIZATION_REF.child(cUser.getUid()).setValue(organization).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override

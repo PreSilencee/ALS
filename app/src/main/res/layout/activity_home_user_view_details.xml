@@ -181,6 +181,18 @@
 
                     </LinearLayout>
 
+                    <Button
+                        android:id="@+id/sendMessageForOrganizationOnlyButton"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sendMessage"
+                        android:layout_margin="10dp"
+                        android:padding="10dp"
+                        android:drawableStart="@drawable/ic_outline_chat_24"
+                        android:layout_gravity="center"
+                        android:drawableTint="@color/colorWhite"
+                        android:backgroundTint="@color/colorAccent"
+                        android:visibility="gone"/>
 
                 </LinearLayout>
 

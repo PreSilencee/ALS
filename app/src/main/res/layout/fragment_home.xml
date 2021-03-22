@@ -6,49 +6,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorGray"
     tools:context=".ui.home.HomeFragment">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/homeEventListSwipeRefreshLayout"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/homeFragmentViewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.core.widget.NestedScrollView
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/homeFragmentTabLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:scrollbars="none">
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabGravity="fill"
+            app:tabInlineLabel="true"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/colorAccent"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusableInTouchMode="true"
-                android:orientation="vertical">
+    </androidx.viewpager.widget.ViewPager>
 
-                <com.example.als.widget.AlsRecyclerView
-                    android:id="@+id/homeEventListRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="80dp"
-                    android:descendantFocusability="blocksDescendants"
-                    android:fitsSystemWindows="true"
-                    android:focusableInTouchMode="true"/>
-
-            </LinearLayout>
-
-        </androidx.core.widget.NestedScrollView>
-
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <include
-        android:id="@+id/homeEventListEmptyView"
-        layout="@layout/empty_home_event_list"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

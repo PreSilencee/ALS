@@ -179,7 +179,16 @@ public class MessageChatActivity extends AppCompatActivity {
                                         Contributor contributor = snapshot.getValue(Contributor.class);
 
                                         if(contributor != null){
-                                            if(contributor.getProfileImageName() != null){
+                                            if(contributor.getProfileImageUrl() != null){
+                                                Uri photoUri = Uri.parse(contributor.getProfileImageUrl());
+                                                Log.d(TAG, "loadProfileImage: success");
+                                                //push image into image view
+                                                GlideApp.with(getApplicationContext())
+                                                        .load(photoUri)
+                                                        .placeholder(R.drawable.loading_image)
+                                                        .into(messageChatIV);
+                                            }
+                                            else if(contributor.getProfileImageName() != null){
                                                 StorageReference imageRef = Variable.CONTRIBUTOR_SR.child(messageChatUserId)
                                                         .child("profile").child(contributor.getProfileImageName());
 
@@ -201,6 +210,9 @@ public class MessageChatActivity extends AppCompatActivity {
                                                             }
                                                         });
                                             }
+                                            else{
+                                                messageChatIV.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
+                                            }
 
                                             if(contributor.getName() != null){
                                                 messageChatUsername.setText(contributor.getName());
@@ -211,7 +223,7 @@ public class MessageChatActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError error) {
-
+                                    Log.d(TAG, "Database Error: " + error.getMessage());
                                 }
                             });
                         }
@@ -219,7 +231,7 @@ public class MessageChatActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
+                        Log.d(TAG, "Database Error: " + error.getMessage());
                     }
                 });
                 readMessage(cUser.getUid(), messageChatUserId);
@@ -373,7 +385,7 @@ public class MessageChatActivity extends AppCompatActivity {
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()){
                     Token token = dataSnapshot.getValue(Token.class);
                     Log.d(TAG, messageChatUserId);
-                    Data data = new Data(cUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message",
+                    Data data = new Data(cUser.getUid(), R.mipmap.ic_logo, username+": "+message, "New Message",
                             messageChatUserId);
 
                     Sender sender = new Sender(data, token.getToken());

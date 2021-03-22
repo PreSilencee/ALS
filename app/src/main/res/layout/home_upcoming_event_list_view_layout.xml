@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:id="@+id/homeEventListCardView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/CardView.Light"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/homeUpcomingEventListEventHandlerLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:weightSum="2">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/homeUpcomingEventListProfileImageView"
+                android:layout_weight="0.3"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_baseline_person_color_accent_24"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/colorGray" />
+
+            <LinearLayout
+                android:layout_weight="1.7"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/homeUpcomingEventListProfileNameTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accountName"
+                    style="@style/TextAppearance.AppCompat.Title"/>
+
+                <TextView
+                    android:id="@+id/homeUpcomingEventListEventCreatedTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/createdDate"
+                    android:textStyle="italic"/>
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/homeUpcomingEventListImageView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/eventImage"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"/>
+
+        <TextView
+            android:id="@+id/homeUpcomingEventListTitleTextView"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/eventTitle"
+            style="@style/TextAppearance.AppCompat.Title" />
+
+        <TextView
+            android:id="@+id/homeUpcomingEventListDurationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textStyle="italic"
+            android:hint="@string/duration"
+            style="@style/TextAppearance.AppCompat.Body1"/>
+
+        <TextView
+            android:id="@+id/homeUpcomingEventListDescriptionTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
+            android:hint="@string/eventDes"
+            style="@style/TextAppearance.AppCompat.Body1" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

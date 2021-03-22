@@ -1,244 +1,270 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".ui.raised_event.RaisedEventDetailsActivity">
 
-    <LinearLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/raisedEventDetailsSwipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/raisedEventDetailsCustomizeSearchViewToolbarView">
 
-        <ImageView
-            android:id="@+id/eventDetailsMainImage"
-            android:layout_width="370dp"
-            android:layout_height="150dp"
-            android:layout_margin="10dp"
-            android:src="@drawable/select_image_view"
-            android:layout_gravity="center"
-            android:contentDescription="@string/eventImage"/>
-
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="vertical"
-            android:background="@drawable/card_view_border">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                android:layout_marginTop="5dp"
+                android:orientation="vertical">
 
                 <ImageView
-                    android:layout_weight="0.5"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_outline_title_24"
-                    android:contentDescription="@string/title"
-                    app:tint="@color/colorAccent" />
-
-                <TextView
-                    android:layout_weight="1.5"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/eventDetailsMainImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:padding="10dp"
-                    android:hint="@string/eventName"
-                    android:textSize="18sp"
-                    android:id="@+id/eventDetailsNameTextView"/>
+                    android:layout_marginBottom="10dp"
+                    android:src="@drawable/select_image_view"
+                    android:layout_gravity="center"
+                    android:scaleType="fitXY"
+                    android:contentDescription="@string/eventImage"/>
 
-            </LinearLayout>
-
-            <View
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/colorAccent"
-                android:alpha="0.5"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:orientation="horizontal"
-                android:weightSum="2">
-
-                <ImageView
-                    android:layout_weight="0.5"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_outline_subtitles_24"
-                    android:contentDescription="@string/eventDes"
-                    app:tint="@color/colorAccent"
-                    android:layout_gravity="center"/>
+                    android:orientation="vertical"
+                    android:background="@drawable/card_view_border">
 
-                <TextView
-                    android:layout_weight="1.5"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:padding="10dp"
-                    android:hint="@string/eventDes"
-                    android:textSize="18sp"
-                    android:id="@+id/eventDetailsDescriptionTextView"
-                    android:layout_gravity="center"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
 
-            </LinearLayout>
+                        <ImageView
+                            android:layout_weight="0.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_outline_title_24"
+                            android:contentDescription="@string/title"
+                            app:tint="@color/colorAccent" />
 
-            <View
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/colorAccent"
-                android:alpha="0.5"/>
+                        <TextView
+                            android:layout_weight="1.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:padding="10dp"
+                            android:hint="@string/eventName"
+                            android:textSize="18sp"
+                            android:id="@+id/eventDetailsNameTextView"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                    </LinearLayout>
 
-                <ImageView
-                    android:layout_weight="0.5"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    <View
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorAccent"
+                        android:alpha="0.5"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <ImageView
+                            android:layout_weight="0.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_outline_subtitles_24"
+                            android:contentDescription="@string/eventDes"
+                            app:tint="@color/colorAccent"
+                            android:layout_gravity="center"/>
+
+                        <TextView
+                            android:layout_weight="1.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:padding="10dp"
+                            android:hint="@string/eventDes"
+                            android:textSize="18sp"
+                            android:id="@+id/eventDetailsDescriptionTextView"
+                            android:layout_gravity="center"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorAccent"
+                        android:alpha="0.5"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <ImageView
+                            android:layout_weight="0.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_outline_date_range_24"
+                            android:contentDescription="@string/title"
+                            app:tint="@color/colorAccent" />
+
+                        <TextView
+                            android:layout_weight="1.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:padding="10dp"
+                            android:hint="@string/eventStartDate"
+                            android:textSize="18sp"
+                            android:id="@+id/eventDetailsStartDateTextView"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorAccent"
+                        android:alpha="0.5"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <ImageView
+                            android:layout_weight="0.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="10dp"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_outline_date_range_24"
+                            android:contentDescription="@string/title"
+                            app:tint="@color/colorAccent" />
+
+                        <TextView
+                            android:layout_weight="1.5"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:padding="10dp"
+                            android:hint="@string/eventEndDate"
+                            android:textSize="18sp"
+                            android:id="@+id/eventDetailsEndDateTextView"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
                     android:layout_margin="10dp"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_outline_date_range_24"
-                    android:contentDescription="@string/title"
-                    app:tint="@color/colorAccent" />
+                    android:orientation="vertical"
+                    android:background="@drawable/card_view_border">
 
-                <TextView
-                    android:layout_weight="1.5"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:padding="10dp"
-                    android:hint="@string/eventStartDate"
-                    android:textSize="18sp"
-                    android:id="@+id/eventDetailsStartDateTextView"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:hint="@string/fundTitle"
+                        android:textSize="16sp"
+                        style="@style/TextAppearance.AppCompat.Title" />
 
-            </LinearLayout>
+                    <ProgressBar
+                        android:id="@+id/eventDetailsTargetFundProgressBar"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:minWidth="320dp"
+                        android:scaleY="3"
+                        android:max="100" />
 
-            <View
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/colorAccent"
-                android:alpha="0.5"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                        <TextView
+                            android:id="@+id/eventDetailsCurrentFundTextView"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/currentFund"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"
+                            android:gravity="start"/>
 
-                <ImageView
-                    android:layout_weight="0.5"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_outline_date_range_24"
-                    android:contentDescription="@string/title"
-                    app:tint="@color/colorAccent" />
+                        <TextView
+                            android:id="@+id/eventDetailsTargetFundTextView"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/targetFund"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginRight="10dp"
+                            android:gravity="end" />
 
-                <TextView
-                    android:layout_weight="1.5"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:padding="10dp"
-                    android:hint="@string/eventEndDate"
-                    android:textSize="18sp"
-                    android:id="@+id/eventDetailsEndDateTextView"/>
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_margin="10dp"
-            android:orientation="vertical"
-            android:background="@drawable/card_view_border">
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:hint="@string/fundTitle"
-                android:textSize="16sp"
-                style="@style/TextAppearance.AppCompat.Title" />
 
-            <ProgressBar
-                android:id="@+id/eventDetailsTargetFundProgressBar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:minWidth="320dp"
-                android:scaleY="3"
-                android:max="100" />
+    <include
+        android:id="@+id/raisedEventDetailsCustomizeSearchViewToolbarView"
+        layout="@layout/customize_home_user_details_toolbar"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2">
-
-                <TextView
-                    android:id="@+id/eventDetailsCurrentFundTextView"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/currentFund"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:gravity="start"/>
-
-                <TextView
-                    android:id="@+id/eventDetailsTargetFundTextView"
-                    android:layout_weight="1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/targetFund"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:gravity="end" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

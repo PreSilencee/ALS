@@ -17,7 +17,7 @@ public class Organization {
     private String organizationEmail;
     private String organizationPhone;
     private String organizationProfileImageName;
-    private boolean organizationVerifyStatus;
+    private String organizationVerifyStatus;
 
 
     public Organization() {
@@ -87,11 +87,11 @@ public class Organization {
         this.organizationProfileImageName = organizationProfileImageName;
     }
 
-    public boolean isOrganizationVerifyStatus() {
+    public String getOrganizationVerifyStatus() {
         return organizationVerifyStatus;
     }
 
-    public void setOrganizationVerifyStatus(boolean organizationVerifyStatus) {
+    public void setOrganizationVerifyStatus(String organizationVerifyStatus) {
         this.organizationVerifyStatus = organizationVerifyStatus;
     }
 

@@ -17,7 +17,7 @@ public class Event {
     private double eventCurrentAmount;
     private String eventImageName;
     private String eventHandler;
-    private boolean eventVerifyStatus;
+    private String eventStatus;
 
     public String getEventTitle() {
         return eventTitle;
@@ -99,12 +99,12 @@ public class Event {
         this.eventId = eventId;
     }
 
-    public boolean isEventVerifyStatus() {
-        return eventVerifyStatus;
+    public String getEventStatus() {
+        return eventStatus;
     }
 
-    public void setEventVerifyStatus(boolean eventVerifyStatus) {
-        this.eventVerifyStatus = eventVerifyStatus;
+    public void setEventStatus(String eventStatus) {
+        this.eventStatus = eventStatus;
     }
 
     @Exclude
@@ -121,7 +121,7 @@ public class Event {
         result.put("eventCurrentAmount", eventCurrentAmount);
         result.put("eventImageName", eventImageName);
         result.put("eventHandler", eventHandler);
-        result.put("eventVerifyStatus", eventVerifyStatus);
+        result.put("eventStatus", eventStatus);
 
         return result;
     }

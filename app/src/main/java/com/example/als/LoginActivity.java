@@ -78,8 +78,6 @@ public class LoginActivity extends AppCompatActivity {
     //tag for console log
     private static final String TAG = "Login Activity";
     private static final int RC_SIGN_IN = 9001;
-    private static final int FB_SIGN_IN = 8001;
-    private static final String EMAIL = "email";
 
     //google signIn
     private GoogleSignInClient cGoogleSignInClient;

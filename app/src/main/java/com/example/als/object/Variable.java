@@ -57,19 +57,19 @@ public class Variable {
     //string
     public static final String CONTRIBUTOR = "CONTRIBUTOR";
     public static final String ORGANIZATION = "ORGANIZATION";
-    public static final String VERIFIED_ORGANIZATION = "VERIFIED ORGANIZATION";
+    public static final String VERIFIED = "VERIFIED";
     public static final String PENDING = "PENDING";
+    public static final String AVAILABLE = "AVAILABLE";
+    public static final String DECLINED = "DECLINED";
 
     //sessionId
     public static final String EVENT_SESSION_ID = "eventSessionId";
     public static final String USER_SESSION_ID = "userSessionId";
     public static final String HOME_EVENT_SESSION_ID = "homeEventSessionId";
     public static final String HOME_USER_SESSION_ID = "homeUserSessionId";
+    public static final String HOME_ORGANIZATION_SESSION_ID = "homeOrganizationSessionId";
     public static final String HOME_USER_SESSION_POSITION = "homeUserPositionSessionId";
     public static final String MESSAGE_USER_SESSION_ID = "messageUserSessionId";
-
-    //stripe publishable key
-    public static final String STRIPE_KEY = "pk_test_51Hklw2HeAF36bhnSQH6J2DDp2Ph7uHb9EaxurePC3cFhngCrp0fBsAbpBJkpC7gd2yp0odVCHDw587bAfOTqsULP00jEFJE1eW";
 
     public static final String MESSAGE_TYPE_TEXT = "text";
     public static final String MESSAGE_TYPE_FILE = "file";
@@ -85,5 +85,7 @@ public class Variable {
     public static final String MESSAGE_CHANNEL_ID = "MESSAGE_CHANNEL_ID";
     public static final String MESSAGE_CHANNEL_NAME = "MESSAGE_CHANNEL_NAME";
     public static final String MESSAGE_CHANNEL_DESC = "MESSAGE_CHANNEL_DESCRIPTION";
+
+
 }
 

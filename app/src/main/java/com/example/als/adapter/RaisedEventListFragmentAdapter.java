@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -74,48 +75,31 @@ public class RaisedEventListFragmentAdapter extends RecyclerView.Adapter<RaisedE
             holder.raisedEventListNameTV.setText("-");
         }
 
-        //String
-        String currentAmount;
-        String targetAmount;
-
-        //double
-        double cAmount;
-        double tAmount;
-
-        //if event current amount more than 0
-        if(event.getEventCurrentAmount() >= 0){
-            currentAmount = "RM " + event.getEventCurrentAmount();
-            cAmount = event.getEventCurrentAmount();
-        }
-        else{
-            //set "RM 0" as default
-            currentAmount = "RM 0";
-            cAmount = 0.0;
-        }
-
-        //if event target amount more than 0
-        if(event.getEventTargetAmount() > 0){
-            targetAmount = "RM " + event.getEventTargetAmount();
-            tAmount = event.getEventTargetAmount();
-        }
-        else {
-            //set "RM 0" as default
-            targetAmount = "RM 0";
-            tAmount = 0.0;
-        }
-
-        //create string for progress
-        String currentProgressTV = currentAmount + "/" +targetAmount;
-        //set string to text view
-        holder.raisedEventListProgressTV.setText(currentProgressTV);
-
         //calculate the progress
-        double progress = (cAmount/tAmount)*100;
+        double fundProgress = (event.getEventCurrentAmount() / event.getEventTargetAmount()) * 100;
         //apply to progress bar
-        holder.raisedEventListPB.setProgress((int) progress);
+        holder.raisedEventListPB.setProgress((int) fundProgress);
+        //set string to text view
+        String progress = (int) fundProgress + "%";
+        holder.raisedEventListProgressTV.setText(progress);
 
-        //itemView onclick
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        if(event.getEventStatus() != null){
+
+            switch (event.getEventStatus()) {
+                case Variable.PENDING:
+                    holder.raisedEventListStatusTV.setTextColor(context.getColor(R.color.colorGray));
+                    break;
+                case Variable.AVAILABLE:
+                    holder.raisedEventListStatusTV.setTextColor(context.getColor(R.color.colorGreen));
+                    break;
+                case Variable.DECLINED:
+                    holder.raisedEventListStatusTV.setTextColor(context.getColor(R.color.colorRed));
+                    break;
+            }
+            holder.raisedEventListStatusTV.setText(event.getEventStatus());
+        }
+
+        holder.raisedEventListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(context, RaisedEventDetailsActivity.class);
@@ -123,6 +107,14 @@ public class RaisedEventListFragmentAdapter extends RecyclerView.Adapter<RaisedE
                 context.startActivity(i);
             }
         });
+
+//        //itemView onclick
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
     }
 
     //get size of event list
@@ -136,10 +128,12 @@ public class RaisedEventListFragmentAdapter extends RecyclerView.Adapter<RaisedE
 
         //text view
         public TextView raisedEventListYearTV, raisedEventListDayTV,
-                raisedEventListMonthTV, raisedEventListNameTV, raisedEventListProgressTV;
+                raisedEventListMonthTV, raisedEventListNameTV, raisedEventListProgressTV, raisedEventListStatusTV;
 
         //progress bar
         public ProgressBar raisedEventListPB;
+
+        public Button raisedEventListBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -150,9 +144,12 @@ public class RaisedEventListFragmentAdapter extends RecyclerView.Adapter<RaisedE
             raisedEventListMonthTV = itemView.findViewById(R.id.raisedEventListMonthTextView);
             raisedEventListNameTV = itemView.findViewById(R.id.raisedEventListNameTextView);
             raisedEventListProgressTV = itemView.findViewById(R.id.raisedEventListProgressTextView);
+            raisedEventListStatusTV = itemView.findViewById(R.id.raisedEventListStatusTextView);
 
             //find id for progress bar
             raisedEventListPB = itemView.findViewById(R.id.raisedEventTargetFundProgressBar);
+
+            raisedEventListBtn = itemView.findViewById(R.id.raisedEventListViewButton);
 
         }
     }

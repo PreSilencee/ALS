@@ -13,12 +13,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
-import com.bumptech.glide.Glide;
 import com.example.als.CreateEventActivity;
 import com.example.als.R;
 import com.example.als.adapter.RaisedEventListFragmentAdapter;
@@ -30,10 +27,6 @@ import com.example.als.object.Event;
 import com.example.als.object.Organization;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
-import com.example.als.ui.donationHistory.DonationHistoryFragment;
-import com.example.als.ui.home.HomeFragment;
-import com.example.als.ui.message.MessageFragment;
-import com.example.als.ui.settings.SettingFragment;
 import com.example.als.widget.AlsRecyclerView;
 import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -48,7 +41,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -58,13 +50,6 @@ public class EventFragment extends Fragment{
     private static final String TAG = "EventFragment";
     private Connectivity device;
     private FirebaseAuth cAuth;
-
-    private SwipeRefreshLayout raisedEventListSRL;
-
-    private AlsRecyclerView raisedEventRV;
-
-    private List<Event> raisedEventList;
-    private RaisedEventListFragmentAdapter adapter;
 
     FirebaseUser cUser;
 
@@ -217,43 +202,19 @@ public class EventFragment extends Fragment{
             }
         });
 
-
-//
-//        raisedEventListSRL = root.findViewById(R.id.raisedEventListSwipeRefreshLayout);
-//        View raisedEventEmptyView = root.findViewById(R.id.empty_raised_event_list);
-//        //recycler view
-//        raisedEventRV = root.findViewById(R.id.raisedEventListRecyclerView);
-//        raisedEventRV.setHasFixedSize(true);
-//        raisedEventRV.setLayoutManager(new LinearLayoutManager(requireActivity()));
-//        raisedEventRV.showIfEmpty(raisedEventEmptyView);
-//        raisedEventRV.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
-//
-//        //swipeRefreshLayout function
-//        raisedEventListSRL.setOnRefreshListener(this);
-//        raisedEventListSRL.setColorSchemeResources(R.color.colorPrimary,
-//                android.R.color.holo_green_dark,
-//                android.R.color.holo_orange_dark,
-//                android.R.color.holo_blue_dark);
-//
-//        raisedEventListSRL.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                raisedEventListSRL.setRefreshing(true);
-//                loadRaisedEvent();
-//            }
-//        });
-
         return root;
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
-        adapter.addFragment(new RaisedEventFragment(), "Event");
-        adapter.addFragment(new EventDraftFragment(), "Draft");
+        adapter.addFragment(new RaisedAllEventFragment(), "All");
+        adapter.addFragment(new RaisedAvailableEventFragment(), "Available");
+        adapter.addFragment(new RaisedUpcomingEventFragment(), "Upcoming");
+        adapter.addFragment(new RaisedPendingEventFragment(), "Pending");
+        adapter.addFragment(new RaisedDeclinedEventFragment(), "Declined");
 
         viewPager.setAdapter(adapter);
     }
-
 
     @Override
     public void onStart() {
@@ -276,45 +237,4 @@ public class EventFragment extends Fragment{
         super.onStop();
     }
 
-//    private void loadRaisedEvent(){
-//
-//        cUser = cAuth.getCurrentUser();
-//
-//        if (cUser != null) {
-//
-//            raisedEventList = new ArrayList<>();
-//
-//            Variable.EVENT_REF.addListenerForSingleValueEvent(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                    raisedEventList.clear();
-//
-//                    for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-//                        Event event = dataSnapshot.getValue(Event.class);
-//
-//                        if(event != null) {
-//                            if (event.getEventHandler().equals(cUser.getUid())) {
-//                                raisedEventList.add(event);
-//                            }
-//                        }
-//                    }
-//
-//                    adapter = new RaisedEventListFragmentAdapter(raisedEventList, getContext());
-//                    adapter.notifyDataSetChanged();
-//                    raisedEventRV.setAdapter(adapter);
-//                    raisedEventListSRL.setRefreshing(false);
-//                }
-//
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError error) {
-//                    Log.d(TAG, "Database Error: " + error.getMessage());
-//                }
-//            });
-//        }
-//    }
-//
-//    @Override
-//    public void onRefresh() {
-//        loadRaisedEvent();
-//    }
 }

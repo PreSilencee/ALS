@@ -9,14 +9,14 @@
     <LinearLayout
         android:orientation="horizontal"
         android:baselineAligned="false"
-        android:weightSum="2"
+        android:weightSum="3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="10dp">
 
         <LinearLayout
-            android:layout_weight="0.5"
+            android:layout_weight="0.4"
             android:orientation="vertical"
             android:baselineAligned="false"
             android:layout_width="0dp"
@@ -48,7 +48,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_weight="1.5"
+            android:layout_weight="1.9"
             android:orientation="vertical"
             android:baselineAligned="false"
             android:layout_width="0dp"
@@ -58,43 +58,64 @@
                 android:id="@+id/raisedEventListNameTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/uid"
+                android:text="@string/eventName"
                 android:padding="5dp"
                 android:gravity="center"
                 android:textColor="@color/colorAccent"/>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
                 <ProgressBar
+                    android:layout_weight="1.6"
                     android:id="@+id/raisedEventTargetFundProgressBar"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:minWidth="300dp"
+                    android:minWidth="320dp"
                     android:scaleY="3"
                     android:max="100" />
 
                 <TextView
                     android:id="@+id/raisedEventListProgressTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignTop="@id/raisedEventTargetFundProgressBar"
-                    android:layout_alignBottom="@id/raisedEventTargetFundProgressBar"
-                    android:layout_alignLeft="@id/raisedEventTargetFundProgressBar"
-                    android:layout_alignRight="@id/raisedEventTargetFundProgressBar"
-                    android:text="@string/uid"
-                    android:layout_alignStart="@id/raisedEventTargetFundProgressBar"
-                    android:layout_alignEnd="@id/raisedEventTargetFundProgressBar"
-                    android:gravity="center"/>
+                    android:layout_weight="0.4"
+                    android:text="@string/percent"
+                    android:padding="5dp" />
 
-            </RelativeLayout>
+            </LinearLayout>
 
 
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="0.7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/raisedEventListStatusTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/status"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textColor="#ff9382"/>
+
+            <Button
+                android:id="@+id/raisedEventListViewButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/view"
+                android:backgroundTint="@color/colorAccent"
+                android:textColor="@color/colorWhite"/>
 
         </LinearLayout>
 

@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.home.HomeOrganizationViewDetailsActivity">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/homeUserViewSwipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/homeOrganizationCustomizeSearchViewToolbarView">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/dataOrganizationImageContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/welcome_background"
+                    android:orientation="vertical">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/homeOrganizationViewDetailsImageView"
+                        android:layout_width="125dp"
+                        android:layout_height="125dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:src="@drawable/ic_baseline_person_color_accent_24"
+                        app:civ_border_color="@color/colorGray"
+                        app:civ_border_width="2dp" />
+
+                    <TextView
+                        android:id="@+id/homeOrganizationViewDetailsNameTextView"
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:hint="@string/accountName"
+                        android:padding="5dp" />
+
+                    <TextView
+                        android:id="@+id/homeOrganizationViewDetailsPositionTitleTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="5dp"
+                        android:text="@string/title"
+                        android:textStyle="italic" />
+
+                    <LinearLayout
+                        android:id="@+id/becameFriendLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        android:weightSum="2">
+
+                        <Button
+                            android:id="@+id/becameFriendSendMessageButton"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/corner_button_main_filled"
+                            android:drawableStart="@drawable/ic_outline_chat_24"
+                            android:drawableTint="@color/colorWhite"
+                            android:padding="10dp"
+                            android:text="@string/sendMessage"
+                            android:textAllCaps="false"
+                            android:textColor="@color/colorWhite" />
+
+                        <ImageButton
+                            android:id="@+id/becameFriendImageButton"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_margin="10dp"
+                            android:layout_weight="0.5"
+                            android:background="@drawable/corner_button_gray"
+                            android:padding="10dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/person_checked" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/noFriendLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        android:weightSum="2">
+
+                        <Button
+                            android:id="@+id/noFriendLayoutAddFriendButton"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/corner_button_main_filled"
+                            android:drawableStart="@drawable/ic_outline_person_add_alt_1_24"
+                            android:drawableTint="@color/colorWhite"
+                            android:padding="10dp"
+                            android:text="@string/addFriend"
+                            android:textColor="@color/colorWhite" />
+
+                        <ImageButton
+                            android:id="@+id/noFriendLayoutSendMessageImageButton"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_margin="10dp"
+                            android:layout_weight="0.5"
+                            android:background="@drawable/corner_button_gray"
+                            android:padding="10dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_outline_chat_24" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/followLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        android:weightSum="2">
+
+                        <Button
+                            android:id="@+id/followButton"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/corner_button_main_filled"
+                            android:drawableStart="@drawable/ic_outline_person_add_alt_1_24"
+                            android:drawableTint="@color/colorWhite"
+                            android:padding="10dp"
+                            android:text="@string/follow"
+                            android:textColor="@color/colorWhite" />
+
+                        <ImageButton
+                            android:id="@+id/followLayoutSendMessageImageButton"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_margin="10dp"
+                            android:layout_weight="0.5"
+                            android:background="@drawable/corner_button_gray"
+                            android:padding="10dp"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/ic_outline_chat_24" />
+
+
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/sendMessageForOrganizationOnlyButton"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sendMessage"
+                        android:layout_margin="10dp"
+                        android:padding="10dp"
+                        android:drawableStart="@drawable/ic_outline_chat_24"
+                        android:layout_gravity="center"
+                        android:drawableTint="@color/colorWhite"
+                        android:backgroundTint="@color/colorAccent"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/homeUserViewDetailsTitleTextView"
+                        style="@style/TextAppearance.AppCompat.Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:text="@string/personalInformation" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/card_view_border"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/homeUserViewDetailsOrganizationTypeLinearLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.2"
+                                android:contentDescription="@string/organizationTypePrompt"
+                                android:src="@drawable/ic_outline_home_work_24"
+                                app:tint="@color/colorAccent" />
+
+                            <TextView
+                                android:id="@+id/homeUserViewOrganizationTypeTextView"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1.8"
+                                android:text="@string/organizationTypePrompt" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/homeUserViewDetailsOrganizationTypeView"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:alpha="0.5"
+                            android:background="@color/colorAccent" />
+
+                        <LinearLayout
+                            android:id="@+id/homeUserViewDetailsOrganizationRegistrationNumberLinearLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.2"
+                                android:contentDescription="@string/organizationRegistrationNumber"
+                                android:src="@drawable/ic_outline_vpn_key_24"
+                                app:tint="@color/colorAccent" />
+
+                            <TextView
+                                android:id="@+id/homeUserViewOrganizationRegistrationNumberTextView"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1.5"
+                                android:text="@string/organizationRegistrationNumber" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/homeUserViewDetailsOrganizationRegistrationNumberView"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:alpha="0.5"
+                            android:background="@color/colorAccent" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.2"
+                                android:contentDescription="@string/email"
+                                android:src="@drawable/ic_outline_email_24"
+                                app:tint="@color/colorAccent" />
+
+                            <TextView
+                                android:id="@+id/homeUserViewEmailTextView"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1.8"
+                                android:text="@string/email" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:alpha="0.5"
+                            android:background="@color/colorAccent" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.2"
+                                android:contentDescription="@string/phone"
+                                android:src="@drawable/ic_baseline_phone_android_24"
+                                app:tint="@color/colorAccent" />
+
+                            <TextView
+                                android:id="@+id/homeUserViewPhoneTextView"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1.8"
+                                android:text="@string/phone" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/homeUserViewDetailsOrganizationDescriptionView"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:alpha="0.5"
+                            android:background="@color/colorAccent" />
+
+                        <LinearLayout
+                            android:id="@+id/homeUserViewDetailsOrganizationDescriptionLinearLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.2"
+                                android:contentDescription="@string/organizationDescription"
+                                android:src="@drawable/ic_outline_description_24"
+                                app:tint="@color/colorAccent" />
+
+                            <TextView
+                                android:id="@+id/homeUserViewOrganizationDescriptionTextView"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1.8"
+                                android:text="@string/organizationDescription" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/homeUserViewDetailsOrganizationAddressView"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:alpha="0.5"
+                            android:background="@color/colorAccent" />
+
+                        <LinearLayout
+                            android:id="@+id/homeUserViewDetailsOrganizationAddressLinearLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.2"
+                                android:contentDescription="@string/address"
+                                android:src="@drawable/ic_outline_house_24"
+                                app:tint="@color/colorAccent" />
+
+                            <TextView
+                                android:id="@+id/homeUserViewOrganizationAddressTextView"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1.8"
+                                android:text="@string/address" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <com.example.als.widget.AlsRecyclerView
+                    android:id="@+id/homeEventListRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="80dp"
+                    android:descendantFocusability="blocksDescendants"
+                    android:fitsSystemWindows="true"
+                    android:focusableInTouchMode="true" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/homeOrganizationCustomizeSearchViewToolbarView"
+        layout="@layout/customize_home_user_details_toolbar"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

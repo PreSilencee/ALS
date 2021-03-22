@@ -419,7 +419,7 @@ public class CreateEventActivity extends AppCompatActivity implements DatePicker
                         newEvent.setEventDateTimeCreated(dateTimeCreated);
                         newEvent.setEventHandler(cUser.getUid());
                         newEvent.setEventImageName(eventImageName);
-                        newEvent.setEventVerifyStatus(false);
+                        newEvent.setEventStatus(Variable.PENDING);
 
                         DatabaseReference pushedEvent = Variable.EVENT_REF.push();
                         String id = pushedEvent.getKey();

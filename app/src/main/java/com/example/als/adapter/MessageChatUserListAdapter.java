@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.als.R;
 import com.example.als.handler.AESCrypt;
 import com.example.als.handler.GlideApp;
@@ -30,8 +29,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.Arrays;
 import java.util.List;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class MessageChatUserListAdapter extends RecyclerView.Adapter<MessageChatUserListAdapter.ViewHolder>{
 
@@ -89,6 +89,16 @@ public class MessageChatUserListAdapter extends RecyclerView.Adapter<MessageChat
                                 holder.messageChatListProfileNameTV.setText("-");
                             }
 
+                            if(contributor.getProfileImageUrl() != null){
+                                Uri photoUri = Uri.parse(contributor.getProfileImageUrl());
+                                Log.d(TAG, "loadProfileImage: success");
+                                //push image into image view
+                                GlideApp.with(context)
+                                        .load(photoUri)
+                                        .placeholder(R.drawable.loading_image)
+                                        .into(holder.messageChatListProfileIV);
+                            }
+                            else
                             //if contributor profile image name not null
                             if(contributor.getProfileImageName() != null) {
 
