@@ -67,132 +67,43 @@
                         android:textStyle="italic" />
 
                     <LinearLayout
-                        android:id="@+id/becameFriendLayout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
+                        android:layout_margin="10dp"
                         android:orientation="horizontal"
-                        android:visibility="gone"
-                        android:weightSum="2">
-
-                        <Button
-                            android:id="@+id/becameFriendSendMessageButton"
-                            style="@style/Widget.AppCompat.Button.Borderless"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginBottom="10dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/corner_button_main_filled"
-                            android:drawableStart="@drawable/ic_outline_chat_24"
-                            android:drawableTint="@color/colorWhite"
-                            android:padding="10dp"
-                            android:text="@string/sendMessage"
-                            android:textAllCaps="false"
-                            android:textColor="@color/colorWhite" />
-
-                        <ImageButton
-                            android:id="@+id/becameFriendImageButton"
-                            android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_margin="10dp"
-                            android:layout_weight="0.5"
-                            android:background="@drawable/corner_button_gray"
-                            android:padding="10dp"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/person_checked" />
-
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/noFriendLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:visibility="gone"
-                        android:weightSum="2">
-
-                        <Button
-                            android:id="@+id/noFriendLayoutAddFriendButton"
-                            style="@style/Widget.AppCompat.Button.Borderless"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginBottom="10dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/corner_button_main_filled"
-                            android:drawableStart="@drawable/ic_outline_person_add_alt_1_24"
-                            android:drawableTint="@color/colorWhite"
-                            android:padding="10dp"
-                            android:text="@string/addFriend"
-                            android:textColor="@color/colorWhite" />
-
-                        <ImageButton
-                            android:id="@+id/noFriendLayoutSendMessageImageButton"
-                            android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_margin="10dp"
-                            android:layout_weight="0.5"
-                            android:background="@drawable/corner_button_gray"
-                            android:padding="10dp"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_outline_chat_24" />
-
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/followLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="horizontal"
-                        android:visibility="gone"
                         android:weightSum="2">
 
                         <Button
                             android:id="@+id/followButton"
-                            style="@style/Widget.AppCompat.Button.Borderless"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:layout_marginBottom="10dp"
                             android:layout_weight="1"
-                            android:background="@drawable/corner_button_main_filled"
+                            android:backgroundTint="@color/colorAccent"
                             android:drawableStart="@drawable/ic_outline_person_add_alt_1_24"
                             android:drawableTint="@color/colorWhite"
                             android:padding="10dp"
                             android:text="@string/follow"
                             android:textColor="@color/colorWhite" />
 
-                        <ImageButton
-                            android:id="@+id/followLayoutSendMessageImageButton"
+                        <Button
+                            android:id="@+id/sendMessageButton"
                             android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_margin="10dp"
-                            android:layout_weight="0.5"
-                            android:background="@drawable/corner_button_gray"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:layout_weight="1"
+                            android:backgroundTint="@color/colorWhite"
+                            android:drawableStart="@drawable/ic_outline_chat_24"
+                            android:drawableTint="@color/colorBlack"
                             android:padding="10dp"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_outline_chat_24" />
+                            android:text="@string/sendMessage"
+                            android:textColor="@color/colorBlack" />
 
 
                     </LinearLayout>
-
-                    <Button
-                        android:id="@+id/sendMessageForOrganizationOnlyButton"
-                        android:layout_width="200dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/sendMessage"
-                        android:layout_margin="10dp"
-                        android:padding="10dp"
-                        android:drawableStart="@drawable/ic_outline_chat_24"
-                        android:layout_gravity="center"
-                        android:drawableTint="@color/colorWhite"
-                        android:backgroundTint="@color/colorAccent"
-                        android:visibility="gone"/>
 
                 </LinearLayout>
 
@@ -402,15 +313,6 @@
 
 
                 </LinearLayout>
-
-                <com.example.als.widget.AlsRecyclerView
-                    android:id="@+id/homeEventListRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="80dp"
-                    android:descendantFocusability="blocksDescendants"
-                    android:fitsSystemWindows="true"
-                    android:focusableInTouchMode="true" />
 
             </LinearLayout>
 

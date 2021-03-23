@@ -160,7 +160,7 @@ public class HomeOrganizationFragment extends Fragment implements SwipeRefreshLa
 
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
-            Log.d("EventAllFragment", "Database Error: " + error.getMessage());
+            Log.d("OrganizationList", "Database Error: " + error.getMessage());
         }
     };
 

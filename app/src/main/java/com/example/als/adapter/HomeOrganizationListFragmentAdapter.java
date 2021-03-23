@@ -15,10 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.als.R;
-import com.example.als.object.Event;
 import com.example.als.object.Organization;
 import com.example.als.object.Variable;
-import com.example.als.ui.home.HomeOrganizationViewDetailsActivity;
 import com.example.als.ui.home.HomeUserViewDetailsActivity;
 import com.example.als.ui.more.AccountActivity;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -108,7 +106,7 @@ public class HomeOrganizationListFragmentAdapter extends RecyclerView.Adapter<Ho
                     }
                     else{
                         Intent i = new Intent(context, HomeUserViewDetailsActivity.class);
-                        i.putExtra(Variable.HOME_ORGANIZATION_SESSION_ID, organization.getUserId());
+                        i.putExtra(Variable.HOME_USER_SESSION_ID, organization.getUserId());
                         context.startActivity(i);
                     }
                 }

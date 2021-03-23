@@ -87,13 +87,7 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity implements Sw
             homeUserViewDetailsOrganizationDescriptionV, homeUserViewDetailsOrganizationAddressV;
 
     //button
-    Button becameFriendSendMessageBtn, noFriendLayoutAddFriendBtn, followLayoutBtn, sendMessageForOrganizationOnlyBtn;
-
-    //image button
-    ImageButton becameFriendImageBtn, noFriendLayoutSendMessageImageBtn, followLayoutSendMessageImageBtn;
-
-    //linear layout
-    LinearLayout becameFriendLayout, noFriendLayout, followLayout;
+    Button followBtn, sendMessageBtn;
 
     Toolbar homeCustomizeSearchViewToolbar;
     Button homeCustomizeSearchBtn;
@@ -128,20 +122,9 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity implements Sw
         //find id for image view
         homeUserViewDetailsIV = findViewById(R.id.homeUserViewDetailsImageView);
 
-        becameFriendLayout = findViewById(R.id.becameFriendLayout);
-        noFriendLayout = findViewById(R.id.noFriendLayout);
-        followLayout = findViewById(R.id.followLayout);
-
         //button
-        becameFriendSendMessageBtn = findViewById(R.id.becameFriendSendMessageButton);
-        noFriendLayoutAddFriendBtn = findViewById(R.id.noFriendLayoutAddFriendButton);
-        followLayoutBtn = findViewById(R.id.followButton);
-        sendMessageForOrganizationOnlyBtn = findViewById(R.id.sendMessageForOrganizationOnlyButton);
-
-        //imageBtn
-        becameFriendImageBtn = findViewById(R.id.becameFriendImageButton);
-        noFriendLayoutSendMessageImageBtn = findViewById(R.id.noFriendLayoutSendMessageImageButton);
-        followLayoutSendMessageImageBtn = findViewById(R.id.followLayoutSendMessageImageButton);
+        followBtn = findViewById(R.id.followButton);
+        sendMessageBtn = findViewById(R.id.sendMessageButton);
 
         //find id for text view
         homeUserViewDetailsNameTV = findViewById(R.id.homeUserViewDetailsNameTextView);
@@ -355,9 +338,6 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity implements Sw
         if(session.hasExtra(Variable.HOME_USER_SESSION_ID)){
             homeUserSessionId = session.getStringExtra(Variable.HOME_USER_SESSION_ID);
         }
-        else if(session.hasExtra(Variable.HOME_ORGANIZATION_SESSION_ID)){
-            homeOrganizationSessionId = session.getStringExtra(Variable.HOME_ORGANIZATION_SESSION_ID);
-        }
         else{
             Toasty.warning(getApplicationContext(), "Something went wrong. Please Try Again", Toast.LENGTH_SHORT,true).show();
             finish();
@@ -370,71 +350,24 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity implements Sw
         if(cUser != null){
 
             if(homeUserSessionId != null){
-                Variable.USER_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                Variable.CONTRIBUTOR_REF.child(homeUserSessionId).addListenerForSingleValueEvent(contributorValueEventListener);
+                followBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if(snapshot.exists()){
-                            User user = snapshot.getValue(User.class);
-
-                            if(user != null)
-                            {
-                                if(user.getRole() != null){
-                                    currentUserRole = user.getRole();
-                                    Variable.CONTRIBUTOR_REF.child(homeUserSessionId).addListenerForSingleValueEvent(contributorValueEventListener);
-                                }
-                                else{
-                                    finish();
-                                    //show error message to user
-                                    Toasty.warning(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG,true).show();
-                                }
-
-                            }
-                            else{
-                                finish();
-                                //show error message to user
-                                Toasty.warning(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG,true).show();
-                            }
+                    public void onClick(View v) {
+                        if (followBtn.getText().equals("Follow")) {
+                            follow(cUser.getUid(), homeUserSessionId);
+                        } else if (followBtn.getText().equals("Unfollow")) {
+                            unfollow(cUser.getUid(), homeUserSessionId);
                         }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.d(TAG, "Database Error: " + error.getMessage());
                     }
                 });
 
-            }
-            else if(homeOrganizationSessionId != null){
-                Variable.USER_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                sendMessageBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if(snapshot.exists()){
-                            User user = snapshot.getValue(User.class);
-
-                            if(user != null)
-                            {
-                                if(user.getRole() != null){
-                                    currentUserRole = user.getRole();
-                                    Variable.ORGANIZATION_REF.child(homeOrganizationSessionId).addListenerForSingleValueEvent(organizationValueEventListener2);
-                                }
-                                else{
-                                    finish();
-                                    //show error message to user
-                                    Toasty.warning(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG,true).show();
-                                }
-
-                            }
-                            else{
-                                finish();
-                                //show error message to user
-                                Toasty.warning(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG,true).show();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.d(TAG, "Database Error: " + error.getMessage());
+                    public void onClick(View v) {
+                        Intent i = new Intent(getApplicationContext(), MessageChatActivity.class);
+                        i.putExtra(Variable.MESSAGE_USER_SESSION_ID, homeUserSessionId);
+                        startActivity(i);
                     }
                 });
 
@@ -458,6 +391,7 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity implements Sw
             //clear the background task
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
+
         }
     }
 
@@ -465,22 +399,6 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity implements Sw
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             if(snapshot.exists()){
-
-                if(currentUserRole.equals(Variable.CONTRIBUTOR)){
-                    becameFriendLayout.setVisibility(View.VISIBLE);
-                }
-                else{
-                    becameFriendLayout.setVisibility(View.GONE);
-                    sendMessageForOrganizationOnlyBtn.setVisibility(View.VISIBLE);
-                    sendMessageForOrganizationOnlyBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent i = new Intent(getApplicationContext(), MessageChatActivity.class);
-                            i.putExtra(Variable.MESSAGE_USER_SESSION_ID, homeUserSessionId);
-                            startActivity(i);
-                        }
-                    });
-                }
 
                 //set visibility to gone for unnecessary view
                 homeUserViewDetailsOrganizationTypeLL.setVisibility(View.GONE);
@@ -556,50 +474,14 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity implements Sw
 
                     }
 
+                    Variable.FOLLOW_REF.child(cUser.getUid()).child(homeUserSessionId).addListenerForSingleValueEvent(followValueEventListener);
+
                     homeUserViewSwipeRefreshLayout.setRefreshing(false);
                 }
 
             }
             else{
-                if(currentUserRole.equals(Variable.CONTRIBUTOR)){
-                    Variable.FOLLOW_REF.child(cUser.getUid()).child(homeUserSessionId).addListenerForSingleValueEvent(followValueEventListener);
-                    Variable.ORGANIZATION_REF.child(homeUserSessionId).addListenerForSingleValueEvent(organizationValueEventListener);
-                    followLayout.setVisibility(View.VISIBLE);
-                    followLayoutBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if(followLayoutBtn.getText().equals("Follow")){
-                                follow(cUser.getUid(), homeUserSessionId);
-                            }
-                            else if(followLayoutBtn.getText().equals("Unfollow")){
-                                unfollow(cUser.getUid(), homeUserSessionId);
-                            }
-                        }
-                    });
-
-                    followLayoutSendMessageImageBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent i = new Intent(HomeUserViewDetailsActivity.this, MessageChatActivity.class);
-                            i.putExtra(Variable.MESSAGE_USER_SESSION_ID, homeUserSessionId);
-                            startActivity(i);
-                        }
-                    });
-                }
-                else{
-                    sendMessageForOrganizationOnlyBtn.setVisibility(View.VISIBLE);
-                    sendMessageForOrganizationOnlyBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent i = new Intent(getApplicationContext(), MessageChatActivity.class);
-                            i.putExtra(Variable.MESSAGE_USER_SESSION_ID, homeUserSessionId);
-                            startActivity(i);
-                        }
-                    });
-                }
-
-
-                homeUserViewSwipeRefreshLayout.setRefreshing(false);
+                Variable.ORGANIZATION_REF.child(homeUserSessionId).addListenerForSingleValueEvent(organizationValueEventListener);
             }
         }
 
@@ -613,12 +495,12 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity implements Sw
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             if(snapshot.exists()){
-                followLayoutBtn.setText(R.string.unfollow);
-                followLayoutBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_outline_person_remove_24, 0, 0, 0);
+                followBtn.setText(R.string.unfollow);
+                followBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_outline_person_remove_24, 0, 0, 0);
             }
             else{
-                followLayoutBtn.setText(R.string.follow);
-                followLayoutBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_outline_person_add_alt_1_24, 0, 0, 0);
+                followBtn.setText(R.string.follow);
+                followBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_outline_person_add_alt_1_24, 0, 0, 0);
             }
         }
 
@@ -723,153 +605,13 @@ public class HomeUserViewDetailsActivity extends AppCompatActivity implements Sw
                     else{
                         homeUserViewDetailsOrganizationAddressTV.setText("-");
                     }
+
+                    Variable.FOLLOW_REF.child(cUser.getUid()).child(homeUserSessionId).addListenerForSingleValueEvent(followValueEventListener);
+
+                    homeUserViewSwipeRefreshLayout.setRefreshing(false);
                 }
 
             }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-            Log.d(TAG, "databaseError: "+error.getMessage());
-        }
-    };
-
-    private final ValueEventListener organizationValueEventListener2 = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            homeUserViewDetailsPositionTitleTV.setText(Variable.ORGANIZATION);
-            if(snapshot.exists()){
-                Organization organization = snapshot.getValue(Organization.class);
-
-                if(organization != null){
-
-                    if(currentUserRole.equals(Variable.CONTRIBUTOR)){
-                        Variable.FOLLOW_REF.child(cUser.getUid()).child(homeOrganizationSessionId).addListenerForSingleValueEvent(followValueEventListener);
-                        followLayout.setVisibility(View.VISIBLE);
-                        followLayoutBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if(followLayoutBtn.getText().equals("Follow")){
-                                    follow(cUser.getUid(), homeOrganizationSessionId);
-                                }
-                                else if(followLayoutBtn.getText().equals("Unfollow")){
-                                    unfollow(cUser.getUid(), homeOrganizationSessionId);
-                                }
-                            }
-                        });
-
-                        followLayoutSendMessageImageBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent i = new Intent(HomeUserViewDetailsActivity.this, MessageChatActivity.class);
-                                i.putExtra(Variable.MESSAGE_USER_SESSION_ID, homeOrganizationSessionId);
-                                startActivity(i);
-                            }
-                        });
-                    }
-                    else{
-                        sendMessageForOrganizationOnlyBtn.setVisibility(View.VISIBLE);
-                        sendMessageForOrganizationOnlyBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Intent i = new Intent(getApplicationContext(), MessageChatActivity.class);
-                                i.putExtra(Variable.MESSAGE_USER_SESSION_ID, homeOrganizationSessionId);
-                                startActivity(i);
-                            }
-                        });
-                    }
-
-                    if(organization.getOrganizationVerifyStatus().equals(Variable.VERIFIED)){
-
-                        if(organization.getOrganizationName() != null){
-                            homeUserViewDetailsNameTV.setText(organization.getOrganizationName());
-                            homeUserViewDetailsNameTV.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_check_circle_accent_24, 0);
-                        }
-                        else{
-                            homeUserViewDetailsNameTV.setText("-");
-                        }
-                    }
-                    else{
-                        if(organization.getOrganizationName() != null){
-                            homeUserViewDetailsNameTV.setText(organization.getOrganizationName());
-                            homeUserViewDetailsNameTV.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_check_circle_24, 0);
-                        }
-                        else{
-                            homeUserViewDetailsNameTV.setText("-");
-                        }
-                    }
-
-                    if(organization.getOrganizationProfileImageName() != null){
-
-                        StorageReference imageRef = Variable.ORGANIZATION_SR.child(homeOrganizationSessionId)
-                                .child("profile").child(organization.getOrganizationProfileImageName());
-
-                        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                Log.d(TAG, "loadImage: success");
-                                GlideApp.with(getApplicationContext())
-                                        .load(uri)
-                                        .placeholder(R.drawable.loading_image)
-                                        .into(homeUserViewDetailsIV);
-                            }
-                        })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.d(TAG, "loadImage:Failed");
-                                        homeUserViewDetailsIV.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
-                                    }
-                                });
-
-                    }
-
-                    if(organization.getOrganizationType() != null){
-                        homeUserViewDetailsOrganizationTypeTV.setText(organization.getOrganizationType());
-                    }
-                    else{
-                        homeUserViewDetailsOrganizationTypeTV.setText("-");
-                    }
-
-                    if(organization.getOrganizationRegistrationNumber() != null){
-                        homeUserViewDetailsOrganizationRegistrationNumberTV.setText(organization.getOrganizationRegistrationNumber());
-                    }
-                    else{
-                        homeUserViewDetailsOrganizationRegistrationNumberTV.setText("-");
-                    }
-
-                    if(organization.getOrganizationEmail() != null){
-                        homeUserViewDetailsEmailTV.setText(organization.getOrganizationEmail());
-                    }
-                    else{
-                        homeUserViewDetailsEmailTV.setText("-");
-                    }
-
-                    if(organization.getOrganizationPhone() != null){
-                        homeUserViewDetailsPhoneTV.setText(organization.getOrganizationPhone());
-                    }
-                    else{
-                        homeUserViewDetailsPhoneTV.setText("-");
-                    }
-
-                    if(organization.getOrganizationDescription() != null){
-                        homeUserViewDetailsOrganizationDescriptionTV.setText(organization.getOrganizationDescription());
-                    }
-                    else{
-                        homeUserViewDetailsOrganizationDescriptionTV.setText("-");
-                    }
-
-                    if(organization.getOrganizationAddress() != null){
-                        homeUserViewDetailsOrganizationAddressTV.setText(organization.getOrganizationAddress());
-                    }
-                    else{
-                        homeUserViewDetailsOrganizationAddressTV.setText("-");
-                    }
-                }
-
-            }
-
-            homeUserViewSwipeRefreshLayout.setRefreshing(false);
         }
 
         @Override

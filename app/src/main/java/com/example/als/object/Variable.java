@@ -68,8 +68,6 @@ public class Variable {
     public static final String HOME_EVENT_SESSION_ID = "homeEventSessionId";
     public static final String HOME_EVENT_NAME_SESSION_ID = "homeEventNameSessionId";
     public static final String HOME_USER_SESSION_ID = "homeUserSessionId";
-    public static final String HOME_ORGANIZATION_SESSION_ID = "homeOrganizationSessionId";
-    public static final String HOME_USER_SESSION_POSITION = "homeUserPositionSessionId";
     public static final String MESSAGE_USER_SESSION_ID = "messageUserSessionId";
 
     public static final String MESSAGE_TYPE_TEXT = "text";

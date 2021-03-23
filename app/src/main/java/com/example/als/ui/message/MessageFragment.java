@@ -22,6 +22,7 @@ import com.example.als.object.User;
 import com.example.als.object.Variable;
 import com.example.als.ui.home.HomeUserViewDetailsActivity;
 import com.example.als.widget.AlsRecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,6 +50,8 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     private List<String> usersList;
 
+    FloatingActionButton newMessageFAB;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -61,7 +64,15 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
         messageChatListRV.addItemDecoration(new DividerItemDecoration(requireActivity(), LinearLayoutManager.VERTICAL));
         View messageChatEmptyView = root.findViewById(R.id.emptyMessageChatList);
         messageChatListRV.showIfEmpty(messageChatEmptyView);
+        newMessageFAB = root.findViewById(R.id.newMessageFloatingActionButton);
         cUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        newMessageFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(requireActivity(), SearchUserMessageActivity.class));
+            }
+        });
 
         //swipeRefreshLayout function
         messageChatListSRL.setOnRefreshListener(this);
@@ -167,4 +178,5 @@ public class MessageFragment extends Fragment implements SwipeRefreshLayout.OnRe
     public void onRefresh() {
         readChatList();
     }
+
 }
