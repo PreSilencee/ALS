@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:id="@+id/raisedEventListCardView">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <ImageView
+            android:id="@+id/searchEventListImageView"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:scaleType="fitXY"
+            android:contentDescription="@string/eventImage"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:baselineAligned="false"
+            android:layout_weight="1.5"
+            android:layout_width="0dp"
+            android:padding="10dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/searchEventListNameTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/eventName"
+                android:padding="5dp"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"/>
+
+            <TextView
+                android:id="@+id/searchEventListDescriptionTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/eventDes"
+                android:padding="5dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

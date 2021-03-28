@@ -219,13 +219,4 @@ public class MessageSearchUserListAdapter extends RecyclerView.Adapter<MessageSe
         this.onUserListener = listener;
     }
 
-//    //create interface listener
-//    public interface OnUserListener{
-//        void onUserClicked(int position);
-//    }
-//
-//    //create an method on click
-//    public void setOnClickListener(OnUserListener listener){
-//        this.onUserListener = listener;
-//    }
 }

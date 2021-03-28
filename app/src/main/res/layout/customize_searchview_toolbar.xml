@@ -18,6 +18,7 @@
         app:titleTextAppearance="@style/Toolbar.TitleText"/>
 
     <androidx.appcompat.widget.SearchView
+        android:id="@+id/customizeSearchView"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:layout_marginEnd="15dp"

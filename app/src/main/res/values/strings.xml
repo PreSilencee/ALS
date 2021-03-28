@@ -147,6 +147,10 @@
     <string name="emptyOrganization">No Organization has been found</string>
     <string name="pay_with_razorpay">Pay With RazorPay</string>
     <string name="no_user_found_go_to_search_page_and_follow_others">No User Found. Go to Search Page and follow others</string>
+    <string name="nothing_found">Nothing Found</string>
+    <string name="event">Event</string>
+    <string name="more"><![CDATA[More >>]]></string>
+    <string name="download_as_pdf">Download as pdf</string>
 
 
 </resources>

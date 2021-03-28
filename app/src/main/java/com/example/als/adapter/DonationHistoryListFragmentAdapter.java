@@ -22,6 +22,8 @@ public class DonationHistoryListFragmentAdapter extends RecyclerView.Adapter<Don
     //create a context for the adapter
     private Context context;
 
+    private OnDonationListener onDonationListener;
+
     //constructor (donation list, context)
     public DonationHistoryListFragmentAdapter(List<Donation> donationList, Context context) {
         this.donationList = donationList;
@@ -106,6 +108,32 @@ public class DonationHistoryListFragmentAdapter extends RecyclerView.Adapter<Don
             donationHistoryListMonthTV = itemView.findViewById(R.id.donationHistoryListMonthTextView);
             donationHistoryListIdTV = itemView.findViewById(R.id.donationHistoryListIdTextView);
             donationHistoryListAmountTV = itemView.findViewById(R.id.donationHistoryListAmountTextView);
+
+            //item view on click
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if(onDonationListener != null){
+                        //get current position
+                        int position = getAdapterPosition();
+
+                        //if position != -1
+                        if(position != RecyclerView.NO_POSITION){
+                            onDonationListener.onDonationClicked(position);
+                        }
+                    }
+                }
+            });
         }
+    }
+
+    public interface OnDonationListener{
+        void onDonationClicked(int position);
+    }
+
+    //create an method on click
+    public void setOnClickListener(OnDonationListener listener){
+        this.onDonationListener = listener;
     }
 }

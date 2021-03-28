@@ -11,11 +11,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.example.als.MainActivity;
 import com.example.als.R;
 import com.example.als.adapter.DonationHistoryListFragmentAdapter;
 import com.example.als.handler.Connectivity;
@@ -164,6 +162,14 @@ public class DonationHistoryActivity extends AppCompatActivity implements SwipeR
                     donationHistoryListFragmentAdapter.notifyDataSetChanged();
                     donationHistoryRecyclerView.setAdapter(donationHistoryListFragmentAdapter);
                     donationHistoryListSRL.setRefreshing(false);
+                    donationHistoryListFragmentAdapter.setOnClickListener(new DonationHistoryListFragmentAdapter.OnDonationListener() {
+                        @Override
+                        public void onDonationClicked(int position) {
+                            Intent i = new Intent(getApplicationContext(), DonationDetailsActivity.class);
+                            i.putExtra(Variable.DONATION_SESSION_ID, donationHistoryList.get(position).getDonationId());
+                            startActivity(i);
+                        }
+                    });
                 }
 
                 @Override

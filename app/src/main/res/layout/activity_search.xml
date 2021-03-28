@@ -7,7 +7,33 @@
     android:layout_height="match_parent"
     tools:context=".ui.SearchActivity">
 
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/searchViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchToolbarView"
+        android:visibility="gone">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/searchTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            app:tabIndicatorColor="@color/colorAccent"
+            app:tabGravity="fill"
+            app:tabInlineLabel="true"
+            app:tabMode="fixed" />
+
+    </androidx.viewpager.widget.ViewPager>
+
     <include
+        android:id="@+id/empty_search_view"
+        layout="@layout/empty_search"/>
+
+    <include
+        android:id="@+id/searchToolbarView"
         layout="@layout/customize_searchview_toolbar"/>
 
 

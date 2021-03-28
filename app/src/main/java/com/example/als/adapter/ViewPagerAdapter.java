@@ -18,6 +18,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         fragmentTitleList.add(title);
     }
 
+    public void removeFragment(Fragment fragment, int position) {
+        fragmentList.remove(fragment);
+        fragmentTitleList.remove(position);
+    }
+
     public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior){
         super(fm,behavior);
     }

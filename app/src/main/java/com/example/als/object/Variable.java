@@ -69,6 +69,7 @@ public class Variable {
     public static final String HOME_EVENT_NAME_SESSION_ID = "homeEventNameSessionId";
     public static final String HOME_USER_SESSION_ID = "homeUserSessionId";
     public static final String MESSAGE_USER_SESSION_ID = "messageUserSessionId";
+    public static final String DONATION_SESSION_ID = "donationSessionId";
 
     public static final String MESSAGE_TYPE_TEXT = "text";
     public static final String MESSAGE_TYPE_FILE = "file";
@@ -87,6 +88,11 @@ public class Variable {
 
     public static final String SUCCESS = "Success";
     public static final String FAILED = "Failed";
+
+    public static final String SEARCH_ITEM = "searchItem";
+    public static final String FRAGMENT_STATE = "fragmentState";
+    public static final String VISIBLE = "VISIBLE";
+    public static final String NOTVISIBLE = "NOTVISIBLE";
 
 }
 
