@@ -14,6 +14,7 @@ public class Donation {
     private String donationDateTime;
     private String donationState;
     private String donationCurrencyCode;
+    private String donationPaymentMethod;
 
     public Donation(){
         //
@@ -75,6 +76,14 @@ public class Donation {
         this.donationCurrencyCode = donationCurrencyCode;
     }
 
+    public String getDonationPaymentMethod() {
+        return donationPaymentMethod;
+    }
+
+    public void setDonationPaymentMethod(String donationPaymentMethod) {
+        this.donationPaymentMethod = donationPaymentMethod;
+    }
+
     @Exclude
     public Map<String, Object> donationMap(){
         HashMap<String,Object> result = new HashMap<>();
@@ -86,6 +95,7 @@ public class Donation {
         result.put("donationDateTime", donationDateTime);
         result.put("donationState", donationState);
         result.put("donationCurrencyCode", donationCurrencyCode);
+        result.put("donationPaymentMethod", donationPaymentMethod);
 
         return result;
     }

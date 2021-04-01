@@ -352,6 +352,7 @@ public class HomeDonateActivity extends AppCompatActivity implements PaymentResu
         donation.setDonationDateTime(currentDateTime);
         donation.setDonationEventId(eventId);
         donation.setDonationUserId(userId);
+        donation.setDonationPaymentMethod("RAZORPAY");
 
         Variable.DONATION_REF.child(s).setValue(donation).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

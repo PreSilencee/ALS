@@ -1,19 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="8dp"
     android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/messageChatOtherUserProfileImageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_baseline_person_color_accent_24"
+        app:civ_border_width="1dp"
+        app:civ_border_color="@color/colorGray"
+        android:layout_margin="5dp"/>
 
     <TextView
         android:id="@+id/messageShowChatItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
         android:text="@string/sendMessage"
         android:textSize="18sp"
         android:padding="8dp"
-        android:background="@drawable/message_chat_background_left"/>
+        android:background="@drawable/message_chat_background_left"
+        android:layout_toEndOf="@id/messageChatOtherUserProfileImageView"
+        android:layout_alignParentTop="true"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/messageShowChatItemImage"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/messageChatOtherUserProfileImageView"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@string/image"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/messageImageDownloadButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_margin="5dp"
+        android:contentDescription="@string/image"
+        android:layout_toEndOf="@id/messageShowChatItemImage"
+        android:src="@drawable/ic_round_download_for_offline_24"
+        android:layout_centerVertical="true"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/messageShowChatItemDocumentName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/messageChatOtherUserProfileImageView"
+        android:layout_alignParentTop="true"
+        android:text="@string/sendMessage"
+        android:padding="8dp"
+        app:drawableTopCompat="@drawable/ic_round_insert_drive_file_24"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/messageDocumentDownloadButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:contentDescription="@string/image"
+        android:layout_toEndOf="@id/messageShowChatItemDocumentName"
+        android:src="@drawable/ic_round_download_for_offline_24"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:visibility="gone"/>
+
+
 
 
 </RelativeLayout>

@@ -20,8 +20,10 @@ import android.widget.Toast;
 
 import com.example.als.R;
 import com.example.als.handler.Connectivity;
+import com.example.als.object.Contributor;
 import com.example.als.object.Donation;
 import com.example.als.object.Event;
+import com.example.als.object.Organization;
 import com.example.als.object.Variable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -47,6 +49,8 @@ public class DonationDetailsActivity extends AppCompatActivity {
     String donationAmount;
     String status;
     String eventId;
+    String name;
+    String paymentMethod;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +117,7 @@ public class DonationDetailsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
 
-                    Donation donation = snapshot.getValue(Donation.class);
+                    final Donation donation = snapshot.getValue(Donation.class);
 
                     if(donation != null){
                         if(donation.getDonationDateTime() != null){
@@ -133,49 +137,158 @@ public class DonationDetailsActivity extends AppCompatActivity {
                             eventId = donation.getDonationEventId();
                         }
 
-                        String html = "<!DOCTYPE html>\n" +
-                                "<html lang=\"en\">\n" +
-                                "<head>\n" +
-                                "    <meta charset=\"UTF-8\">\n" +
-                                "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n" +
-                                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
-                                "    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n" +
-                                "    <title>Document</title>\n" +
-                                "</head>\n" +
-                                "<body>\n" +
-                                "    <div class=\"container\">\n" +
-                                "        <h3>Donation Receipt</h3>\n" +
-                                "        <h5>Invoice: "+ donationSessionId +"</h5>\n" +
-                                "        <h6>Date: "+separatedDateAndTime[0]+"</h6>\n" +
-                                "        <h6>Time: "+separatedDateAndTime[1]+ " "+separatedDateAndTime[2]+"</h6>\n" +
-                                "        <table class=\"table\">\n" +
-                                "            <thead>\n" +
-                                "              <tr>\n" +
-                                "                <th scope=\"col\">Item</th>\n" +
-                                "                <th scope=\"col\"></th>\n" +
-                                "                <th scope=\"col\">Sub Total (RM)</th>\n" +
-                                "              </tr>\n" +
-                                "            </thead>\n" +
-                                "            <tbody>\n" +
-                                "              <tr>\n" +
-                                "                <td id=\"description\">Donation for "+eventId +"</td>\n" +
-                                "                <td></td>\n" +
-                                "                <td id=\"amount\"> "+donationAmount+"</td>\n" +
-                                "              </tr>\n" +
-                                "              <tr>\n" +
-                                "                  <td></td>\n" +
-                                "                  <td>Total</td>\n" +
-                                "                  <td id=\"tAmount\"> "+donationAmount+"</td>\n" +
-                                "              </tr>\n" +
-                                "            </tbody>\n" +
-                                "          </table>\n" +
-                                "          <h6 id=\"status\"> Payment Status: "+status+"</h6>\n" +
-                                "    </div>\n" +
-                                "    \n" +
-                                "</body>\n" +
-                                "</html>";
+                        if(donation.getDonationPaymentMethod() != null){
+                            paymentMethod = donation.getDonationPaymentMethod();
+                        }
 
-                        donationWebView.loadDataWithBaseURL(null,html,"text/html","utf-8",null);
+                        if(donation.getDonationUserId() != null){
+                            Variable.CONTRIBUTOR_REF.child(donation.getDonationUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if(snapshot.exists()){
+                                        Contributor contributor = snapshot.getValue(Contributor.class);
+
+                                        if(contributor != null){
+                                            if(contributor.getName() != null){
+                                                name = contributor.getName();
+                                            }
+
+                                            String html = "<!DOCTYPE html>\n" +
+                                                    "<html lang=\"en\">\n" +
+                                                    "<head>\n" +
+                                                    "    <meta charset=\"UTF-8\">\n" +
+                                                    "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n" +
+                                                    "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                                                    "    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n" +
+                                                    "    <title>Document</title>\n" +
+                                                    "</head>\n" +
+                                                    "<body>\n" +
+                                                    "    <div class=\"container\">\n" +
+                                                    "      <table>\n" +
+                                                    "        <tr>\n" +
+                                                    "          <th> <img src=\"file:android_asset/AlittleShare-1.png\" class=\"img-fluid\" alt=\"Responsive image\" width=\"50px\" height=\"50px\"></th>\n" +
+                                                    "          <th> <h3>AlittleShare</h3> </th>\n" +
+                                                    "        </tr>\n" +
+                                                    "      </table>\n" +
+                                                    "        <h5>Donation Receipt</h5>\n" +
+                                                    "        <table class=\"table\">\n" +
+                                                    "          <thead>\n" +
+                                                    "            <tr>\n" +
+                                                    "              <td>Invoice Number: <strong>"+donationSessionId+"</strong></td>\n" +
+                                                    "              <td>Date: <strong>"+separatedDateAndTime[0]+"</strong></td>\n" +
+                                                    "            </tr>\n" +
+                                                    "            <tr>\n" +
+                                                    "              <td>Donated By: <strong>"+name+"</strong></td>\n" +
+                                                    "              <td>Payment Method: <strong>"+paymentMethod+"</strong></td>\n" +
+                                                    "            </tr>\n" +
+                                                    "          </thead>\n" +
+                                                    "        </table>\n" +
+                                                    "        <table class=\"table\">\n" +
+                                                    "            <thead>\n" +
+                                                    "              <tr>\n" +
+                                                    "                <th scope=\"col\">Description</th>\n" +
+                                                    "                <th scope=\"col\">Amount (RM)</th>\n" +
+                                                    "              </tr>\n" +
+                                                    "            </thead>\n" +
+                                                    "            <tbody>\n" +
+                                                    "              <tr>\n" +
+                                                    "                <td id=\"description\">Donation for "+eventId+"</td>\n" +
+                                                    "                <td id=\"amount\">"+donationAmount+"</td>\n" +
+                                                    "              </tr>\n" +
+                                                    "            </tbody>\n" +
+                                                    "          </table>\n" +
+                                                    "          <h6>Thank you for your generosity. We appreciate your support!</h6>\n" +
+                                                    "    </div>\n" +
+                                                    "    \n" +
+                                                    "</body>\n" +
+                                                    "</html>";
+
+                                            donationWebView.loadDataWithBaseURL(null,html,"text/html","utf-8",null);
+                                        }
+                                    }
+                                    else{
+                                        Variable.ORGANIZATION_REF.child(donation.getDonationUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                if(snapshot.exists()){
+                                                    Organization organization = snapshot.getValue(Organization.class);
+
+                                                    if(organization != null){
+                                                        if(organization.getOrganizationName() != null){
+                                                            name = organization.getOrganizationName();
+                                                        }
+
+                                                        String html = "<!DOCTYPE html>\n" +
+                                                                "<html lang=\"en\">\n" +
+                                                                "<head>\n" +
+                                                                "    <meta charset=\"UTF-8\">\n" +
+                                                                "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n" +
+                                                                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n" +
+                                                                "    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n" +
+                                                                "    <title>Document</title>\n" +
+                                                                "</head>\n" +
+                                                                "<body>\n" +
+                                                                "    <div class=\"container\">\n" +
+                                                                "      <table>\n" +
+                                                                "        <tr>\n" +
+                                                                "          <th> <img src=\"file:android_asset/AlittleShare-1.png\" class=\"img-fluid\" alt=\"Responsive image\" width=\"50px\" height=\"50px\"></th>\n" +
+                                                                "          <th> <h3>AlittleShare</h3> </th>\n" +
+                                                                "        </tr>\n" +
+                                                                "      </table>\n" +
+                                                                "        <h5>Donation Receipt</h5>\n" +
+                                                                "        <table class=\"table\">\n" +
+                                                                "          <thead>\n" +
+                                                                "            <tr>\n" +
+                                                                "              <td>Invoice Number: <strong>"+donationSessionId+"</strong></td>\n" +
+                                                                "              <td>Date: <strong>"+separatedDateAndTime[0]+"</strong></td>\n" +
+                                                                "            </tr>\n" +
+                                                                "            <tr>\n" +
+                                                                "              <td>Donated By: <strong>"+name+"</strong></td>\n" +
+                                                                "              <td>Payment Method: <strong>"+paymentMethod+"</strong></td>\n" +
+                                                                "            </tr>\n" +
+                                                                "          </thead>\n" +
+                                                                "        </table>\n" +
+                                                                "        <table class=\"table\">\n" +
+                                                                "            <thead>\n" +
+                                                                "              <tr>\n" +
+                                                                "                <th scope=\"col\">Description</th>\n" +
+                                                                "                <th scope=\"col\">Amount (RM)</th>\n" +
+                                                                "              </tr>\n" +
+                                                                "            </thead>\n" +
+                                                                "            <tbody>\n" +
+                                                                "              <tr>\n" +
+                                                                "                <td id=\"description\">Donation for "+eventId+"</td>\n" +
+                                                                "                <td id=\"amount\">"+donationAmount+"</td>\n" +
+                                                                "              </tr>\n" +
+                                                                "            </tbody>\n" +
+                                                                "          </table>\n" +
+                                                                "          <h6>Thank you for your generosity. We appreciate your support!</h6>\n" +
+                                                                "    </div>\n" +
+                                                                "    \n" +
+                                                                "</body>\n" +
+                                                                "</html>";
+
+                                                        donationWebView.loadDataWithBaseURL(null,html,"text/html","utf-8",null);
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                //
+                                            }
+                                        });
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    //
+                                }
+                            });
+                        }
+
+
                     }
                 }
             }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:layout_width="300dp"
@@ -19,7 +19,53 @@
             android:layout_alignParentEnd="true"
             android:padding="8dp"
             android:textSize="18sp"
-            android:textColor="@color/colorWhite"/>
+            android:textColor="@color/colorWhite"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/messageShowChatItemImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@string/image"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/messageImageDownloadButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:contentDescription="@string/image"
+            android:layout_toStartOf="@id/messageShowChatItemImage"
+            android:src="@drawable/ic_round_download_for_offline_24"
+            android:layout_centerVertical="true"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/messageShowChatItemDocumentName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/sendMessage"
+            android:padding="8dp"
+            app:drawableTopCompat="@drawable/ic_round_insert_drive_file_24"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/messageDocumentDownloadButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:contentDescription="@string/image"
+            android:layout_toStartOf="@id/messageShowChatItemDocumentName"
+            android:src="@drawable/ic_round_download_for_offline_24"
+            android:layout_centerVertical="true"
+            android:visibility="gone"/>
+
 
     </RelativeLayout>
 

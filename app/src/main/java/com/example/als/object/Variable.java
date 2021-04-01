@@ -53,6 +53,8 @@ public class Variable {
     public static final StorageReference EVENT_SR =
             FirebaseStorage.getInstance()
                     .getReference("event");
+    public static final StorageReference MESSAGE_SR =
+            FirebaseStorage.getInstance().getReference("message");
 
     //string
     public static final String CONTRIBUTOR = "CONTRIBUTOR";
@@ -73,6 +75,7 @@ public class Variable {
 
     public static final String MESSAGE_TYPE_TEXT = "text";
     public static final String MESSAGE_TYPE_FILE = "file";
+    public static final String MESSAGE_TYPE_IMAGE = "image";
 
     //use for AESCrypt
     public static final String ALGORITHM = "AES";

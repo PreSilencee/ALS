@@ -17,7 +17,7 @@
         android:roundIcon="@mipmap/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.more.DonationDetailsActivity"></activity>
+        <activity android:name=".ui.more.DonationDetailsActivity"/>
         <activity android:name=".ui.message.SearchUserMessageActivity" />
         <activity android:name=".ui.more.DonationHistoryActivity" />
 

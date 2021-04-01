@@ -9,32 +9,40 @@
 </head>
 <body>
     <div class="container">
-        <h3>Donation Receipt</h3>
-        <h5>Invoice: Number</h5>
-        <h6>Date: Date</h6>
-        <h6>Time: Time</h6>
+      <table>
+        <tr>
+          <th> <img src="AlittleShare-1.png" class="img-fluid" alt="Responsive image" width="50px" height="50px"></th>
+          <th> <h3>AlittleShare</h3> </th>
+        </tr>
+      </table>
+        <h5>Donation Receipt</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <td>Invoice Number: <strong>number</strong></td>
+              <td>Date: <strong>date</strong></td>
+            </tr>
+            <tr>
+              <td>Donated By: <strong>donator</strong></td>
+              <td>Payment Method: <strong>method</strong></td>
+            </tr>
+          </thead>
+        </table>
         <table class="table">
             <thead>
               <tr>
-                <th scope="col">Item</th>
-                <th scope="col"></th>
-                <th scope="col">Sub Total</th>
+                <th scope="col">Description</th>
+                <th scope="col">Amount</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td id="description">Description</td>
-                <td></td>
-                <td id="amount">Amount</td>
-              </tr>
-              <tr>
-                  <td></td>
-                  <td>Total</td>
-                  <td id="tAmount">Total Amount</td>
+                <td id="amount">amount</td>
               </tr>
             </tbody>
           </table>
-          <h6 id="status"> Payment Status: status</h6>
+          <h6>Thank you for your generosity. We appreciate your support!</h6>
     </div>
     
 </body>

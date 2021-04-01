@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/messageChatRelativeLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#e6e6e6"
-    tools:context=".ui.message.MessageChatActivity">
+    tools:context=".ui.message.MessageChatActivity"
+    android:clickable="true"
+    android:focusable="true">
 
     <include
         android:id="@+id/messageChatToolbar"
@@ -18,7 +21,9 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/messageChatToolbar"
         android:layout_above="@+id/messageChatSendMessageRelativeLayout"
-        android:layout_marginBottom="6dp">
+        android:layout_marginBottom="6dp"
+        android:clickable="true"
+        android:focusable="true">
     </androidx.recyclerview.widget.RecyclerView>
 
     <RelativeLayout
@@ -64,5 +69,84 @@
             android:contentDescription="@string/sendMessage" />
 
     </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/sendFilesCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="8dp"
+        android:layout_above="@id/messageChatSendMessageRelativeLayout"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="10dp">
+
+                <ImageButton
+                    android:id="@+id/messageSendDocumentButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_round_description_24"
+                    android:background="@drawable/document_round_corner"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/document"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/document"
+                    android:textSize="16sp"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_margin="10dp">
+
+                <ImageButton
+                    android:id="@+id/messageSendImageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_round_image_24"
+                    android:background="@drawable/image_round_corner"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/image"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/image"
+                    android:textSize="16sp"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

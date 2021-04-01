@@ -8,6 +8,7 @@ public class Message {
     private String messageContent;
     private String messageType;
     private String messageDateTimeSent;
+    private String messageUrl;
 
     public String getMessageId() {
         return messageId;
@@ -55,5 +56,13 @@ public class Message {
 
     public void setMessageDateTimeSent(String messageDateTimeSent) {
         this.messageDateTimeSent = messageDateTimeSent;
+    }
+
+    public String getMessageUrl() {
+        return messageUrl;
+    }
+
+    public void setMessageUrl(String messageUrl) {
+        this.messageUrl = messageUrl;
     }
 }

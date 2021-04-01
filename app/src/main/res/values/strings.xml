@@ -151,6 +151,10 @@
     <string name="event">Event</string>
     <string name="more"><![CDATA[More >>]]></string>
     <string name="download_as_pdf">Download as pdf</string>
+    <string name="camera">Camera</string>
+    <string name="document">Document</string>
+    <string name="gallery">Gallery</string>
+    <string name="image">Image</string>
 
 
 </resources>
