@@ -227,15 +227,8 @@ public class MessageChatItemAdapter extends RecyclerView.Adapter<MessageChatItem
             });
         }
         else if(message.getMessageType().equals(Variable.MESSAGE_TYPE_FILE)){
-            //decrypt message
-            String decryptedMessage ="";
-            try{
-                decryptedMessage = AESCrypt.decrypt(message.getMessageContent());
-            }
-            catch (Exception e){
-                Log.d(TAG, e.toString());
-            }
-            holder.messageChatItemDocument.setText(decryptedMessage);
+
+            holder.messageChatItemDocument.setText(message.getMessageFileName());
             holder.messageChatItemDocument.setVisibility(View.VISIBLE);
             holder.messageChatItemDocumentDownloadBtn.setVisibility(View.VISIBLE);
             holder.messageChatItemDocumentDownloadBtn.setOnClickListener(new View.OnClickListener() {

@@ -129,8 +129,8 @@ public class DonationDetailsActivity extends AppCompatActivity {
                             donationAmount = String.valueOf(donation.getDonationAmount());
                         }
 
-                        if(donation.getDonationState() != null){
-                            status = donation.getDonationState();
+                        if(donation.getDonationStatus() != null){
+                            status = donation.getDonationStatus();
                         }
 
                         if(donation.getDonationEventId() != null){

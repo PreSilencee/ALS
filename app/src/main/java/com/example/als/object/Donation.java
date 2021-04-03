@@ -12,7 +12,7 @@ public class Donation {
     private String donationEventId;
     private double donationAmount;
     private String donationDateTime;
-    private String donationState;
+    private String donationStatus;
     private String donationCurrencyCode;
     private String donationPaymentMethod;
 
@@ -60,12 +60,12 @@ public class Donation {
         this.donationDateTime = donationDateTime;
     }
 
-    public String getDonationState() {
-        return donationState;
+    public String getDonationStatus() {
+        return donationStatus;
     }
 
-    public void setDonationState(String donationState) {
-        this.donationState = donationState;
+    public void setDonationStatus(String donationStatus) {
+        this.donationStatus = donationStatus;
     }
 
     public String getDonationCurrencyCode() {
@@ -93,7 +93,7 @@ public class Donation {
         result.put("donationEventId", donationEventId);
         result.put("donationAmount", donationAmount);
         result.put("donationDateTime", donationDateTime);
-        result.put("donationState", donationState);
+        result.put("donationStatus", donationStatus);
         result.put("donationCurrencyCode", donationCurrencyCode);
         result.put("donationPaymentMethod", donationPaymentMethod);
 

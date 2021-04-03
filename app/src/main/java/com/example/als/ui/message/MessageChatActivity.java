@@ -573,7 +573,7 @@ public class MessageChatActivity extends AppCompatActivity {
         });
     }
 
-    private void sendImageMessage(final String myId, final String userId, final Uri i){
+    private void sendImageMessage2(final String myId, final String userId, final Uri i, final String m){
         //a progress dialog to view progress of create account
         final ProgressDialog progressDialog = new ProgressDialog(MessageChatActivity.this);
 
@@ -584,16 +584,15 @@ public class MessageChatActivity extends AppCompatActivity {
         progressDialog.show();
 
         if(myId != null && userId != null && i != null){
+
             //initialize pattern of date
             SimpleDateFormat imageSimpleDateFormat = new SimpleDateFormat("ddMMyyyyhhmmss", Locale.US);
             //initialize date object
             Date imageDateObj = Calendar.getInstance().getTime();
             //initialize string for current date time use the pattern above
-            ContentResolver cR = getContentResolver();
-            MimeTypeMap mime = MimeTypeMap.getSingleton();
-            String type = mime.getExtensionFromMimeType(cR.getType(i));
             final String imageDateTime = imageSimpleDateFormat.format(imageDateObj);
-            final String messageImageName = "image"+imageDateTime+type;
+            String extension = imageUri.toString().substring(imageUri.toString().lastIndexOf("."));
+            final String messageImageName = "image"+imageDateTime+extension;
 
             final StorageReference messageImageSR = Variable.MESSAGE_SR.child(messageImageName);
 
@@ -608,7 +607,7 @@ public class MessageChatActivity extends AppCompatActivity {
                                 if(uri != null){
                                     String messageContent = "";
                                     try{
-                                        messageContent = AESCrypt.encrypt(messageImageName);
+                                        messageContent = AESCrypt.encrypt(m);
                                     }
                                     catch (Exception e){
                                         Log.d(TAG, e.toString());
@@ -629,6 +628,7 @@ public class MessageChatActivity extends AppCompatActivity {
                                     message.setMessageDateTimeSent(currentDateTime);
                                     message.setMessageContent(messageContent);
                                     message.setMessageUrl(uri.toString());
+                                    message.setMessageFileName(messageImageName);
 
                                     Variable.MESSAGE_REF.child(message.getMessageId()).setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
@@ -647,7 +647,7 @@ public class MessageChatActivity extends AppCompatActivity {
                                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                                     Contributor contributor = snapshot.getValue(Contributor.class);
                                                                     if(notify){
-                                                                        sendNotification(message.getMessageReceiver(), contributor.getName(), messageImageName);
+                                                                        sendNotification(message.getMessageReceiver(), contributor.getName(), m);
                                                                     }
                                                                     notify = false;
                                                                     progressDialog.dismiss();
@@ -666,7 +666,160 @@ public class MessageChatActivity extends AppCompatActivity {
                                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                                     Organization organization = snapshot.getValue(Organization.class);
                                                                     if(notify){
-                                                                        sendNotification(message.getMessageReceiver(), organization.getOrganizationName(), messageImageName);
+                                                                        sendNotification(message.getMessageReceiver(), organization.getOrganizationName(), m);
+                                                                    }
+                                                                    notify = false;
+                                                                    progressDialog.dismiss();
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                                    Log.d(TAG, "databaseError: "+error.getMessage());
+                                                                    progressDialog.dismiss();
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                    Log.d(TAG, "databaseError: "+error.getMessage());
+                                                    progressDialog.dismiss();
+                                                }
+                                            });
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toasty.error(MessageChatActivity.this, "Send Failed. Please Try Again", Toast.LENGTH_SHORT, true).show();
+                                            Log.d(TAG, "sendMessage: failed," +
+                                                    "description: "+e.toString());
+                                        }
+                                    });
+                                }
+                            }
+                        })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        progressDialog.dismiss();
+                                        Log.d(TAG, "sendImage: failed");
+                                        Toasty.error(getApplicationContext(), "Send image failed. Please Try Again",Toast.LENGTH_LONG).show();
+                                    }
+                                });
+
+
+
+                    }
+                    else{
+                        progressDialog.dismiss();
+                        Log.d(TAG, "sendImage: failed");
+                        Toasty.error(getApplicationContext(), "Send image failed. Please Try Again",Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+
+
+        }
+    }
+
+    private void sendImageMessage(final String myId, final String userId, final Uri i, final String m){
+        //a progress dialog to view progress of create account
+        final ProgressDialog progressDialog = new ProgressDialog(MessageChatActivity.this);
+
+        //set message for progress dialog
+        progressDialog.setMessage("Sending Image...");
+
+        //show dialog
+        progressDialog.show();
+
+        if(myId != null && userId != null && i != null){
+            //initialize pattern of date
+            SimpleDateFormat imageSimpleDateFormat = new SimpleDateFormat("ddMMyyyyhhmmss", Locale.US);
+            //initialize date object
+            Date imageDateObj = Calendar.getInstance().getTime();
+            //initialize string for current date time use the pattern above
+            ContentResolver cR = getContentResolver();
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            String type = mime.getExtensionFromMimeType(cR.getType(i));
+            final String imageDateTime = imageSimpleDateFormat.format(imageDateObj);
+            final String messageImageName = "image"+imageDateTime+"."+type;
+
+            final StorageReference messageImageSR = Variable.MESSAGE_SR.child(messageImageName);
+
+            messageImageSR.putFile(i).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    if(task.isSuccessful()){
+
+                        messageImageSR.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                if(uri != null){
+                                    String messageContent = "";
+                                    try{
+                                        messageContent = AESCrypt.encrypt(m);
+                                    }
+                                    catch (Exception e){
+                                        Log.d(TAG, e.toString());
+                                    }
+
+                                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a", Locale.US);
+                                    Date dateObj = Calendar.getInstance().getTime();
+                                    final String currentDateTime = simpleDateFormat.format(dateObj);
+                                    DatabaseReference pushedMessage = Variable.MESSAGE_REF.push();
+
+                                    String id = pushedMessage.getKey();
+
+                                    final Message message = new Message();
+                                    message.setMessageId(id);
+                                    message.setMessageSender(myId);
+                                    message.setMessageReceiver(userId);
+                                    message.setMessageType(Variable.MESSAGE_TYPE_IMAGE);
+                                    message.setMessageDateTimeSent(currentDateTime);
+                                    message.setMessageContent(messageContent);
+                                    message.setMessageUrl(uri.toString());
+                                    message.setMessageFileName(messageImageName);
+
+                                    Variable.MESSAGE_REF.child(message.getMessageId()).setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "sendMessage: success");
+                                            messageChatInputMessageET.getText().clear();
+                                            Variable.USER_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    User user = snapshot.getValue(User.class);
+
+                                                    if(user != null){
+                                                        if(user.getRole().equals(Variable.CONTRIBUTOR)){
+                                                            Variable.CONTRIBUTOR_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                    Contributor contributor = snapshot.getValue(Contributor.class);
+                                                                    if(notify){
+                                                                        sendNotification(message.getMessageReceiver(), contributor.getName(), m);
+                                                                    }
+                                                                    notify = false;
+                                                                    progressDialog.dismiss();
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError error) {
+                                                                    Log.d(TAG, "databaseError: "+error.getMessage());
+                                                                }
+                                                            });
+
+                                                        }
+                                                        else{
+                                                            Variable.ORGANIZATION_REF.child(cUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                    Organization organization = snapshot.getValue(Organization.class);
+                                                                    if(notify){
+                                                                        sendNotification(message.getMessageReceiver(), organization.getOrganizationName(), m);
                                                                     }
                                                                     notify = false;
                                                                     progressDialog.dismiss();
@@ -725,7 +878,7 @@ public class MessageChatActivity extends AppCompatActivity {
         }
     }
 
-    private void sendFileMessage(final String myId, final String userId, final Uri i){
+    private void sendFileMessage(final String myId, final String userId, final Uri i, final String m){
         //a progress dialog to view progress of create account
         final ProgressDialog progressDialog = new ProgressDialog(MessageChatActivity.this);
 
@@ -745,7 +898,7 @@ public class MessageChatActivity extends AppCompatActivity {
             MimeTypeMap mime = MimeTypeMap.getSingleton();
             String type = mime.getExtensionFromMimeType(cR.getType(i));
             final String fileDateTime = fileSimpleDateFormat.format(imageDateObj);
-            final String messageFileName = "file"+fileDateTime+type;
+            final String messageFileName = "file"+fileDateTime+"."+type;
 
             final StorageReference messageImageSR = Variable.MESSAGE_SR.child(messageFileName);
 
@@ -760,7 +913,7 @@ public class MessageChatActivity extends AppCompatActivity {
                                 if(uri != null){
                                     String messageContent = "";
                                     try{
-                                        messageContent = AESCrypt.encrypt(messageFileName);
+                                        messageContent = AESCrypt.encrypt(m);
                                     }
                                     catch (Exception e){
                                         Log.d(TAG, e.toString());
@@ -781,6 +934,7 @@ public class MessageChatActivity extends AppCompatActivity {
                                     message.setMessageDateTimeSent(currentDateTime);
                                     message.setMessageContent(messageContent);
                                     message.setMessageUrl(uri.toString());
+                                    message.setMessageFileName(messageFileName);
 
                                     Variable.MESSAGE_REF.child(message.getMessageId()).setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
@@ -799,7 +953,7 @@ public class MessageChatActivity extends AppCompatActivity {
                                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                                     Contributor contributor = snapshot.getValue(Contributor.class);
                                                                     if(notify){
-                                                                        sendNotification(message.getMessageReceiver(), contributor.getName(), messageFileName);
+                                                                        sendNotification(message.getMessageReceiver(), contributor.getName(), m);
                                                                     }
                                                                     notify = false;
                                                                     progressDialog.dismiss();
@@ -818,7 +972,7 @@ public class MessageChatActivity extends AppCompatActivity {
                                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                                     Organization organization = snapshot.getValue(Organization.class);
                                                                     if(notify){
-                                                                        sendNotification(message.getMessageReceiver(), organization.getOrganizationName(), messageFileName);
+                                                                        sendNotification(message.getMessageReceiver(), organization.getOrganizationName(), m);
                                                                     }
                                                                     notify = false;
                                                                     progressDialog.dismiss();
@@ -882,7 +1036,7 @@ public class MessageChatActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK && result.getUri() != null) {
                 imageUri = result.getUri();
                 if(imageUri != null){
-                    sendImageMessage(cUser.getUid(), messageChatUserId, imageUri);
+                    sendImageMessage2(cUser.getUid(), messageChatUserId, imageUri, "Sent an image");
                 }
                 sendFilesCardView.setVisibility(View.GONE);
                 //Toasty.info(getApplicationContext(), imageUri.toString(), Toast.LENGTH_SHORT).show();
@@ -902,10 +1056,10 @@ public class MessageChatActivity extends AppCompatActivity {
                     String type = mime.getExtensionFromMimeType(cR.getType(fileUri));
                     String typeLowerCase = type.toLowerCase();
                     if(typeLowerCase.equals("png") || typeLowerCase.equals("jpg") || typeLowerCase.equals("gif") || typeLowerCase.equals("jpeg")){
-                        sendImageMessage(cUser.getUid(), messageChatUserId, fileUri);
+                        sendImageMessage(cUser.getUid(), messageChatUserId, fileUri, "Sent an image");
                     }
                     else{
-                        sendFileMessage(cUser.getUid(), messageChatUserId, fileUri);
+                        sendFileMessage(cUser.getUid(), messageChatUserId, fileUri, "Sent a file");
                     }
                 }
                 sendFilesCardView.setVisibility(View.GONE);

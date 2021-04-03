@@ -9,6 +9,7 @@ public class Message {
     private String messageType;
     private String messageDateTimeSent;
     private String messageUrl;
+    private String messageFileName;
 
     public String getMessageId() {
         return messageId;
@@ -64,5 +65,13 @@ public class Message {
 
     public void setMessageUrl(String messageUrl) {
         this.messageUrl = messageUrl;
+    }
+
+    public String getMessageFileName() {
+        return messageFileName;
+    }
+
+    public void setMessageFileName(String messageFileName) {
+        this.messageFileName = messageFileName;
     }
 }

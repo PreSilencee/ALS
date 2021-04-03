@@ -346,7 +346,7 @@ public class HomeDonateActivity extends AppCompatActivity implements PaymentResu
         final String currentDateTime = simpleDateFormat.format(dateObj);
         final Donation donation = new Donation();
         donation.setDonationCurrencyCode("MYR");
-        donation.setDonationState(Variable.SUCCESS);
+        donation.setDonationStatus(Variable.SUCCESS);
         donation.setDonationAmount(getSelectedAmount());
         donation.setDonationId(s);
         donation.setDonationDateTime(currentDateTime);

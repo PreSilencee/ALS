@@ -41,29 +41,31 @@ public class ExampleInstrumentedTest {
 //        assertNotNull(FirebaseApp.initializeApp(appContext));
 //
 //    }
-
-    @Test
-    public void testCreateUserInFirebaseAuth(){
-
-        FirebaseApp.initializeApp(appContext);
-        FirebaseAuth cAuth = FirebaseAuth.getInstance();
-        cAuth.createUserWithEmailAndPassword("a@gmail.com", "123456")
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                assertEquals(true, task.isSuccessful());
-            }
-        });
-        //assertTrue(status);
-
-
-    }
 //
+//    @Test
+//    public void TestRegisterFunction(){
+//
+//        FirebaseApp.initializeApp(appContext);
+//        FirebaseAuth cAuth = FirebaseAuth.getInstance();
+//        cAuth.createUserWithEmailAndPassword("b@gmail.com", "123456")
+//                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//            @Override
+//            public void onComplete(@NonNull Task<AuthResult> task) {
+//                //assertEquals(true, task.isSuccessful());
+//                assertTrue(task.isSuccessful());
+//            }
+//        });
+//    }
+
 //    @Test
 //    public void testSignIn(){
 //        FirebaseApp.initializeApp(appContext);
 //        FirebaseAuth cAuth = FirebaseAuth.getInstance();
-//        boolean status = cAuth.signInWithEmailAndPassword("junioraymond92@gmail.com", "123456").isSuccessful();
-//        assertEquals(true, status);
+//        cAuth.signInWithEmailAndPassword("b@gmail.com", "1234567").addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//            @Override
+//            public void onComplete(@NonNull Task<AuthResult> task) {
+//                assertEquals(true, task.isSuccessful());
+//            }
+//        });
 //    }
 }

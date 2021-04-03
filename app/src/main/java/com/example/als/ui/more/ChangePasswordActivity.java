@@ -15,8 +15,10 @@ import com.example.als.LoginActivity;
 import com.example.als.R;
 import com.example.als.handler.Connectivity;
 import com.example.als.object.Variable;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -135,7 +137,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 final ProgressDialog progressDialog = new ProgressDialog(ChangePasswordActivity.this);
 
                 //set message for progress dialog
-                progressDialog.setMessage("Signing in... " +
+                progressDialog.setMessage("Changing Password... " +
                         "Please wait awhile, we are processing the account");
 
                 //show dialog
@@ -151,43 +153,39 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     AuthCredential credential = EmailAuthProvider
                             .getCredential(cUser.getEmail(), currentPass);
 
-                    //check whether current user enter correct current password
-                    cUser.reauthenticate(credential)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    //if success
-                                    Log.d(TAG, "User re-authenticated: success");
 
-                                    //update the password
-                                    cUser.updatePassword(newPass).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    cUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                //if success
+                                Log.d(TAG, "User re-authenticated: success");
+                                if(!currentPass.equals(newPass)){
+                                    cUser.updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
-                                        public void onSuccess(Void aVoid) {
-                                            //if success to change password
-                                            //send message to console
-                                            clearField();
-                                            Log.d(TAG, "changePassword: success");
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                //if success to change password
+                                                //send message to console
+                                                clearField();
+                                                Log.d(TAG, "changePassword: success");
 
-                                            //show message to the user
-                                            Toasty.success(ChangePasswordActivity.this, "Password Changed Successfully", Toast.LENGTH_SHORT, true).show();
+                                                //show message to the user
+                                                Toasty.success(ChangePasswordActivity.this, "Password Changed Successfully", Toast.LENGTH_SHORT, true).show();
 
-                                            //sign out for current user
-                                            cAuth.signOut();
+                                                //sign out for current user
+                                                cAuth.signOut();
 
-                                            //sign in again using email and newpassword
-                                            cAuth.signInWithEmailAndPassword(cUser.getEmail(), newPass)
-                                                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                                        @Override
-                                                        public void onSuccess(AuthResult authResult) {
+                                                cAuth.signInWithEmailAndPassword(cUser.getEmail(), newPass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                                        if(task.isSuccessful()){
                                                             //if success
                                                             //send message to console
                                                             Log.d(TAG, "userRelogin: success");
                                                             progressDialog.dismiss();
                                                         }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
+                                                        else{
                                                             //if failed
                                                             //show error message to console log
                                                             Log.d(TAG, "userRelogin: failed");
@@ -195,38 +193,44 @@ public class ChangePasswordActivity extends AppCompatActivity {
                                                             //cancel the progress dialog
                                                             progressDialog.dismiss();
                                                         }
-                                                    });
+                                                    }
+                                                });
+                                            }
+                                            else{
+                                                //if change password failed
+                                                //show error message to console log
+                                                Log.d(TAG, "changePassword: failed");
 
+                                                //show error message to the user
+                                                Toasty.error(ChangePasswordActivity.this, "Password Changed Failed", Toast.LENGTH_SHORT, true).show();
+
+                                                //cancel the progress dialog
+                                                progressDialog.dismiss();
+                                            }
                                         }
-                                    })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    //if change password failed
-                                                    //show error message to console log
-                                                    Log.d(TAG, "changePassword: failed");
-
-                                                    //show error message to the user
-                                                    Toasty.error(ChangePasswordActivity.this, "Password Changed Failed", Toast.LENGTH_SHORT, true).show();
-
-                                                    //cancel the progress dialog
-                                                    progressDialog.dismiss();
-                                                }
-                                            });
+                                    });
                                 }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    //if re-authenticated failed
-                                    Log.d(TAG, "User re-authenticated: failed");
+                                else{
+                                    Log.d(TAG, "Old password and new password are same");
 
                                     //show error message for the user (type wrong old password)
-                                    Toasty.error(ChangePasswordActivity.this, "Invalid Old Password", Toast.LENGTH_SHORT, true).show();
+                                    Toasty.error(ChangePasswordActivity.this, "Old password and new password are same", Toast.LENGTH_LONG, true).show();
                                     //cancel the progress dialog
                                     progressDialog.dismiss();
                                 }
-                            });
+                            }
+                            else{
+                                //if re-authenticated failed
+                                Log.d(TAG, "User re-authenticated: failed");
+
+                                //show error message for the user (type wrong old password)
+                                Toasty.error(ChangePasswordActivity.this, "Invalid Old Password", Toast.LENGTH_SHORT, true).show();
+                                //cancel the progress dialog
+                                progressDialog.dismiss();
+                            }
+                        }
+                    });
+
                 }
 
             }
