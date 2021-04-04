@@ -1,16 +1,12 @@
-package com.example.als.ui;
+package com.example.als.ui.search;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -24,7 +20,6 @@ import android.widget.Toast;
 import com.example.als.LoginActivity;
 import com.example.als.R;
 import com.example.als.adapter.HomeOrganizationListFragmentAdapter;
-import com.example.als.adapter.RaisedEventListFragmentAdapter;
 import com.example.als.adapter.SearchContributorListFragmentAdapter;
 import com.example.als.adapter.SearchEventListFragmentAdapter;
 import com.example.als.handler.Connectivity;
@@ -41,9 +36,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
 
 import es.dmoral.toasty.Toasty;
 
@@ -67,51 +66,33 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
     CardView searchAllEventCV, searchAllContributorCV, searchAllOrganizationCV;
     FirebaseUser cUser;
 
-    String query;
-    String secondQuery;
+    public static String queryAll;
 
-    boolean firstQueryState = true;
-    boolean secondQueryState = true;
-    boolean thirdQueryState = true;
+    View emptySearchAllView;
 
     TextView moreEventTV, moreContributorTV, moreOrganizationTV;
 
-    public SearchAllFragment(String q){
-        this.query = q;
+    public void setQuery(String q){
+        queryAll = q;
     }
 
-//    public static SearchAllFragment newInstance(String q){
-//        SearchAllFragment fragment = new SearchAllFragment();
-//        Bundle args = new Bundle();
-//        args.putString(Variable.SEARCH_ITEM, q);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-//
-//    @Override
-//    public void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        if(secondQuery != null){
-//            query = secondQuery;
-//        }
-//        else
-//        if(getArguments() != null){
-//            query = getArguments().getString(Variable.SEARCH_ITEM);
-//        }
-//    }
+
+
+    public static SearchAllFragment newInstance(String q){
+        SearchAllFragment fragment = new SearchAllFragment();
+        fragment.setQuery(q);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-//        if(secondQuery != null){
-//            query = secondQuery;
-//        }
-//        else
-//        if(getArguments() != null){
-//            query = getArguments().getString(Variable.SEARCH_ITEM);
-//            getArguments().remove(Variable.SEARCH_ITEM);
-//        }
+
         View root = inflater.inflate(R.layout.fragment_search_all, container, false);
 
         device = new Connectivity(getContext());
@@ -148,6 +129,7 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
         moreOrganizationTV = root.findViewById(R.id.moreOrganizationTextView);
 
         //recycler view
+        emptySearchAllView = root.findViewById(R.id.empty_search_all_view);
         searchAllEventListRV = root.findViewById(R.id.searchEventListRecyclerView);
         searchAllEventListRV.setHasFixedSize(true);
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(requireActivity());
@@ -185,6 +167,20 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
             }
         });
 
+        moreContributorTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchActivity.searchViewPager.setCurrentItem(2, true);
+            }
+        });
+
+        moreOrganizationTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchActivity.searchViewPager.setCurrentItem(3, true);
+            }
+        });
+
         return root;
     }
 
@@ -200,7 +196,6 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
             Toasty.error(requireContext(), device.NetworkError(), Toast.LENGTH_SHORT).show();
         }
         else{
-            //requireContext().registerReceiver(searchReceiver, new IntentFilter("KEY"));
             searchAll();
         }
     }
@@ -211,7 +206,6 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
         Variable.EVENT_REF.removeEventListener(searchEventAllValueEventListener);
         Variable.CONTRIBUTOR_REF.removeEventListener(searchContributorAllValueEventListener);
         Variable.ORGANIZATION_REF.removeEventListener(searchOrganizationAllValueEventListener);
-        //requireContext().unregisterReceiver(searchReceiver);
     }
 
     @Override
@@ -221,7 +215,6 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
             Toasty.error(requireContext(), device.NetworkError(), Toast.LENGTH_SHORT).show();
         }
         else{
-            //requireContext().registerReceiver(searchReceiver, new IntentFilter("KEY"));
             searchAll();
         }
     }
@@ -234,22 +227,13 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
         Variable.CONTRIBUTOR_REF.addListenerForSingleValueEvent(searchContributorAllValueEventListener);
         Variable.ORGANIZATION_REF.addListenerForSingleValueEvent(searchOrganizationAllValueEventListener);
 
+        if(searchAllEventCV.getVisibility() == View.GONE && searchAllContributorCV.getVisibility() == View.GONE && searchAllOrganizationCV.getVisibility() == View.GONE){
+            emptySearchAllView.setVisibility(View.VISIBLE);
+        }
+        else{
+            emptySearchAllView.setVisibility(View.GONE);
+        }
 
-//        Log.d("Data1: " , String.valueOf(firstQueryState));
-//        Log.d("Data2: " , String.valueOf(secondQueryState));
-//        Log.d("Data3: " , String.valueOf(thirdQueryState));
-//        if(!firstQueryState && !secondQueryState && !thirdQueryState){
-//            SearchActivity.searchViewPager.setVisibility(View.GONE);
-//            SearchActivity.emptySearchView.setVisibility(View.VISIBLE);
-////            Intent i = new Intent("FRAGMENT_S");
-////            i.putExtra(Variable.FRAGMENT_STATE, Variable.NOTVISIBLE);
-////            requireContext().sendBroadcast(i);
-//        }
-//        else{
-////            Intent i = new Intent("FRAGMENT_S");
-////            i.putExtra(Variable.FRAGMENT_STATE, Variable.VISIBLE);
-////            requireContext().sendBroadcast(i);
-//        }
 
     }
 
@@ -257,18 +241,35 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             eventAllList.clear();
-
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+            Date dateObj = Calendar.getInstance().getTime();
+            Date currentDate = null;
+            try {
+                currentDate = simpleDateFormat.parse(simpleDateFormat.format(dateObj));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             for(DataSnapshot dataSnapshot : snapshot.getChildren()){
                 Event event = dataSnapshot.getValue(Event.class);
 
-                if(event != null &&
-                        (event.getEventTitle().contains(query)
-                                || event.getEventDescription().contains(query)
-                                || event.getEventTitle().toLowerCase().contains(query)
-                                || event.getEventDescription().toLowerCase().contains(query))){
-                    if(eventAllList.size() < 2){
-                        eventAllList.add(event);
+                if(event != null && event.getEventStatus().equals(Variable.AVAILABLE) && event.getEventEndDate() != null && (event.getEventTitle().contains(queryAll)
+                                || event.getEventDescription().contains(queryAll)
+                                || event.getEventTitle().toLowerCase().contains(queryAll)
+                                || event.getEventDescription().toLowerCase().contains(queryAll))){
+                    try {
+                        Date eventEndDate = simpleDateFormat.parse(event.getEventEndDate());
+                        if(currentDate != null){
+                            if(((currentDate.compareTo(eventEndDate) == 0 || currentDate.compareTo(eventEndDate) < 0))){
+                                if(eventAllList.size() < 2){
+                                    eventAllList.add(event);
+                                }
+                            }
+                        }
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
+
 
                 }
             }
@@ -279,7 +280,9 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
 
             if(searchAllEventAdapter.getItemCount() == 0){
                 searchAllEventCV.setVisibility(View.GONE);
-                firstQueryState = false;
+            }
+            else{
+                searchAllEventCV.setVisibility(View.VISIBLE);
             }
 
 
@@ -300,7 +303,7 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
                 Contributor contributor = dataSnapshot.getValue(Contributor.class);
 
                 if(contributor != null) {
-                    if (contributor.getName().contains(query) || contributor.getName().toLowerCase().contains(query)) {
+                    if (contributor.getName().contains(queryAll) || contributor.getName().toLowerCase().contains(queryAll)) {
                         if(contributorAllList.size() < 2){
                             contributorAllList.add(contributor);
                         }
@@ -315,7 +318,9 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
 
             if(searchContributorListFragmentAdapter.getItemCount() == 0){
                 searchAllContributorCV.setVisibility(View.GONE);
-                thirdQueryState = false;
+            }
+            else{
+                searchAllContributorCV.setVisibility(View.VISIBLE);
             }
 
         }
@@ -336,7 +341,7 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
 
                 if(organization != null){
                     if(organization.getOrganizationVerifyStatus().equals(Variable.VERIFIED)){
-                        if(organization.getOrganizationName().contains(query) || organization.getOrganizationName().toLowerCase().contains(query)){
+                        if(organization.getOrganizationName().contains(queryAll) || organization.getOrganizationName().toLowerCase().contains(queryAll)){
                             if(organizationAllList.size() < 2){
                                 organizationAllList.add(organization);
                             }
@@ -352,7 +357,9 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
 
             if(searchOrganizationListFragmentAdapter.getItemCount() == 0){
                 searchAllOrganizationCV.setVisibility(View.GONE);
-                secondQueryState = false;
+            }
+            else{
+                searchAllOrganizationCV.setVisibility(View.VISIBLE);
             }
 
             searchAllListSRL.setRefreshing(false);
@@ -364,12 +371,4 @@ public class SearchAllFragment extends Fragment implements SwipeRefreshLayout.On
             Log.d("OrganizationList", "Database Error: " + error.getMessage());
         }
     };
-
-//    private final BroadcastReceiver searchReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            //newInstance(intent.getStringExtra(Variable.SEARCH_ITEM));
-//            //Log.d("Data", intent.getStringExtra(Variable.SEARCH_ITEM));
-//        }
-//    };
 }

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.SearchActivity">
+    tools:context=".ui.search.SearchActivity">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/searchViewPager"
@@ -24,7 +24,7 @@
             app:tabIndicatorColor="@color/colorAccent"
             app:tabGravity="fill"
             app:tabInlineLabel="true"
-            app:tabMode="fixed" />
+            app:tabMode="scrollable" />
 
     </androidx.viewpager.widget.ViewPager>
 

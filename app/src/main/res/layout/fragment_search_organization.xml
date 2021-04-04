@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.search.SearchContributorFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.raised_event.SearchOrganizationFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/searchContributorAllListSwipeRefreshLayout"
+        android:id="@+id/searchOrganizationAllListSwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,7 +29,7 @@
                 android:orientation="vertical">
 
                 <com.example.als.widget.AlsRecyclerView
-                    android:id="@+id/searchContributorAllListRecyclerView"
+                    android:id="@+id/searchOrganizationAllListRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="80dp"
@@ -46,7 +45,7 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <include
-        android:id="@+id/empty_search_contributor_view"
+        android:id="@+id/empty_search_organization_view"
         layout="@layout/empty_search"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

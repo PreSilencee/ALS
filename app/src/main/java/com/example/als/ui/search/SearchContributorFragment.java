@@ -1,9 +1,6 @@
-package com.example.als.ui;
+package com.example.als.ui.search;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,10 +17,8 @@ import android.widget.Toast;
 import com.example.als.LoginActivity;
 import com.example.als.R;
 import com.example.als.adapter.SearchContributorListFragmentAdapter;
-import com.example.als.adapter.SearchEventListFragmentAdapter;
 import com.example.als.handler.Connectivity;
 import com.example.als.object.Contributor;
-import com.example.als.object.Event;
 import com.example.als.object.Variable;
 import com.example.als.widget.AlsRecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,8 +45,8 @@ public class SearchContributorFragment extends Fragment implements SwipeRefreshL
     SearchContributorListFragmentAdapter searchContributorAllAdapter;
     AlsRecyclerView searchContributorAllRV;
 
-    String query;
-    String secondQuery;
+    public static String queryContributor;
+
 
     FirebaseUser cUser;
 
@@ -59,24 +54,19 @@ public class SearchContributorFragment extends Fragment implements SwipeRefreshL
         // Required empty public constructor
     }
 
+    public void setQueryContributor(String q){
+        queryContributor = q;
+    }
+
     public static SearchContributorFragment newInstance(String q) {
         SearchContributorFragment fragment = new SearchContributorFragment();
-        Bundle args = new Bundle();
-        args.putString(Variable.SEARCH_ITEM, q);
-        fragment.setArguments(args);
+        fragment.setQueryContributor(q);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(secondQuery != null){
-            query = secondQuery;
-        }
-        else
-        if(getArguments() != null){
-            query = getArguments().getString(Variable.SEARCH_ITEM);
-        }
     }
 
     @Override
@@ -84,14 +74,6 @@ public class SearchContributorFragment extends Fragment implements SwipeRefreshL
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_search_contributor, container, false);
-
-        if(secondQuery != null){
-            query = secondQuery;
-        }
-        else
-        if(getArguments() != null){
-            query = getArguments().getString(Variable.SEARCH_ITEM);
-        }
 
         device = new Connectivity(getContext());
 
@@ -148,7 +130,6 @@ public class SearchContributorFragment extends Fragment implements SwipeRefreshL
             Toasty.error(requireContext(), device.NetworkError(), Toast.LENGTH_SHORT).show();
         }
         else{
-            requireContext().registerReceiver(searchContributorReceiver, new IntentFilter("KEY"));
             searchAllContributor();
         }
     }
@@ -157,7 +138,6 @@ public class SearchContributorFragment extends Fragment implements SwipeRefreshL
     public void onStop() {
         super.onStop();
         Variable.CONTRIBUTOR_REF.removeEventListener(searchAllContributorValueEventListener);
-        requireContext().unregisterReceiver(searchContributorReceiver);
     }
 
     @Override
@@ -167,7 +147,6 @@ public class SearchContributorFragment extends Fragment implements SwipeRefreshL
             Toasty.error(requireContext(), device.NetworkError(), Toast.LENGTH_SHORT).show();
         }
         else{
-            requireContext().registerReceiver(searchContributorReceiver, new IntentFilter("KEY"));
             searchAllContributor();
         }
     }
@@ -191,7 +170,7 @@ public class SearchContributorFragment extends Fragment implements SwipeRefreshL
                 Contributor contributor = dataSnapshot.getValue(Contributor.class);
 
                 if(contributor != null) {
-                    if (contributor.getName().contains(query) || contributor.getName().toLowerCase().contains(query)) {
+                    if (contributor.getName().contains(queryContributor) || contributor.getName().toLowerCase().contains(queryContributor)) {
                         searchContributorAllList.add(contributor);
                     }
                 }
@@ -203,22 +182,11 @@ public class SearchContributorFragment extends Fragment implements SwipeRefreshL
 
             searchContributorListSRL.setRefreshing(false);
 
-//            if(searchContributorAllAdapter.getItemCount() == 0){
-//                SearchActivity.searchViewPagerAdapter.removeFragment(get);
-//            }
         }
 
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
             Log.d("ContributorAllFragment", "Database Error: " + error.getMessage());
-        }
-    };
-
-    private final BroadcastReceiver searchContributorReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            secondQuery = intent.getStringExtra(Variable.SEARCH_ITEM);
-            //Log.d("Data", intent.getStringExtra(Variable.SEARCH_ITEM));
         }
     };
 }

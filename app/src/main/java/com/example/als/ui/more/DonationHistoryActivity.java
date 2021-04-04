@@ -19,7 +19,7 @@ import com.example.als.adapter.DonationHistoryListFragmentAdapter;
 import com.example.als.handler.Connectivity;
 import com.example.als.object.Donation;
 import com.example.als.object.Variable;
-import com.example.als.ui.SearchActivity;
+import com.example.als.ui.search.SearchActivity;
 import com.example.als.widget.AlsRecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

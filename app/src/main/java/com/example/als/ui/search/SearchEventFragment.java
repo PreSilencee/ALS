@@ -1,9 +1,6 @@
-package com.example.als.ui;
+package com.example.als.ui.search;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -30,8 +27,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import es.dmoral.toasty.Toasty;
 
@@ -48,7 +50,7 @@ public class SearchEventFragment extends Fragment implements SwipeRefreshLayout.
     SearchEventListFragmentAdapter searchEventAllAdapter;
     AlsRecyclerView searchEventAllRV;
 
-    String query;
+    public static String queryEvent;
     String secondQuery;
 
     FirebaseUser cUser;
@@ -57,24 +59,19 @@ public class SearchEventFragment extends Fragment implements SwipeRefreshLayout.
         // Required empty public constructor
     }
 
+    public void setQueryEvent(String q){
+        queryEvent = q;
+    }
+
     public static SearchEventFragment newInstance(String q) {
         SearchEventFragment fragment = new SearchEventFragment();
-        Bundle args = new Bundle();
-        args.putString(Variable.SEARCH_ITEM, q);
-        fragment.setArguments(args);
+        fragment.setQueryEvent(q);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(secondQuery != null){
-            query = secondQuery;
-        }
-        else
-        if(getArguments() != null){
-            query = getArguments().getString(Variable.SEARCH_ITEM);
-        }
     }
 
     @Override
@@ -82,14 +79,6 @@ public class SearchEventFragment extends Fragment implements SwipeRefreshLayout.
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_search_event, container, false);
-
-        if(secondQuery != null){
-            query = secondQuery;
-        }
-        else
-        if(getArguments() != null){
-            query = getArguments().getString(Variable.SEARCH_ITEM);
-        }
 
         device = new Connectivity(getContext());
 
@@ -152,7 +141,6 @@ public class SearchEventFragment extends Fragment implements SwipeRefreshLayout.
             Toasty.error(requireContext(), device.NetworkError(), Toast.LENGTH_SHORT).show();
         }
         else{
-            requireContext().registerReceiver(searchEventReceiver, new IntentFilter("KEY"));
             searchAllEvent();
         }
     }
@@ -164,7 +152,6 @@ public class SearchEventFragment extends Fragment implements SwipeRefreshLayout.
             Toasty.error(requireContext(), device.NetworkError(), Toast.LENGTH_SHORT).show();
         }
         else{
-            requireContext().registerReceiver(searchEventReceiver, new IntentFilter("KEY"));
             searchAllEvent();
         }
     }
@@ -173,7 +160,6 @@ public class SearchEventFragment extends Fragment implements SwipeRefreshLayout.
     public void onStop() {
         super.onStop();
         Variable.EVENT_REF.removeEventListener(searchAllEventValueEventListener);
-        requireContext().unregisterReceiver(searchEventReceiver);
     }
 
     public void searchAllEvent(){
@@ -187,17 +173,38 @@ public class SearchEventFragment extends Fragment implements SwipeRefreshLayout.
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             searchEventAllList.clear();
 
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+            Date dateObj = Calendar.getInstance().getTime();
+            Date currentDate = null;
+            try {
+                currentDate = simpleDateFormat.parse(simpleDateFormat.format(dateObj));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
             for(DataSnapshot dataSnapshot : snapshot.getChildren()){
                 Event event = dataSnapshot.getValue(Event.class);
 
-                if(event != null &&
-                        (event.getEventTitle().contains(query)
-                                || event.getEventDescription().contains(query)
-                                || event.getEventTitle().toLowerCase().contains(query)
-                                || event.getEventDescription().toLowerCase().contains(query))){
-                    searchEventAllList.add(event);
+                if(event != null && event.getEventStatus().equals(Variable.AVAILABLE) && event.getEventEndDate() != null && (event.getEventTitle().contains(queryEvent)
+                        || event.getEventDescription().contains(queryEvent)
+                        || event.getEventTitle().toLowerCase().contains(queryEvent)
+                        || event.getEventDescription().toLowerCase().contains(queryEvent))){
+                    try {
+                        Date eventEndDate = simpleDateFormat.parse(event.getEventEndDate());
+                        if(currentDate != null){
+                            if(((currentDate.compareTo(eventEndDate) == 0 || currentDate.compareTo(eventEndDate) < 0))){
+                                searchEventAllList.add(event);
+                            }
+                        }
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
                 }
             }
+
 
             searchEventAllAdapter = new SearchEventListFragmentAdapter(searchEventAllList, getContext());
             searchEventAllAdapter.notifyDataSetChanged();
@@ -209,13 +216,6 @@ public class SearchEventFragment extends Fragment implements SwipeRefreshLayout.
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
             Log.d("EventAllFragment", "Database Error: " + error.getMessage());
-        }
-    };
-
-    private final BroadcastReceiver searchEventReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            secondQuery = intent.getStringExtra(Variable.SEARCH_ITEM);
         }
     };
 }

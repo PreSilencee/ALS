@@ -1,6 +1,7 @@
 package com.example.als.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,8 +19,12 @@ import com.example.als.object.Contributor;
 import com.example.als.object.Event;
 import com.example.als.object.Follow;
 import com.example.als.object.Variable;
+import com.example.als.ui.home.HomeUserViewDetailsActivity;
+import com.example.als.ui.more.AccountActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
@@ -52,7 +57,7 @@ public class SearchContributorListFragmentAdapter extends RecyclerView.Adapter<S
 
     @Override
     public void onBindViewHolder(@NonNull final SearchContributorListFragmentAdapter.ViewHolder holder, int position) {
-        Contributor contributor = contributorList.get(position);
+        final Contributor contributor = contributorList.get(position);
 
         //if event title not null
         if (contributor.getName() != null) {
@@ -94,6 +99,24 @@ public class SearchContributorListFragmentAdapter extends RecyclerView.Adapter<S
         } else {
             holder.searchContributorIV.setImageResource(R.drawable.ic_baseline_person_color_accent_24);
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+                if(cUser != null){
+                    if(contributor.getUserId().equals(cUser.getUid())){
+                        context.startActivity(new Intent(context, AccountActivity.class));
+                    }
+                    else{
+                        Intent i = new Intent(context, HomeUserViewDetailsActivity.class);
+                        i.putExtra(Variable.HOME_USER_SESSION_ID, contributor.getUserId());
+                        context.startActivity(i);
+                    }
+                }
+
+            }
+        });
     }
 
     @Override

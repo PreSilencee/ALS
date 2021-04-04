@@ -17,7 +17,8 @@
         android:roundIcon="@mipmap/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.more.DonationDetailsActivity"/>
+        <activity android:name=".ui.search.SearchEventDetailsActivity"></activity>
+        <activity android:name=".ui.more.DonationDetailsActivity" />
         <activity android:name=".ui.message.SearchUserMessageActivity" />
         <activity android:name=".ui.more.DonationHistoryActivity" />
 
@@ -44,7 +45,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.SearchActivity" />
+        <activity android:name=".ui.search.SearchActivity" />
         <activity android:name=".RegisterOrganizationActivity" />
         <activity android:name=".RegisterContributorActivity" />
 

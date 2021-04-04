@@ -16,7 +16,7 @@ import com.example.als.R;
 import com.example.als.handler.Connectivity;
 import com.example.als.object.Organization;
 import com.example.als.object.Variable;
-import com.example.als.ui.SearchActivity;
+import com.example.als.ui.search.SearchActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;

@@ -1,6 +1,7 @@
 package com.example.als.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,8 +19,14 @@ import com.example.als.R;
 import com.example.als.handler.GlideApp;
 import com.example.als.object.Event;
 import com.example.als.object.Variable;
+import com.example.als.ui.home.HomeUserViewDetailsActivity;
+import com.example.als.ui.more.AccountActivity;
+import com.example.als.ui.raised_event.RaisedEventDetailsActivity;
+import com.example.als.ui.search.SearchEventDetailsActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
@@ -51,7 +58,7 @@ public class SearchEventListFragmentAdapter extends RecyclerView.Adapter<SearchE
 
     @Override
     public void onBindViewHolder(@NonNull final SearchEventListFragmentAdapter.ViewHolder holder, int position) {
-        Event event = eventList.get(position);
+        final Event event = eventList.get(position);
 
         //if event title not null
         if (event.getEventTitle() != null) {
@@ -100,6 +107,26 @@ public class SearchEventListFragmentAdapter extends RecyclerView.Adapter<SearchE
             //show loading image
             holder.searchEventListIV.setImageResource(R.drawable.loading_image);
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+                if(cUser != null){
+                    if(event.getEventHandler().equals(cUser.getUid())){
+                        Intent n = new Intent(context, RaisedEventDetailsActivity.class);
+                        n.putExtra(Variable.EVENT_SESSION_ID, event.getEventId());
+                        context.startActivity(n);
+                    }
+                    else{
+                        Intent i = new Intent(context, SearchEventDetailsActivity.class);
+                        i.putExtra(Variable.SEARCH_EVENT_SESSION_ID, event.getEventId());
+                        context.startActivity(i);
+                    }
+                }
+
+            }
+        });
     }
 
     @Override

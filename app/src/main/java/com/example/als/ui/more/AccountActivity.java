@@ -32,7 +32,7 @@ import com.example.als.object.Contributor;
 import com.example.als.object.Organization;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
-import com.example.als.ui.SearchActivity;
+import com.example.als.ui.search.SearchActivity;
 import com.facebook.AccessToken;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;

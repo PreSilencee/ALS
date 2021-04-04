@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.search.SearchEventDetailsActivity">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/searchEventDetailsSwipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchEventDetailsCustomizeSearchViewToolbarView">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/searchEventDetailsCardView"
+                style="@style/CardView.Light"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/searchEventDetailsEventHandlerLinearLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="5dp"
+                        android:weightSum="2">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/searchEventDetailsProfileImageView"
+                            android:layout_weight="0.3"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:src="@drawable/ic_baseline_person_color_accent_24"
+                            app:civ_border_width="2dp"
+                            app:civ_border_color="@color/colorGray" />
+
+                        <LinearLayout
+                            android:layout_weight="1.7"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/searchEventDetailsProfileNameTextView"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/accountName"
+                                style="@style/TextAppearance.AppCompat.Title"/>
+
+                            <TextView
+                                android:id="@+id/searchEventDetailsCreatedTextView"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/createdDate"
+                                android:textStyle="italic"/>
+
+                        </LinearLayout>
+
+
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/searchEventDetailsImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/eventImage"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitXY"/>
+
+                    <TextView
+                        android:id="@+id/searchEventDetailsTitleTextView"
+                        android:layout_marginStart="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/eventTitle"
+                        style="@style/TextAppearance.AppCompat.Title" />
+
+                    <TextView
+                        android:id="@+id/searchEventDetailsDurationTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:textStyle="italic"
+                        android:hint="@string/duration"
+                        style="@style/TextAppearance.AppCompat.Body1"/>
+
+                    <TextView
+                        android:id="@+id/searchEventDetailsDescriptionTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:hint="@string/eventDes"
+                        style="@style/TextAppearance.AppCompat.Body1" />
+
+                    <LinearLayout
+                        android:id="@+id/searchEventDetailsProgressLinearLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:padding="5dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/rectangle_background_no_filled">
+
+                        <ProgressBar
+                            android:id="@+id/searchEventDetailsProgressBar"
+                            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="10dp"
+                            android:minWidth="320dp"
+                            android:scaleY="3"
+                            android:max="100" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
+
+                            <TextView
+                                android:id="@+id/searchEventDetailsCurrentFundTextView"
+                                android:layout_weight="1"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/currentFund"
+                                android:layout_marginStart="10dp"
+                                android:gravity="start"/>
+
+                            <TextView
+                                android:id="@+id/searchEventDetailsTargetFundTextView"
+                                android:layout_weight="1"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/targetFund"
+                                android:layout_marginEnd="10dp"
+                                android:gravity="end" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/searchEventDetailsDonateButton"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/corner_button_red_filled"
+                        android:layout_margin="5dp"
+                        android:text="@string/donate"
+                        android:textColor="@color/colorWhite"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:rippleColor="@color/colorAccent"
+                        android:layout_gravity="center"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+
+    <include
+        android:id="@+id/searchEventDetailsCustomizeSearchViewToolbarView"
+        layout="@layout/customize_home_user_details_toolbar"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -72,6 +72,7 @@ public class Variable {
     public static final String HOME_USER_SESSION_ID = "homeUserSessionId";
     public static final String MESSAGE_USER_SESSION_ID = "messageUserSessionId";
     public static final String DONATION_SESSION_ID = "donationSessionId";
+    public static final String SEARCH_EVENT_SESSION_ID = "searchEventSessionId";
 
     public static final String MESSAGE_TYPE_TEXT = "text";
     public static final String MESSAGE_TYPE_FILE = "file";

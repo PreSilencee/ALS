@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.SearchAllFragment">
+    tools:context=".ui.search.SearchAllFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/searchAllListSwipeRefreshLayout"
@@ -151,5 +151,9 @@
         </ScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/empty_search_all_view"
+        layout="@layout/empty_search"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

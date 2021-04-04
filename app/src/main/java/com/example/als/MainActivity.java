@@ -14,7 +14,7 @@ import com.example.als.handler.Connectivity;
 import com.example.als.notification.Token;
 import com.example.als.object.User;
 import com.example.als.object.Variable;
-import com.example.als.ui.SearchActivity;
+import com.example.als.ui.search.SearchActivity;
 import com.example.als.ui.more.SettingFragment;
 import com.example.als.ui.home.HomeFragment;
 import com.example.als.ui.message.MessageFragment;
