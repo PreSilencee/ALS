@@ -436,8 +436,6 @@ public class MessageChatActivity extends AppCompatActivity {
             message.setMessageDateTimeSent(currentDateTime);
             message.setMessageContent(messageContent);
 
-
-
             Variable.MESSAGE_REF.child(message.getMessageId()).setValue(message).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {

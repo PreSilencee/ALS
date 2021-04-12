@@ -100,7 +100,6 @@ public class SearchEventDetailsActivity extends AppCompatActivity implements Swi
             }
         });
 
-
     }
 
     @Override
